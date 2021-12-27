@@ -69,7 +69,7 @@ final class RouterTest extends TestCase
         );
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         Router::clear();
         Router::setAutoRoute(false);
