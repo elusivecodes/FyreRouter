@@ -453,11 +453,11 @@ abstract class Router
                 continue;
             }
 
-            $namespaceLength = strlen($namespace);
-            if (substr($class, 0, $namespaceLength) !== $namespace) {
+            if (!str_starts_with($class, $namespace)) {
                 continue;
             }
 
+            $namespaceLength = strlen($namespace);
             $class = substr($class, $namespaceLength);
 
             if ($pathPrefix) {
