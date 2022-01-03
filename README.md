@@ -75,14 +75,17 @@ Router::put($path, $destination, $options);
 Router::redirect($path, $destination, $options);
 ```
 
-Route destinations can be expressed in the following formats:
+The `$destination` can be expressed in the following formats:
 
 ```php
 Router::connect('my-class', 'MyClass');
 Router::connect('my-class/custom-method', 'MyClass::customMethod');
 Router::connect('my-class/custom-method/(.*)/(.*)', 'MyClass::customMethod/$1/$2');
 Router::connect('my-namespace/my-class/custom-method', '\MyNamespace\MyClass::customMethod');
-Router::connect('my-callback/(.*)/(.*)', function(ServerRequest $request, ClientResponse $response, $arg1, $arg2) {});
+Router::connect('my-callback/(.*)/(.*)', function(ServerRequest $request, ClientResponse $response, ...$args) {
+    return $response;
+});
+
 Router::redirect('my-redirect', 'https://test.com/');
 Router::redirect('my-redirect/(.*)', 'https://test.com/$1');
 ```
@@ -176,12 +179,11 @@ Set the default route.
 Router::setDefaultRoute($destination);
 ```
 
-Route destinations can be expressed in the following formats:
+The `$destination` can be expressed in the following formats:
 
 ```php
 Router::setDefaultRoute('MyClass');
 Router::setDefaultRoute('MyClass::customMethod');
-Router::setDefaultRoute('MyClass::customMethod/$1/$2');
 Router::setDefaultRoute('\MyNamespace\MyClass::customMethod');
 ```
 
@@ -205,13 +207,12 @@ Set the error route.
 Router::setErrorRoute($destination);
 ```
 
-Route destinations can be expressed in the following formats:
+The `$destination` can be expressed in the following formats:
 
 ```php
-Router::setDefaultRoute('MyClass');
-Router::setDefaultRoute('MyClass::customMethod');
-Router::setDefaultRoute('MyClass::customMethod/$1/$2');
-Router::setDefaultRoute('\MyNamespace\MyClass::customMethod');
+Router::setErrorRoute('MyClass');
+Router::setErrorRoute('MyClass::customMethod');
+Router::setErrorRoute('\MyNamespace\MyClass::customMethod');
 ```
 
 **URL**
