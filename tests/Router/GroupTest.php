@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Tests\Router;
 
 use
-    Fyre\Router\Router;
+    Fyre\Router\Router,
+    Fyre\Router\Routes\ControllerRoute,
+    Fyre\Server\ServerRequest;
 
 trait GroupTest
 {
@@ -15,14 +17,21 @@ trait GroupTest
             Router::get('home', 'Home');
         });
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('prefix/home');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('prefix/home', 'get')
+            '\Tests\Controller\Home',
+            $route->getController()
         );
     }
 
@@ -34,14 +43,21 @@ trait GroupTest
             });
         });
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('prefix/deep/home');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('prefix/deep/home', 'get')
+            '\Tests\Controller\Home',
+            $route->getController()
         );
     }
 
@@ -51,14 +67,21 @@ trait GroupTest
             Router::get('home', 'Home');
         });
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('prefix/home');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('prefix/home', 'get')
+            '\Tests\Controller\Home',
+            $route->getController()
         );
     }
 
@@ -68,14 +91,21 @@ trait GroupTest
             Router::get('home', 'Home');
         });
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('prefix/home');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('prefix/home', 'get')
+            '\Tests\Controller\Home',
+            $route->getController()
         );
     }
 

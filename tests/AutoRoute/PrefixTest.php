@@ -5,7 +5,9 @@ namespace Tests\AutoRoute;
 
 use
     Fyre\Router\Exceptions\RouterException,
-    Fyre\Router\Router;
+    Fyre\Router\Router,
+    Fyre\Router\Routes\ControllerRoute,
+    Fyre\Server\ServerRequest;
 
 trait PrefixTest
 {
@@ -15,14 +17,26 @@ trait PrefixTest
         Router::clear();
         Router::addNamespace('Tests\Controller', 'prefix');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('prefix/deep/example/alt-method');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Deep\Example',
-                'method' => 'altMethod',
-                'arguments' => []
-            ],
-            Router::findRoute('prefix/deep/example/alt-method')
+            '\Tests\Controller\Deep\Example',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'altMethod',
+            $route->getAction()
         );
     }
 
@@ -31,14 +45,26 @@ trait PrefixTest
         Router::clear();
         Router::addNamespace('Tests\Controller', '/prefix');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('prefix/deep/example/alt-method');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Deep\Example',
-                'method' => 'altMethod',
-                'arguments' => []
-            ],
-            Router::findRoute('prefix/deep/example/alt-method')
+            '\Tests\Controller\Deep\Example',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'altMethod',
+            $route->getAction()
         );
     }
 
@@ -47,14 +73,26 @@ trait PrefixTest
         Router::clear();
         Router::addNamespace('Tests\Controller', 'prefix/');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('prefix/deep/example/alt-method');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Deep\Example',
-                'method' => 'altMethod',
-                'arguments' => []
-            ],
-            Router::findRoute('prefix/deep/example/alt-method')
+            '\Tests\Controller\Deep\Example',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'altMethod',
+            $route->getAction()
         );
     }
 

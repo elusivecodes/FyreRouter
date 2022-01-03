@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace Tests\Controller;
 
-class Home
+use
+    Fyre\Controller\Controller;
+
+class Home extends Controller
 {
 
     public function index()

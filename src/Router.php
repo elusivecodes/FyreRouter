@@ -5,26 +5,26 @@ namespace Fyre\Router;
 
 use
     Closure,
-    Fyre\Router\Exceptions\RouterException;
+    Fyre\Router\Exceptions\RouterException,
+    Fyre\Router\Routes\ClosureRoute,
+    Fyre\Router\Routes\ControllerRoute,
+    Fyre\Router\Routes\RedirectRoute,
+    Fyre\Server\ServerRequest;
 
 use function
     array_filter,
     array_map,
     array_merge,
     array_pop,
-    array_shift,
     array_slice,
     array_unshift,
     class_exists,
     count,
     explode,
     implode,
-    in_array,
     is_string,
     lcfirst,
     method_exists,
-    trim,
-    preg_match,
     preg_match_all,
     preg_replace,
     preg_replace_callback,
@@ -35,6 +35,7 @@ use function
     strlen,
     strtolower,
     substr,
+    trim,
     ucwords;
 
 /**
@@ -51,9 +52,11 @@ abstract class Router
 
     protected static string $defaultNamespace = '\\';
 
-    protected static array|null $defaultRoute = null;
+    protected static Route|null $route = null;
 
-    protected static array|null $errorRoute = null;
+    protected static Route|null $defaultRoute = null;
+
+    protected static Route|null $errorRoute = null;
 
     protected static string $delimiter = '-';
 
@@ -89,10 +92,6 @@ abstract class Router
     public static function connect(string $path, Closure|string $destination, array $options = []): void
     {
         $options['method'] ??= [];
-        $options['method'] = array_map(
-            fn($method) => strtolower($method),
-            (array) $options['method']
-        );
         $options['redirect'] ??= false;
 
         $path = static::normalizePath($path);
@@ -101,23 +100,17 @@ abstract class Router
             $path = '/'.implode('/', static::$pathPrefixes).$path;
         }
 
-        $options['path'] = $path;
+        $methods = (array) $options['method'];
 
         if ($options['redirect']) {
-            $options['destination'] = [
-                'type' => 'redirect',
-                'redirect' => $destination
-            ];
+            $route = new RedirectRoute($destination, $path, $methods);
         } else if (is_string($destination)) {
-            $options['destination'] = static::buildRoute($destination);
+            $route = new ControllerRoute($destination, $path, $methods);
         } else {
-            $options['destination'] = [
-                'type' => 'callback',
-                'callback' => $destination
-            ];
+            $route = new ClosureRoute($destination, $path, $methods);
         }
 
-        static::$routes[] = $options;
+        static::$routes[] = $route;
     }
 
     /**
@@ -132,58 +125,6 @@ abstract class Router
     }
 
     /**
-     * Find a route.
-     * @param string $path The route path.
-     * @param string|null $method The request method.
-     */
-    public static function findRoute(string $path = '/', string|null $method = null): array
-    {
-        $path = static::normalizePath($path);
-
-        $method ??= $_SERVER['REQUEST_METHOD'] ?? 'get';
-        $method = strtolower($method);
-
-        if ($path === '/' && static::$defaultRoute) {
-            return static::$defaultRoute;
-        }
-
-        foreach (static::$routes AS $route) {
-            if ($route['method'] !== [] && !in_array($method, $route['method'])) {
-                continue;
-            }
-
-            $regex = '`^'.$route['path'].'$`';
-
-            if (!preg_match($regex, $path, $match)) {
-                continue;
-            }
-
-            $destination = $route['destination'];
-
-            switch ($destination['type']) {
-                case 'callback':
-                case 'redirect':
-                    $destination['arguments'] = array_slice($match, 1);
-                    break;
-                case 'class':
-                    $destination['arguments'] = array_map(
-                        fn($argument) => preg_replace($regex, $argument, $path),
-                        $destination['arguments']
-                    );
-                    break;
-            }
-
-            return $destination;
-        }
-
-        if (static::$autoRoute) {
-            return static::autoLoadRoute($path);
-        }
-
-        throw RouterException::forInvalidRoute($path);
-    }
-
-    /**
      * Connect a GET route.
      * @param string $path The route path.
      * @param Closure|string $destination The route destination.
@@ -195,21 +136,39 @@ abstract class Router
     }
 
     /**
-     * Get the default route.
-     * @return array|null The default route.
+     * Get the default namespace.
+     * @return string The default namespace.
      */
-    public static function getDefaultRoute(): array|null
+    public static function getDefaultNamespace(): string
+    {
+        return static::$defaultNamespace;
+    }
+
+    /**
+     * Get the default route.
+     * @return ControllerRoute|null The default route.
+     */
+    public static function getDefaultRoute(): ControllerRoute|null
     {
         return static::$defaultRoute;
     }
 
     /**
      * Get the error route.
-     * @return array|null The error route.
+     * @return ControllerRoute|null The error route.
      */
-    public static function getErrorRoute(): array|null
+    public static function getErrorRoute(): ControllerRoute|null
     {
         return static::$errorRoute;
+    }
+
+    /**
+     * Get the current route.
+     * @return Route|null The current route.
+     */
+    public static function getRoute(): Route|null
+    {
+        return static::$route;
     }
 
     /**
@@ -224,6 +183,42 @@ abstract class Router
         $callback();
 
         array_pop(static::$pathPrefixes);
+    }
+
+    /**
+     * Load a route.
+     * @param ServerRequest $request The ServerRequest.
+     */
+    public static function loadRoute(ServerRequest $request): void
+    {
+        $path = $request->getUri()->getPath();
+        $method = $request->getMethod();
+
+        $path = static::normalizePath($path);
+
+        if ($path === '/' && static::$defaultRoute) {
+            static::$route = static::$defaultRoute;
+
+            return;
+        }
+
+        foreach (static::$routes AS $route) {
+            if (!$route->checkMethod($method) || !$route->checkPath($path)) {
+                continue;
+            }
+
+            $route->setArgumentsFromPath($path);
+
+            static::$route = $route;
+
+            return;
+        }
+
+        if (!static::$autoRoute) {
+            throw RouterException::forInvalidRoute($path);
+        }
+
+        static::autoLoadRoute($path);
     }
 
     /**
@@ -294,7 +289,7 @@ abstract class Router
      */
     public static function setDefaultRoute(string $destination): void
     {
-        static::$defaultRoute = static::buildRoute($destination);
+        static::$defaultRoute = new ControllerRoute($destination);
     }
 
     /**
@@ -312,7 +307,7 @@ abstract class Router
      */
     public static function setErrorRoute(string $destination): void
     {
-        static::$errorRoute = static::buildRoute($destination);
+        static::$errorRoute = new ControllerRoute($destination);
     }
 
     /**
@@ -323,20 +318,15 @@ abstract class Router
      */
     public static function url(string $destination, array $arguments = []): string|null
     {
-        $testRoute = static::buildRoute($destination);
-
-        if ($arguments !== []) {
-            $testRoute['arguments'] = $arguments;
-        }
-
-        $argumentCount = count($testRoute['arguments']);
+        $testRoute = new ControllerRoute($destination);
+        $argumentCount = count($arguments);
 
         foreach (static::$routes AS $route) {
             if (
-                $testRoute['type'] !== 'class' ||
-                $testRoute['class'] !== $route['destination']['class'] ||
-                $testRoute['method'] !== $route['destination']['method'] ||
-                $argumentCount !== preg_match_all('/\(.*?\)/', $route['path'])
+                !($route instanceof ControllerRoute) ||
+                $route->getController() !== $testRoute->getController() ||
+                $route->getAction() !== $testRoute->getAction() ||
+                preg_match_all('/\(.*?\)/', $route->getPath()) !== $argumentCount
             ) {
                 continue;
             }
@@ -344,10 +334,10 @@ abstract class Router
             $index = 0;
             $url = preg_replace_callback(
                 '/\(.*?\)/',
-                function($matches) use ($testRoute, &$index) {
-                    return $testRoute['arguments'][$index++];
+                function($matches) use ($arguments, &$index) {
+                    return $arguments[$index++];
                 },
-                $route['path']
+                $route->getPath()
             );
 
             $segments = array_map(
@@ -359,6 +349,8 @@ abstract class Router
         }
 
         if (static::$autoRoute) {
+            $testRoute->setArguments($arguments);
+
             return static::autoLoadUrl($testRoute);
         }
 
@@ -368,10 +360,9 @@ abstract class Router
     /**
      * Find an auto-route for a path.
      * @param string $path The route path.
-     * @return array The route array.
      * @throws RouterException if the route was not found.
      */
-    protected static function autoLoadRoute(string $path): array
+    protected static function autoLoadRoute(string $path): void
     {
         $namespaces = static::getAllNamespaces();
 
@@ -412,14 +403,16 @@ abstract class Router
                 $classSuffix = implode('\\', $classSegments);
                 $class = $namespace.$classSuffix;
 
-                if (class_exists($class) && method_exists($class, $method)) {
-                    return [
-                        'type' => 'class',
-                        'class' => $class,
-                        'method' => $method,
-                        'arguments' => $arguments
-                    ];
+                if (!class_exists($class) || !method_exists($class, $method)) {
+                    continue;
                 }
+
+                $route = new ControllerRoute($class.'::'.$method);
+                $route->setArguments($arguments);
+
+                static::$route = $route;
+
+                return;
             }
 
             if ($indexTest) {
@@ -437,14 +430,15 @@ abstract class Router
 
     /**
      * Build an auto-route path from a route array.
-     * @param array $route The route array.
+     * @param ControllerRoute $route The ControllerRoute.
      * @return string|null The route path.
      */
-    protected static function autoLoadUrl(array $route): string|null
+    protected static function autoLoadUrl(ControllerRoute $route): string|null
     {
         $namespaces = static::getAllNamespaces();
 
-        $class = $route['class'];
+        $controller = $route->getController();
+        $action = $route->getAction();
 
         $segments = [];
 
@@ -453,33 +447,33 @@ abstract class Router
                 continue;
             }
 
-            if (!str_starts_with($class, $namespace)) {
+            if (!str_starts_with($controller, $namespace)) {
                 continue;
             }
 
             $namespaceLength = strlen($namespace);
-            $class = substr($class, $namespaceLength);
+            $controller = substr($controller, $namespaceLength);
 
             if ($pathPrefix) {
                 $segments = explode('/', $pathPrefix);
             }
         }
 
-        $classSegments = explode('\\', $class);
+        $controllerSegments = explode('\\', $controller);
 
-        if ($route['method'] !== 'index') {
-            $classSegments[] = $route['method'];
+        if ($action !== 'index') {
+            $controllerSegments[] = $action;
         }
 
-        $classSegments = array_map(
+        $controllerSegments = array_map(
             fn($segment) => static::slug($segment),
-            $classSegments
+            $controllerSegments
         );
 
-        $segments = array_merge($segments, $classSegments);
+        $segments = array_merge($segments, $controllerSegments);
         $segments = array_filter($segments);
 
-        $segments = array_merge($segments, $route['arguments']);
+        $segments = array_merge($segments, $route->getArguments());
 
         $segments = array_map(
             fn($segment) => rawurlencode($segment),
@@ -487,32 +481,6 @@ abstract class Router
         );
 
         return '/'.implode('/', $segments);
-    }
-
-    /**
-     * Build a route array from a destination string.
-     * @param string $destination The destination string.
-     * @return array The route array.
-     */
-    protected static function buildRoute(string $destination): array
-    {
-        $arguments = explode('/', $destination);
-        $destination = array_shift($arguments);
-        $destination = explode('::', $destination, 2);
-
-        $class = array_shift($destination);
-        if ($class && $class[0] !== '\\') {
-            $class = static::$defaultNamespace.$class;
-        }
-
-        $method = array_shift($destination) ?? 'index';
-
-        return [
-            'type' => 'class',
-            'class' => $class,
-            'method' => $method,
-            'arguments' => $arguments
-        ];
     }
 
     /**

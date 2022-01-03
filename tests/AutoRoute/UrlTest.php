@@ -17,7 +17,7 @@ trait UrlTest
         );
     }
 
-    public function testUrlMethod(): void
+    public function testUrlAction(): void
     {
         $this->assertEquals(
             '/home/alt-method',
@@ -33,7 +33,7 @@ trait UrlTest
         );
     }
 
-    public function testUrlDeepMethod(): void
+    public function testUrlDeepAction(): void
     {
         $this->assertEquals(
             '/deep/example/alt-method',

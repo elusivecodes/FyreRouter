@@ -19,7 +19,12 @@
             "Tests\\": "tests/"
         }
     },
+    "require": {
+        "fyre/middleware": "^1.0",
+        "fyre/server": "^1.0"
+    },
     "require-dev": {
+        "fyre/controller": "^1.0",
         "phpunit/phpunit": "^9"
     }
 }

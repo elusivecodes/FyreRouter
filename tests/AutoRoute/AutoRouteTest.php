@@ -5,6 +5,8 @@ namespace Tests\AutoRoute;
 
 use
     Fyre\Router\Router,
+    Fyre\Router\Routes\ControllerRoute,
+    Fyre\Server\ServerRequest,
     PHPUnit\Framework\TestCase;
 
 final class AutoRouteTest extends TestCase
@@ -19,14 +21,26 @@ final class AutoRouteTest extends TestCase
     {
         Router::setDelimiter('_');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('home/alt_method');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'altMethod',
-                'arguments' => []
-            ],
-            Router::findRoute('home/alt_method')
+            '\Tests\Controller\Home',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'altMethod',
+            $route->getAction()
         );
     }
     

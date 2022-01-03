@@ -6,12 +6,15 @@ namespace Tests\Router;
 use
     Fyre\Router\Exceptions\RouterException,
     Fyre\Router\Router,
+    Fyre\Router\Routes\ControllerRoute,
+    Fyre\Server\ServerRequest,
     PHPUnit\Framework\TestCase;
 
 final class RouterTest extends TestCase
 {
 
     use
+        ConnectTest,
         DefaultNamespaceTest,
         DeleteTest,
         FindRouteTest,
@@ -21,21 +24,22 @@ final class RouterTest extends TestCase
         PostTest,
         PutTest,
         RedirectTest,
-        RouteTest,
         UrlTest;
 
     public function testDefaultRoute(): void
     {
         Router::setDefaultRoute('Home');
 
+        $defaultRoute = Router::getDefaultRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $defaultRoute
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::getDefaultRoute()
+            '\Tests\Controller\Home',
+            $defaultRoute->getController()
         );
     }
 
@@ -43,14 +47,13 @@ final class RouterTest extends TestCase
     {
         Router::setDefaultRoute('Home');
 
+        $request = new ServerRequest;
+
+        Router::loadRoute($request);
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute()
+            Router::getDefaultRoute(),
+            Router::getRoute()
         );
     }
 
@@ -58,14 +61,16 @@ final class RouterTest extends TestCase
     {
         Router::setErrorRoute('Error');
 
+        $errorRoute = Router::getErrorRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $errorRoute
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Error',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::getErrorRoute()
+            '\Tests\Controller\Error',
+            $errorRoute->getController()
         );
     }
 

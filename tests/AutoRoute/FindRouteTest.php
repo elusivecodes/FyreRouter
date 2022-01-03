@@ -5,119 +5,166 @@ namespace Tests\AutoRoute;
 
 use
     Fyre\Router\Exceptions\RouterException,
-    Fyre\Router\Router;
+    Fyre\Router\Router,
+    Fyre\Router\Routes\ControllerRoute,
+    Fyre\Server\ServerRequest;
 
 trait FindRouteTest
 {
 
     public function testFindRoute(): void
     {
+        $request = new ServerRequest;
+        $request->getUri()->setPath('home');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('home')
+            '\Tests\Controller\Home',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'index',
+            $route->getAction()
         );
     }
 
-    public function testFindRouteMethod(): void
+    public function testFindRouteAction(): void
     {
+        $request = new ServerRequest;
+        $request->getUri()->setPath('home/alt-method');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'altMethod',
-                'arguments' => []
-            ],
-            Router::findRoute('home/alt-method')
+            '\Tests\Controller\Home',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'altMethod',
+            $route->getAction()
         );
     }
 
     public function testFindRouteDeep(): void
     {
+        $request = new ServerRequest;
+        $request->getUri()->setPath('deep/example');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Deep\Example',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('deep/example')
+            '\Tests\Controller\Deep\Example',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'index',
+            $route->getAction()
         );
     }
 
-    public function testFindRouteDeepMethod(): void
+    public function testFindRouteDeepAction(): void
     {
+        $request = new ServerRequest;
+        $request->getUri()->setPath('deep/example/alt-method');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Deep\Example',
-                'method' => 'altMethod',
-                'arguments' => []
-            ],
-            Router::findRoute('deep/example/alt-method')
+            '\Tests\Controller\Deep\Example',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'altMethod',
+            $route->getAction()
         );
     }
 
     public function testFindRouteArguments(): void
     {
+        $request = new ServerRequest;
+        $request->getUri()->setPath('deep/example/alt-method/test/a/2');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
+        $this->assertEquals(
+            '\Tests\Controller\Deep\Example',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'altMethod',
+            $route->getAction()
+        );
+
         $this->assertEquals(
             [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Deep\Example',
-                'method' => 'altMethod',
-                'arguments' => [
-                    'test',
-                    'a',
-                    '2'
-                ]
+                'test',
+                'a',
+                '2'
             ],
-            Router::findRoute('deep/example/alt-method/test/a/2')
+            $route->getArguments()
         );
     }
-
-    public function testFindRouteLeadingSlash(): void
-    {
-        $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('/home')
-        );
-    }
-
-    public function testFindRouteTrailingSlash(): void
-    {
-        $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('home/')
-        );
-    }
-
     public function testFindRouteDefaultNamespace(): void
     {
         Router::clear();
         Router::setDefaultNamespace('Tests\Controller');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('deep/example/alt-method');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Deep\Example',
-                'method' => 'altMethod',
-                'arguments' => []
-            ],
-            Router::findRoute('deep/example/alt-method')
+            '\Tests\Controller\Deep\Example',
+            $route->getController()
         );
     }
 
@@ -125,7 +172,10 @@ trait FindRouteTest
     {
         $this->expectException(RouterException::class);
 
-        Router::findRoute('invalid');
+        $request = new ServerRequest;
+        $request->getUri()->setPath('invalid');
+
+        Router::loadRoute($request);
     }
 
 }

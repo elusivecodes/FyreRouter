@@ -4,7 +4,10 @@ declare(strict_types=1);
 namespace Tests\Router;
 
 use
-    Fyre\Router\Router;
+    Fyre\Router\Router,
+    Fyre\Router\Routes\ClosureRoute,
+    Fyre\Router\Routes\ControllerRoute,
+    Fyre\Server\ServerRequest;
 
 trait PutTest
 {
@@ -13,29 +16,55 @@ trait PutTest
     {
         Router::put('home', 'Home');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('home');
+        $request->setMethod('put');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('home', 'put')
+            '\Tests\Controller\Home',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'index',
+            $route->getAction()
         );
     }
 
-    public function testPutMethod(): void
+    public function testPutAction(): void
     {
         Router::put('home/alternate', 'Home::altMethod');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('home/alternate');
+        $request->setMethod('put');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'altMethod',
-                'arguments' => []
-            ],
-            Router::findRoute('home/alternate', 'put')
+            '\Tests\Controller\Home',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'altMethod',
+            $route->getAction()
         );
     }
 
@@ -43,29 +72,50 @@ trait PutTest
     {
         Router::put('example', 'Deep\Example');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('example');
+        $request->setMethod('put');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Deep\Example',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('example', 'put')
+            '\Tests\Controller\Deep\Example',
+            $route->getController()
         );
     }
 
-    public function testPutDeepMethod(): void
+    public function testPutDeepAction(): void
     {
         Router::put('example/alternate', 'Deep\Example::altMethod');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('example/alternate');
+        $request->setMethod('put');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Deep\Example',
-                'method' => 'altMethod',
-                'arguments' => []
-            ],
-            Router::findRoute('example/alternate', 'put')
+            '\Tests\Controller\Deep\Example',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'altMethod',
+            $route->getAction()
         );
     }
 
@@ -73,52 +123,93 @@ trait PutTest
     {
         Router::put('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('example/alternate/test/a/2');
+        $request->setMethod('put');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
+        $this->assertEquals(
+            '\Tests\Controller\Deep\Example',
+            $route->getController()
+        );
+
+        $this->assertEquals(
+            'altMethod',
+            $route->getAction()
+        );
+
         $this->assertEquals(
             [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Deep\Example',
-                'method' => 'altMethod',
-                'arguments' => [
-                    'test',
-                    '2'
-                ]
+                'test',
+                '2'
             ],
-            Router::findRoute('example/alternate/test/a/2', 'put')
+            $route->getArguments()
         );
     }
 
-    public function testPutCallback(): void
+    public function testPutClosure(): void
     {
-        $function = function() {};
+        $callback = function() {};
 
-        Router::put('test', $function);
+        Router::put('test', $callback);
+
+        $request = new ServerRequest;
+        $request->getUri()->setPath('test');
+        $request->setMethod('put');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ClosureRoute::class,
+            $route
+        );
 
         $this->assertEquals(
-            [
-                'type' => 'callback',
-                'callback' => $function,
-                'arguments' => []
-            ],
-            Router::findRoute('test', 'put')
+            $callback,
+            $route->getDestination()
         );
     }
 
-    public function testPutCallbackArguments(): void
+    public function testPutClosureArguments(): void
     {
-        $function = function() {};
+        $callback = function() {};
 
-        Router::put('test/(.*)/(.*)', $function);
+        Router::put('test/(.*)/(.*)', $callback);
+
+        $request = new ServerRequest;
+        $request->getUri()->setPath('test/a/2');
+        $request->setMethod('put');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ClosureRoute::class,
+            $route
+        );
+
+        $this->assertEquals(
+            $callback,
+            $route->getDestination()
+        );
 
         $this->assertEquals(
             [
-                'type' => 'callback',
-                'callback' => $function,
-                'arguments' => [
-                    'a',
-                    '2'
-                ]
+                'a',
+                '2'
             ],
-            Router::findRoute('test/a/2', 'put')
+            $route->getArguments()
         );
     }
 

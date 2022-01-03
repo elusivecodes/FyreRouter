@@ -4,23 +4,32 @@ declare(strict_types=1);
 namespace Tests\Router;
 
 use
-    Fyre\Router\Router;
+    Fyre\Router\Router,
+    Fyre\Router\Routes\ControllerRoute,
+    Fyre\Server\ServerRequest;
 
-trait RouteTest
+trait ConnectTest
 {
 
     public function testConnectLeadingSlash(): void
     {
         Router::connect('/home', 'Home');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('home');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('home', 'get')
+            '\Tests\Controller\Home',
+            $route->getController()
         );
     }
 
@@ -28,44 +37,21 @@ trait RouteTest
     {
         Router::connect('home/', 'Home');
 
-        $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('home', 'get')
+        $request = new ServerRequest;
+        $request->getUri()->setPath('home');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
         );
-    }
-
-    public function testFindRouteLeadingSlash(): void
-    {
-        Router::get('home', 'Home');
 
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('/home', 'get')
-        );
-    }
-
-    public function testFindRouteTrailingSlash(): void
-    {
-        Router::get('home', 'Home');
-
-        $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('home/', 'get')
+            '\Tests\Controller\Home',
+            $route->getController()
         );
     }
 

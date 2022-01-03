@@ -19,7 +19,7 @@ trait UrlTest
         );
     }
 
-    public function testUrlMethod(): void
+    public function testUrlAction(): void
     {
         Router::get('home/alternate', 'Home::altMethod');
 
@@ -39,7 +39,7 @@ trait UrlTest
         );
     }
 
-    public function testUrlDeepMethod(): void
+    public function testUrlDeepAction(): void
     {
         Router::get('home/alternate', 'Deep\Example::altMethod');
 

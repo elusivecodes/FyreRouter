@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Tests\Router;
 
 use
-    Fyre\Router\Router;
+    Fyre\Router\Router,
+    Fyre\Router\Routes\ControllerRoute,
+    Fyre\Server\ServerRequest;
 
 trait DefaultNamespaceTest
 {
@@ -14,14 +16,21 @@ trait DefaultNamespaceTest
         Router::get('home', 'Home');
         Router::setDefaultNamespace('Invalid');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('home');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('home', 'get')
+            '\Tests\Controller\Home',
+            $route->getController()
         );
     }
 
@@ -30,14 +39,21 @@ trait DefaultNamespaceTest
         Router::setDefaultNamespace('\Tests\Controller');
         Router::get('home', 'Home');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('home');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('home', 'get')
+            '\Tests\Controller\Home',
+            $route->getController()
         );
     }
 
@@ -46,14 +62,21 @@ trait DefaultNamespaceTest
         Router::setDefaultNamespace('Tests\Controller\\');
         Router::get('home', 'Home');
 
+        $request = new ServerRequest;
+        $request->getUri()->setPath('home');
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
         $this->assertEquals(
-            [
-                'type' => 'class',
-                'class' => '\Tests\Controller\Home',
-                'method' => 'index',
-                'arguments' => []
-            ],
-            Router::findRoute('home', 'get')
+            '\Tests\Controller\Home',
+            $route->getController()
         );
     }
 
