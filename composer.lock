@@ -48,16 +48,16 @@
         },
         {
             "name": "fyre/filesystem",
-            "version": "v1.0.3",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreFileSystem.git",
-                "reference": "1d8076a69bf34cfca7c4e38b575522485241ec5b"
+                "reference": "dce007ad55840590c9dcd641e1bef839300772a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreFileSystem/zipball/1d8076a69bf34cfca7c4e38b575522485241ec5b",
-                "reference": "1d8076a69bf34cfca7c4e38b575522485241ec5b",
+                "url": "https://api.github.com/repos/elusivecodes/FyreFileSystem/zipball/dce007ad55840590c9dcd641e1bef839300772a3",
+                "reference": "dce007ad55840590c9dcd641e1bef839300772a3",
                 "shasum": ""
             },
             "require": {
@@ -85,22 +85,22 @@
             "description": "A file/folder library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreFileSystem/issues",
-                "source": "https://github.com/elusivecodes/FyreFileSystem/tree/v1.0.3"
+                "source": "https://github.com/elusivecodes/FyreFileSystem/tree/v1.0.4"
             },
-            "time": "2021-12-27T08:12:49+00:00"
+            "time": "2022-01-06T10:32:13+00:00"
         },
         {
             "name": "fyre/header",
-            "version": "v1.0.7",
+            "version": "v1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreHeader.git",
-                "reference": "44315a141a6ac45d0045535a690858c49e3b1fee"
+                "reference": "0a9e02f0acea17a327b52eb8ab01d5273a97efa8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreHeader/zipball/44315a141a6ac45d0045535a690858c49e3b1fee",
-                "reference": "44315a141a6ac45d0045535a690858c49e3b1fee",
+                "url": "https://api.github.com/repos/elusivecodes/FyreHeader/zipball/0a9e02f0acea17a327b52eb8ab01d5273a97efa8",
+                "reference": "0a9e02f0acea17a327b52eb8ab01d5273a97efa8",
                 "shasum": ""
             },
             "require-dev": {
@@ -125,22 +125,22 @@
             "description": "A HTTP header library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreHeader/issues",
-                "source": "https://github.com/elusivecodes/FyreHeader/tree/v1.0.7"
+                "source": "https://github.com/elusivecodes/FyreHeader/tree/v1.0.8"
             },
-            "time": "2021-12-29T10:33:43+00:00"
+            "time": "2022-01-06T10:15:48+00:00"
         },
         {
             "name": "fyre/message",
-            "version": "v1.0.6",
+            "version": "v1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreMessage.git",
-                "reference": "ff44c3c5d15b6003dd7ec79690607a6136e3d792"
+                "reference": "219aef69ae93a7b2caeb760456f6479b82ba6a9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreMessage/zipball/ff44c3c5d15b6003dd7ec79690607a6136e3d792",
-                "reference": "ff44c3c5d15b6003dd7ec79690607a6136e3d792",
+                "url": "https://api.github.com/repos/elusivecodes/FyreMessage/zipball/219aef69ae93a7b2caeb760456f6479b82ba6a9b",
+                "reference": "219aef69ae93a7b2caeb760456f6479b82ba6a9b",
                 "shasum": ""
             },
             "require": {
@@ -168,22 +168,22 @@
             "description": "A HTTP message library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreMessage/issues",
-                "source": "https://github.com/elusivecodes/FyreMessage/tree/v1.0.6"
+                "source": "https://github.com/elusivecodes/FyreMessage/tree/v1.0.7"
             },
-            "time": "2021-12-29T10:42:35+00:00"
+            "time": "2022-01-06T10:23:47+00:00"
         },
         {
             "name": "fyre/middleware",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreMiddleware.git",
-                "reference": "fc24789eac3a3301c8cb130504ba4a18003507e4"
+                "reference": "a0ff44e451f3b483717de26684e67883f71fe8d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreMiddleware/zipball/fc24789eac3a3301c8cb130504ba4a18003507e4",
-                "reference": "fc24789eac3a3301c8cb130504ba4a18003507e4",
+                "url": "https://api.github.com/repos/elusivecodes/FyreMiddleware/zipball/a0ff44e451f3b483717de26684e67883f71fe8d8",
+                "reference": "a0ff44e451f3b483717de26684e67883f71fe8d8",
                 "shasum": ""
             },
             "require": {
@@ -211,9 +211,9 @@
             "description": "A middleware library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreMiddleware/issues",
-                "source": "https://github.com/elusivecodes/FyreMiddleware/tree/v1.0.1"
+                "source": "https://github.com/elusivecodes/FyreMiddleware/tree/v1.0.2"
             },
-            "time": "2022-01-03T10:29:27+00:00"
+            "time": "2022-01-06T10:42:34+00:00"
         },
         {
             "name": "fyre/negotiate",
@@ -297,16 +297,16 @@
         },
         {
             "name": "fyre/request",
-            "version": "v1.0.9",
+            "version": "v1.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreRequest.git",
-                "reference": "a34d46792338016b801cbbae55aa6111a582a514"
+                "reference": "b0baff30d48a82921c0bac43f8f850350c4bc15a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreRequest/zipball/a34d46792338016b801cbbae55aa6111a582a514",
-                "reference": "a34d46792338016b801cbbae55aa6111a582a514",
+                "url": "https://api.github.com/repos/elusivecodes/FyreRequest/zipball/b0baff30d48a82921c0bac43f8f850350c4bc15a",
+                "reference": "b0baff30d48a82921c0bac43f8f850350c4bc15a",
                 "shasum": ""
             },
             "require": {
@@ -336,22 +336,22 @@
             "description": "A HTTP request library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreRequest/issues",
-                "source": "https://github.com/elusivecodes/FyreRequest/tree/v1.0.9"
+                "source": "https://github.com/elusivecodes/FyreRequest/tree/v1.0.10"
             },
-            "time": "2021-12-27T05:56:31+00:00"
+            "time": "2022-01-06T10:36:35+00:00"
         },
         {
             "name": "fyre/response",
-            "version": "v1.0.9",
+            "version": "v1.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreResponse.git",
-                "reference": "733a7e0cf7831979c8b5aae0689f1dc307b78bc4"
+                "reference": "10b21683ca7ba589b207f864cd79abf4e0b4ae43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreResponse/zipball/733a7e0cf7831979c8b5aae0689f1dc307b78bc4",
-                "reference": "733a7e0cf7831979c8b5aae0689f1dc307b78bc4",
+                "url": "https://api.github.com/repos/elusivecodes/FyreResponse/zipball/10b21683ca7ba589b207f864cd79abf4e0b4ae43",
+                "reference": "10b21683ca7ba589b207f864cd79abf4e0b4ae43",
                 "shasum": ""
             },
             "require": {
@@ -380,22 +380,22 @@
             "description": "A HTTP response library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreResponse/issues",
-                "source": "https://github.com/elusivecodes/FyreResponse/tree/v1.0.9"
+                "source": "https://github.com/elusivecodes/FyreResponse/tree/v1.0.10"
             },
-            "time": "2021-12-29T10:43:29+00:00"
+            "time": "2022-01-06T10:37:21+00:00"
         },
         {
             "name": "fyre/server",
-            "version": "v1.0.7",
+            "version": "v1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreServer.git",
-                "reference": "a58178286a46793d56b19d687430e1d546f3573d"
+                "reference": "f5d812ae8b1ff8fe5c3a541b1685150fb202944a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreServer/zipball/a58178286a46793d56b19d687430e1d546f3573d",
-                "reference": "a58178286a46793d56b19d687430e1d546f3573d",
+                "url": "https://api.github.com/repos/elusivecodes/FyreServer/zipball/f5d812ae8b1ff8fe5c3a541b1685150fb202944a",
+                "reference": "f5d812ae8b1ff8fe5c3a541b1685150fb202944a",
                 "shasum": ""
             },
             "require": {
@@ -430,22 +430,22 @@
             "description": "A HTTP server request/response library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreServer/issues",
-                "source": "https://github.com/elusivecodes/FyreServer/tree/v1.0.7"
+                "source": "https://github.com/elusivecodes/FyreServer/tree/v1.0.8"
             },
-            "time": "2021-12-31T08:47:08+00:00"
+            "time": "2022-01-06T10:40:11+00:00"
         },
         {
             "name": "fyre/uri",
-            "version": "v1.0.6",
+            "version": "v1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreUri.git",
-                "reference": "76152c91e8e6d8f3b249deccc49494da7349e626"
+                "reference": "11e1035077cd61e095e6004c81bcd7873f3faf62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreUri/zipball/76152c91e8e6d8f3b249deccc49494da7349e626",
-                "reference": "76152c91e8e6d8f3b249deccc49494da7349e626",
+                "url": "https://api.github.com/repos/elusivecodes/FyreUri/zipball/11e1035077cd61e095e6004c81bcd7873f3faf62",
+                "reference": "11e1035077cd61e095e6004c81bcd7873f3faf62",
                 "shasum": ""
             },
             "require-dev": {
@@ -470,22 +470,22 @@
             "description": "A URI library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreUri/issues",
-                "source": "https://github.com/elusivecodes/FyreUri/tree/v1.0.6"
+                "source": "https://github.com/elusivecodes/FyreUri/tree/v1.0.7"
             },
-            "time": "2021-12-29T10:41:20+00:00"
+            "time": "2022-01-06T10:29:56+00:00"
         },
         {
             "name": "fyre/useragent",
-            "version": "v1.0.4",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreUserAgent.git",
-                "reference": "f12a2929f2a317687e482511f0775ee9733a5eb1"
+                "reference": "f7f79671817ac297c87737fcbd0807d91abd11ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreUserAgent/zipball/f12a2929f2a317687e482511f0775ee9733a5eb1",
-                "reference": "f12a2929f2a317687e482511f0775ee9733a5eb1",
+                "url": "https://api.github.com/repos/elusivecodes/FyreUserAgent/zipball/f7f79671817ac297c87737fcbd0807d91abd11ba",
+                "reference": "f7f79671817ac297c87737fcbd0807d91abd11ba",
                 "shasum": ""
             },
             "require-dev": {
@@ -510,9 +510,9 @@
             "description": "A user agent library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreUserAgent/issues",
-                "source": "https://github.com/elusivecodes/FyreUserAgent/tree/v1.0.4"
+                "source": "https://github.com/elusivecodes/FyreUserAgent/tree/v1.0.5"
             },
-            "time": "2021-12-27T05:47:09+00:00"
+            "time": "2022-01-06T10:30:32+00:00"
         }
     ],
     "packages-dev": [
@@ -587,16 +587,16 @@
         },
         {
             "name": "fyre/controller",
-            "version": "v1.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreController.git",
-                "reference": "f68fce5690c38a3a09bd89b7bad18a68f0440212"
+                "reference": "52788e9a5cf12fb3904dc400f6d3572e50836301"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreController/zipball/f68fce5690c38a3a09bd89b7bad18a68f0440212",
-                "reference": "f68fce5690c38a3a09bd89b7bad18a68f0440212",
+                "url": "https://api.github.com/repos/elusivecodes/FyreController/zipball/52788e9a5cf12fb3904dc400f6d3572e50836301",
+                "reference": "52788e9a5cf12fb3904dc400f6d3572e50836301",
                 "shasum": ""
             },
             "require": {
@@ -625,22 +625,22 @@
             "description": "A controller library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreController/issues",
-                "source": "https://github.com/elusivecodes/FyreController/tree/v1.0"
+                "source": "https://github.com/elusivecodes/FyreController/tree/v1.0.1"
             },
-            "time": "2021-12-31T08:49:03+00:00"
+            "time": "2022-01-06T10:41:31+00:00"
         },
         {
             "name": "fyre/view",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elusivecodes/FyreView.git",
-                "reference": "17f7990a85611f35dac0e3d6d0e76d15bc5ac5dc"
+                "reference": "0fe44ecb8d0990eb07f1fdc6ccf0141e927b3797"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreView/zipball/17f7990a85611f35dac0e3d6d0e76d15bc5ac5dc",
-                "reference": "17f7990a85611f35dac0e3d6d0e76d15bc5ac5dc",
+                "url": "https://api.github.com/repos/elusivecodes/FyreView/zipball/0fe44ecb8d0990eb07f1fdc6ccf0141e927b3797",
+                "reference": "0fe44ecb8d0990eb07f1fdc6ccf0141e927b3797",
                 "shasum": ""
             },
             "require": {
@@ -668,9 +668,9 @@
             "description": "A template rendering library.",
             "support": {
                 "issues": "https://github.com/elusivecodes/FyreView/issues",
-                "source": "https://github.com/elusivecodes/FyreView/tree/v1.0.1"
+                "source": "https://github.com/elusivecodes/FyreView/tree/v1.0.2"
             },
-            "time": "2021-12-31T08:48:10+00:00"
+            "time": "2022-01-06T10:35:41+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1009,16 +1009,16 @@
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "1.5.1",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "a12f7e301eb7258bb68acd89d4aefa05c2906cae"
+                "reference": "93ebd0014cab80c4ea9f5e297ea48672f1b87706"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/a12f7e301eb7258bb68acd89d4aefa05c2906cae",
-                "reference": "a12f7e301eb7258bb68acd89d4aefa05c2906cae",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/93ebd0014cab80c4ea9f5e297ea48672f1b87706",
+                "reference": "93ebd0014cab80c4ea9f5e297ea48672f1b87706",
                 "shasum": ""
             },
             "require": {
@@ -1053,9 +1053,9 @@
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
             "support": {
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
-                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.5.1"
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.6.0"
             },
-            "time": "2021-10-02T14:08:47+00:00"
+            "time": "2022-01-04T19:58:01+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -2511,20 +2511,23 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.23.0",
+            "version": "v1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "46cd95797e9df938fdd2b03693b5fca5e64b01ce"
+                "reference": "30885182c981ab175d4d034db0f6f469898070ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/46cd95797e9df938fdd2b03693b5fca5e64b01ce",
-                "reference": "46cd95797e9df938fdd2b03693b5fca5e64b01ce",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/30885182c981ab175d4d034db0f6f469898070ab",
+                "reference": "30885182c981ab175d4d034db0f6f469898070ab",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.1"
+            },
+            "provide": {
+                "ext-ctype": "*"
             },
             "suggest": {
                 "ext-ctype": "For best performance"
@@ -2570,7 +2573,7 @@
                 "portable"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.23.0"
+                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.24.0"
             },
             "funding": [
                 {
@@ -2586,7 +2589,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-19T12:13:01+00:00"
+            "time": "2021-10-20T20:35:02+00:00"
         },
         {
             "name": "theseer/tokenizer",

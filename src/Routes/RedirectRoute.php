@@ -44,7 +44,7 @@ class RedirectRoute extends Route
      * @param string $path The path.
      * @return Route The Route.
      */
-    public function setArgumentsFromPath(string $path): self
+    public function setArgumentsFromPath(string $path): static
     {
         $this->destination = preg_replace($this->getPathRegExp(), $this->destination, $path);
 

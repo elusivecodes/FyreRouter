@@ -92,7 +92,7 @@ class ControllerRoute extends Route
      * @param string $path The path.
      * @return Route The Route.
      */
-    public function setArgumentsFromPath(string $path): self
+    public function setArgumentsFromPath(string $path): static
     {
         $regex = $this->getPathRegExp();
 

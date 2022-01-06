@@ -111,7 +111,7 @@ abstract class Route
      * @param array $arguments The route arguments.
      * @return Route The Route.
      */
-    public function setArguments(array $arguments): self
+    public function setArguments(array $arguments): static
     {
         $this->arguments = $arguments;
 
@@ -123,7 +123,7 @@ abstract class Route
      * @param string $path The path.
      * @return Route The Route.
      */
-    public function setArgumentsFromPath(string $path): self
+    public function setArgumentsFromPath(string $path): static
     {
         preg_match($this->getPathRegExp(), $path, $match);
 
