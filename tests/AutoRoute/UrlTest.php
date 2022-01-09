@@ -11,7 +11,7 @@ trait UrlTest
 
     public function testUrl(): void
     {
-        $this->assertEquals(
+        $this->assertSame(
             '/home',
             Router::url('Tests\Controller\Home')
         );
@@ -19,7 +19,7 @@ trait UrlTest
 
     public function testUrlAction(): void
     {
-        $this->assertEquals(
+        $this->assertSame(
             '/home/alt-method',
             Router::url('Tests\Controller\Home::altMethod')
         );
@@ -27,7 +27,7 @@ trait UrlTest
 
     public function testUrlDeep(): void
     {
-        $this->assertEquals(
+        $this->assertSame(
             '/deep/example',
             Router::url('Tests\Controller\Deep\Example')
         );
@@ -35,7 +35,7 @@ trait UrlTest
 
     public function testUrlDeepAction(): void
     {
-        $this->assertEquals(
+        $this->assertSame(
             '/deep/example/alt-method',
             Router::url('Tests\Controller\Deep\Example::altMethod')
         );
@@ -43,7 +43,7 @@ trait UrlTest
 
     public function testUrlArguments(): void
     {
-        $this->assertEquals(
+        $this->assertSame(
             '/deep/example/alt-method/test/a/2',
             Router::url('Tests\Controller\Deep\Example::altMethod', ['test', 'a', '2'])
         );
@@ -51,7 +51,7 @@ trait UrlTest
 
     public function testUrlLeadingSlash(): void
     {
-        $this->assertEquals(
+        $this->assertSame(
             '/deep/example/alt-method/test/a/2',
             Router::url('\Tests\Controller\Deep\Example::altMethod', ['test', 'a', '2'])
         );
@@ -62,7 +62,7 @@ trait UrlTest
         Router::clear();
         Router::setDefaultNamespace('Tests\Controller');
 
-        $this->assertEquals(
+        $this->assertSame(
             '/deep/example/alt-method',
             Router::url('\Tests\Controller\Deep\Example::altMethod')
         );
@@ -70,7 +70,7 @@ trait UrlTest
 
     public function testUrlInvalid(): void
     {
-        $this->assertEquals(
+        $this->assertSame(
             '/example/alt-method',
             Router::url('Example::altMethod')
         );

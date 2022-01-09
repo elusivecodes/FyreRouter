@@ -43,10 +43,7 @@ final class RouterMiddlewareTest extends TestCase
             $handler->handle($request)
         );
 
-        $this->assertEquals(
-            true,
-            $ran
-        );
+        $this->assertTrue($ran);
     }
 
     public function testProcessControllerRoute(): void
@@ -86,12 +83,12 @@ final class RouterMiddlewareTest extends TestCase
             $response
         );
 
-        $this->assertEquals(
-            '302',
+        $this->assertSame(
+            302,
             $response->getStatusCode()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'https://test.com/',
             $response->getHeaderValue('Location')
         );

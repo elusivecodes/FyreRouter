@@ -26,12 +26,12 @@ trait FindRouteTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'index',
             $route->getAction()
         );
@@ -51,12 +51,12 @@ trait FindRouteTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'altMethod',
             $route->getAction()
         );
@@ -76,12 +76,12 @@ trait FindRouteTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Deep\Example',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'index',
             $route->getAction()
         );
@@ -101,12 +101,12 @@ trait FindRouteTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Deep\Example',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'altMethod',
             $route->getAction()
         );
@@ -126,17 +126,17 @@ trait FindRouteTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Deep\Example',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'altMethod',
             $route->getAction()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'test',
                 'a',
@@ -162,7 +162,7 @@ trait FindRouteTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Deep\Example',
             $route->getController()
         );

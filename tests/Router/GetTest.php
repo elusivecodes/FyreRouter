@@ -28,12 +28,12 @@ trait GetTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'index',
             $route->getAction()
         );
@@ -55,12 +55,12 @@ trait GetTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'altMethod',
             $route->getAction()
         );
@@ -82,7 +82,7 @@ trait GetTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Deep\Example',
             $route->getController()
         );
@@ -104,12 +104,12 @@ trait GetTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Deep\Example',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'altMethod',
             $route->getAction()
         );
@@ -131,17 +131,17 @@ trait GetTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Deep\Example',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'altMethod',
             $route->getAction()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'test',
                 '2'
@@ -168,7 +168,7 @@ trait GetTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             $callback,
             $route->getDestination()
         );
@@ -192,12 +192,12 @@ trait GetTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             $callback,
             $route->getDestination()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'a',
                 '2'

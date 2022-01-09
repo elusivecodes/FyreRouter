@@ -29,7 +29,7 @@ trait FindRouteTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );

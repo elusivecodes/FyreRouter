@@ -37,7 +37,7 @@ final class RouterTest extends TestCase
             $defaultRoute
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $defaultRoute->getController()
         );
@@ -51,7 +51,7 @@ final class RouterTest extends TestCase
 
         Router::loadRoute($request);
 
-        $this->assertEquals(
+        $this->assertSame(
             Router::getDefaultRoute(),
             Router::getRoute()
         );
@@ -68,7 +68,7 @@ final class RouterTest extends TestCase
             $errorRoute
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Error',
             $errorRoute->getController()
         );

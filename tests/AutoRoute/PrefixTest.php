@@ -29,12 +29,12 @@ trait PrefixTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Deep\Example',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'altMethod',
             $route->getAction()
         );
@@ -57,12 +57,12 @@ trait PrefixTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Deep\Example',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'altMethod',
             $route->getAction()
         );
@@ -85,12 +85,12 @@ trait PrefixTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Deep\Example',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'altMethod',
             $route->getAction()
         );
@@ -101,7 +101,7 @@ trait PrefixTest
         Router::clear();
         Router::addNamespace('Tests\Controller', 'prefix');
 
-        $this->assertEquals(
+        $this->assertSame(
             '/prefix/deep/example/alt-method',
             Router::url('\Tests\Controller\Deep\Example::altMethod')
         );

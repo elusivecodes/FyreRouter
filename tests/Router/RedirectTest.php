@@ -27,7 +27,7 @@ trait RedirectTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'https://test.com/',
             $route->getDestination()
         );
@@ -49,7 +49,7 @@ trait RedirectTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'https://test.com/a/2',
             $route->getDestination()
         );

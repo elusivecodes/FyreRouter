@@ -29,7 +29,7 @@ trait GroupTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );
@@ -55,7 +55,7 @@ trait GroupTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );
@@ -79,7 +79,7 @@ trait GroupTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );
@@ -103,7 +103,7 @@ trait GroupTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );

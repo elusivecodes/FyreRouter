@@ -13,7 +13,7 @@ trait UrlTest
     {
         Router::get('home', 'Home');
 
-        $this->assertEquals(
+        $this->assertSame(
             '/home',
             Router::url('Home')
         );
@@ -23,7 +23,7 @@ trait UrlTest
     {
         Router::get('home/alternate', 'Home::altMethod');
 
-        $this->assertEquals(
+        $this->assertSame(
             '/home/alternate',
             Router::url('Home::altMethod')
         );
@@ -33,7 +33,7 @@ trait UrlTest
     {
         Router::get('home', 'Deep\Example');
 
-        $this->assertEquals(
+        $this->assertSame(
             '/home',
             Router::url('Deep\Example')
         );
@@ -43,7 +43,7 @@ trait UrlTest
     {
         Router::get('home/alternate', 'Deep\Example::altMethod');
 
-        $this->assertEquals(
+        $this->assertSame(
             '/home/alternate',
             Router::url('Deep\Example::altMethod')
         );
@@ -53,7 +53,7 @@ trait UrlTest
     {
         Router::get('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
 
-        $this->assertEquals(
+        $this->assertSame(
             '/example/alternate/test/a/2',
             Router::url('Deep\Example::altMethod', ['test', 'a', '2'])
         );

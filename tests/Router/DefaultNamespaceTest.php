@@ -28,7 +28,7 @@ trait DefaultNamespaceTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );
@@ -51,7 +51,7 @@ trait DefaultNamespaceTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );
@@ -74,7 +74,7 @@ trait DefaultNamespaceTest
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );

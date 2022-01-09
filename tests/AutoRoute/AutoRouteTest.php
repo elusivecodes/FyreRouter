@@ -33,12 +33,12 @@ final class AutoRouteTest extends TestCase
             $route
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Home',
             $route->getController()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'altMethod',
             $route->getAction()
         );
@@ -48,7 +48,7 @@ final class AutoRouteTest extends TestCase
     {
         Router::setDelimiter('_');
 
-        $this->assertEquals(
+        $this->assertSame(
             '/home/example_method',
             Router::url('Home::exampleMethod')
         );

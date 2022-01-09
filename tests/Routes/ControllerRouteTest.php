@@ -24,7 +24,7 @@ final class ControllerRouteTest extends TestCase
     {
         $route = new ControllerRoute('Controller::test/$1');
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Controller',
             $route->getController()
         );
@@ -34,7 +34,7 @@ final class ControllerRouteTest extends TestCase
     {
         $route = new ControllerRoute('Controller::test/$1');
 
-        $this->assertEquals(
+        $this->assertSame(
             '\Tests\Controller\Controller::test/$1',
             $route->getDestination()
         );
@@ -44,7 +44,7 @@ final class ControllerRouteTest extends TestCase
     {
         $route = new ControllerRoute('Controller::test/$1');
 
-        $this->assertEquals(
+        $this->assertSame(
             'test',
             $route->getAction()
         );
@@ -56,12 +56,12 @@ final class ControllerRouteTest extends TestCase
 
         $route = new ControllerRoute('Controller::test/$1/$2', 'test/(.*)/(.*)');
 
-        $this->assertEquals(
+        $this->assertSame(
             $route,
             $route->setArgumentsFromPath('test/a/1')
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'a',
                 '1'

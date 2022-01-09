@@ -23,7 +23,7 @@ final class RedirectRouteTest extends TestCase
     {
         $route = new RedirectRoute('https://test.com/');
 
-        $this->assertEquals(
+        $this->assertSame(
             'https://test.com/',
             $route->getDestination()
         );
@@ -35,12 +35,12 @@ final class RedirectRouteTest extends TestCase
 
         $route = new RedirectRoute('https://test.com/$1/$2', 'test/(.*)/(.*)');
 
-        $this->assertEquals(
+        $this->assertSame(
             $route,
             $route->setArgumentsFromPath('test/a/1')
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             'https://test.com/a/1',
             $route->getDestination()
         );

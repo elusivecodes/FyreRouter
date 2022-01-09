@@ -15,8 +15,7 @@ final class RouteTest extends TestCase
     {
         $route = new ControllerRoute('', '', ['get']);
 
-        $this->assertEquals(
-            true,
+        $this->assertTrue(
             $route->checkMethod('get')
         );
     }
@@ -25,8 +24,7 @@ final class RouteTest extends TestCase
     {
         $route = new ControllerRoute('', '', ['get']);
 
-        $this->assertEquals(
-            false,
+        $this->assertFalse(
             $route->checkMethod('post')
         );
     }
@@ -35,8 +33,7 @@ final class RouteTest extends TestCase
     {
         $route = new ControllerRoute('');
 
-        $this->assertEquals(
-            true,
+        $this->assertTrue(
             $route->checkMethod('get')
         );
     }
@@ -45,8 +42,7 @@ final class RouteTest extends TestCase
     {
         $route = new ControllerRoute('', 'test/(.*)');
 
-        $this->assertEquals(
-            true,
+        $this->assertTrue(
             $route->checkPath('test/a')
         );
     }
@@ -55,8 +51,7 @@ final class RouteTest extends TestCase
     {
         $route = new ControllerRoute('', 'test/(.*)');
 
-        $this->assertEquals(
-            false,
+        $this->assertFalse(
             $route->checkPath('invalid')
         );
     }
@@ -65,7 +60,7 @@ final class RouteTest extends TestCase
     {
         $route = new ControllerRoute('', 'test/(.*)');
 
-        $this->assertEquals(
+        $this->assertSame(
             'test/(.*)',
             $route->getPath()
         );
@@ -75,12 +70,12 @@ final class RouteTest extends TestCase
     {
         $route = new ControllerRoute('');
 
-        $this->assertEquals(
+        $this->assertSame(
             $route,
             $route->setArguments(['a', '2'])
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'a',
                 '2'

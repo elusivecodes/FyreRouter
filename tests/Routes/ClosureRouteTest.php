@@ -27,7 +27,7 @@ final class ClosureRouteTest extends TestCase
 
         $route = new ClosureRoute($function);
 
-        $this->assertEquals(
+        $this->assertSame(
             $function,
             $route->getDestination()
         );
@@ -39,12 +39,12 @@ final class ClosureRouteTest extends TestCase
 
         $route = new ClosureRoute($function, 'test/(.*)/(.*)');
 
-        $this->assertEquals(
+        $this->assertSame(
             $route,
             $route->setArgumentsFromPath('test/a/1')
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'a',
                 '1'
