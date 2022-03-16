@@ -39,7 +39,7 @@ abstract class Route
         $this->path = $path;
 
         $this->methods = array_map(
-            fn($method) => strtolower($method),
+            fn(string $method): string => strtolower($method),
             $methods
         );
     }

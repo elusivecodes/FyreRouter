@@ -97,7 +97,7 @@ class ControllerRoute extends Route
         $regex = $this->getPathRegExp();
 
         $this->arguments = array_map(
-            fn($argument) => preg_replace($regex, $argument, $path),
+            fn(string $argument): string => preg_replace($regex, $argument, $path),
             $this->arguments
         );
 

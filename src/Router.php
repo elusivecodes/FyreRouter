@@ -334,14 +334,14 @@ abstract class Router
             $index = 0;
             $url = preg_replace_callback(
                 '/\(.*?\)/',
-                function($matches) use ($arguments, &$index) {
+                function(array $matches) use ($arguments, &$index): string {
                     return $arguments[$index++];
                 },
                 $route->getPath()
             );
 
             $segments = array_map(
-                fn($segment) => rawurlencode($segment),
+                fn(string $segment): string => rawurlencode($segment),
                 explode('/', $url)
             );
 
@@ -371,7 +371,7 @@ abstract class Router
         $segments[] = 'index';
 
         $segments = array_map(
-            fn($segment) => static::classify($segment),
+            fn(string $segment): string => static::classify($segment),
             $segments
         );
 
@@ -466,7 +466,7 @@ abstract class Router
         }
 
         $controllerSegments = array_map(
-            fn($segment) => static::slug($segment),
+            fn(string $segment): string => static::slug($segment),
             $controllerSegments
         );
 
@@ -476,7 +476,7 @@ abstract class Router
         $segments = array_merge($segments, $route->getArguments());
 
         $segments = array_map(
-            fn($segment) => rawurlencode($segment),
+            fn(string $segment): string => rawurlencode($segment),
             $segments
         );
 
