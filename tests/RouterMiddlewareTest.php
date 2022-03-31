@@ -6,8 +6,8 @@ namespace Tests;
 use
     Fyre\Middleware\MiddlewareQueue,
     Fyre\Middleware\RequestHandler,
+    Fyre\Router\Middleware\RouterMiddleware,
     Fyre\Router\Router,
-    Fyre\Router\RouterMiddleware,
     Fyre\Router\Routes\ClosureRoute,
     Fyre\Router\Routes\ControllerRoute,
     Fyre\Router\Routes\RedirectRoute,

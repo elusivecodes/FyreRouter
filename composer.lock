@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89db225fc4b34c4f372bb3d212de009d",
+    "content-hash": "2efe706363a2004bc6669c442c0511c4",
     "packages": [
         {
             "name": "fyre/cookie",
@@ -513,6 +513,49 @@
                 "source": "https://github.com/elusivecodes/FyreUserAgent/tree/v1.0.6"
             },
             "time": "2022-01-09T08:14:30+00:00"
+        },
+        {
+            "name": "fyre/view",
+            "version": "v1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/elusivecodes/FyreView.git",
+                "reference": "06d9c5aba14821fbc7568d17ecebc76aede953e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/elusivecodes/FyreView/zipball/06d9c5aba14821fbc7568d17ecebc76aede953e5",
+                "reference": "06d9c5aba14821fbc7568d17ecebc76aede953e5",
+                "shasum": ""
+            },
+            "require": {
+                "fyre/path": "^1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Fyre\\View\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "elusivecodes",
+                    "email": "elusivecodes@gmail.com"
+                }
+            ],
+            "description": "A template rendering library.",
+            "support": {
+                "issues": "https://github.com/elusivecodes/FyreView/issues",
+                "source": "https://github.com/elusivecodes/FyreView/tree/v1.0.4"
+            },
+            "time": "2022-02-24T08:59:45+00:00"
         }
     ],
     "packages-dev": [
@@ -628,49 +671,6 @@
                 "source": "https://github.com/elusivecodes/FyreController/tree/v1.0.2"
             },
             "time": "2022-01-09T08:55:04+00:00"
-        },
-        {
-            "name": "fyre/view",
-            "version": "v1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/elusivecodes/FyreView.git",
-                "reference": "b5ef58a9294336b1bad62b4e919e3317a600fca5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreView/zipball/b5ef58a9294336b1bad62b4e919e3317a600fca5",
-                "reference": "b5ef58a9294336b1bad62b4e919e3317a600fca5",
-                "shasum": ""
-            },
-            "require": {
-                "fyre/path": "^1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Fyre\\View\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "elusivecodes",
-                    "email": "elusivecodes@gmail.com"
-                }
-            ],
-            "description": "A template rendering library.",
-            "support": {
-                "issues": "https://github.com/elusivecodes/FyreView/issues",
-                "source": "https://github.com/elusivecodes/FyreView/tree/v1.0.3"
-            },
-            "time": "2022-01-09T08:31:19+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2707,5 +2707,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }

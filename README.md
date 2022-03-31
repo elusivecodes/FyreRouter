@@ -81,7 +81,7 @@ See the [Routes](#routes) section for supported destination formats.
 
 Load a route.
 
-- `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer).
+- `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests).
 
 ```php
 Router::loadRoute($request);
@@ -263,14 +263,14 @@ $path = $route->getPath();
 
 Process the route.
 
-- `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer).
-- `$response` is a [*ClientResponse*](https://github.com/elusivecodes/FyreServer).
+- `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests).
+- `$response` is a [*ClientResponse*](https://github.com/elusivecodes/FyreServer#client-responses).
 
 ```php
 $response = $route->process($request, $response);
 ```
 
-This method will return a [*ClientResponse*](https://github.com/elusivecodes/FyreServer).
+This method will return a [*ClientResponse*](https://github.com/elusivecodes/FyreServer#client-responses).
 
 **Set Arguments**
 
@@ -381,16 +381,20 @@ $destination = 'https://test.com/$1';
 ## Router Middleware
 
 ```php
+use Fyre\Router\Middleware\RouterMiddleware;
+```
+
+```php
 $middleware = new RouterMiddleware();
 ```
 
 **Process**
 
-- `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer).
-- `$handler` is a [*RequestHandler*](https://github.com/elusivecodes/FyreMiddleware).
+- `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests).
+- `$handler` is a [*RequestHandler*](https://github.com/elusivecodes/FyreMiddleware#request-handlers).
 
 ```php
 $response = $middleware->process($request, $handler);
 ```
 
-This method will return a [*ClientResponse*](https://github.com/elusivecodes/FyreServer).
+This method will return a [*ClientResponse*](https://github.com/elusivecodes/FyreServer#client-responses).
