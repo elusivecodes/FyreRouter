@@ -13,9 +13,10 @@ final class AutoRouteTest extends TestCase
 {
 
     use
+        BuildFromPathTest,
+        BuildTest,
         FindRouteTest,
-        PrefixTest,
-        UrlTest;
+        PrefixTest;
 
     public function testDelimiterFindRoute(): void
     {
@@ -43,14 +44,17 @@ final class AutoRouteTest extends TestCase
             $route->getAction()
         );
     }
-    
-    public function testDelimiterUrl(): void
+
+    public function testDelimiterBuild(): void
     {
         Router::setDelimiter('_');
 
         $this->assertSame(
             '/home/example_method',
-            Router::url('Home::exampleMethod')
+            Router::build([
+                'controller' => 'Home',
+                'action' => 'exampleMethod'
+            ])
         );
     }
 

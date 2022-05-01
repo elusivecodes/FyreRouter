@@ -42,6 +42,74 @@ Add a namespace for auto routing.
 Router::addNamespace($namespace, $pathPrefix);
 ```
 
+**Build**
+
+Generate a URL for a destination.
+
+- `$destination` is a string or array containing the destination.
+- `$options` is an array containing the route options.
+    - `fullBase` is a boolean indicating whether to use the full base URI and will default to *false*.
+
+```php
+$url = Router::build($destination, $options);
+```
+
+Route destinations can be expressed in the following formats:
+
+```php
+Router::build([
+    'controller' => 'MyClass'
+]);
+Router::build([
+    'controller' => 'MyClass',
+    'action' => 'myMethod'
+]);
+Router::build([
+    'controller' => 'MyClass',
+    'action' => 'myMethod',
+    'arg1',
+    'arg2'
+]);
+Router::build([
+    'controller' => '\MyNamespace\MyClass',
+    'action' => 'myMethod'
+]);
+Router::build([
+    'controller' => 'MyClass',
+    'action' => 'myMethod',
+    '?' => [
+        'key' => 'value'
+    ]
+]);
+Router::build([
+    'controller' => 'MyClass',
+    'action' => 'myMethod',
+    '#' => 'anchor'
+]);
+Router::build('assets/file.ext');
+```
+
+**Build From Path**
+
+Generate a URL for a destination path.
+
+- `$destination` is a string representing the destination path.
+- `$options` is an array containing the route options.
+    - `fullBase` is a boolean indicating whether to use the full base URI and will default to *false*.
+
+```php
+$url = Router::build($destination, $options);
+```
+
+Route destinations can be expressed in the following formats:
+
+```php
+Router::buildFromPath('MyClass');
+Router::buildFromPath('MyClass::myMethod');
+Router::buildFromPath('MyClass::myMethod/arg1/arg2');
+Router::buildFromPath('\MyNamespace\MyClass::myMethod');
+```
+
 **Clear**
 
 Clear all routes and namespaces.
@@ -85,6 +153,14 @@ Load a route.
 
 ```php
 Router::loadRoute($request);
+```
+
+**Get Base Uri**
+
+Get the base uri.
+
+```php
+$baseUri = Router::getBaseUri();
 ```
 
 **Get Default Namespace**
@@ -146,6 +222,16 @@ Configure whether auto-routing will be used.
 Router::setAutoRoute($autoRoute);
 ```
 
+**Set Base Uri**
+
+Set the base uri.
+
+- `$baseUri` is a string representing the base uri.
+
+```php
+Router::getBaseUri($baseUri);
+```
+
 **Set Default Namespace**
 
 - `$namespace` is a string representing the namespace.
@@ -189,26 +275,6 @@ Router::setErrorRoute($destination);
 ```
 
 See the [Controller Routes](#controller-routes) section for supported destination formats.
-
-**URL**
-
-Find a route path for a destination string.
-
-- `$destination` is a string representing the route destination.
-- `$arguments` is an array containing the method arguments.
-
-```php
-$path = Router::url($destination, $arguments);
-```
-
-Route destinations can be expressed in the following formats:
-
-```php
-Router::url('MyClass');
-Router::url('MyClass::customMethod');
-Router::url('MyClass::customMethod', ['arg1', 'arg2']);
-Router::url('\MyNamespace\MyClass::customMethod');
-```
 
 
 ## Routes
@@ -334,9 +400,9 @@ The `$destination` can be expressed in the following formats:
 
 ```php
 $destination = 'MyClass';
-$destination = 'MyClass::customMethod';
-$destination = 'MyClass::customMethod/$1/$2';
-$destination = '\MyNamespace\MyClass::customMethod';
+$destination = 'MyClass::myMethod';
+$destination = 'MyClass::myMethod/$1/$2';
+$destination = '\MyNamespace\MyClass::myMethod';
 ```
 
 **Get Action**

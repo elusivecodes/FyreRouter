@@ -22,6 +22,7 @@
     "require": {
         "fyre/middleware": "^1.0",
         "fyre/server": "^1.0",
+        "fyre/uri": "^2.0",
         "fyre/view": "^1.0"
     },
     "require-dev": {

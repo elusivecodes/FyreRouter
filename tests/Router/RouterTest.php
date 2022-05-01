@@ -14,6 +14,9 @@ final class RouterTest extends TestCase
 {
 
     use
+        BaseUriTest,
+        BuildFromPathTest,
+        BuildTest,
         ConnectTest,
         DefaultNamespaceTest,
         DeleteTest,
@@ -23,8 +26,7 @@ final class RouterTest extends TestCase
         PatchTest,
         PostTest,
         PutTest,
-        RedirectTest,
-        UrlTest;
+        RedirectTest;
 
     public function testDefaultRoute(): void
     {

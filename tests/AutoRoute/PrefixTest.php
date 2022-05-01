@@ -96,14 +96,17 @@ trait PrefixTest
         );
     }
 
-    public function testNamespaceUrlPrefix(): void
+    public function testNamespacePrefixBuild(): void
     {
         Router::clear();
         Router::addNamespace('Tests\Controller', 'prefix');
 
         $this->assertSame(
             '/prefix/deep/example/alt-method',
-            Router::url('\Tests\Controller\Deep\Example::altMethod')
+            Router::build([
+                'controller' => '\Tests\Controller\Deep\Example',
+                'action' => 'altMethod'
+            ])
         );
     }
 
