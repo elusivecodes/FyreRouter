@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c16a28d19fa52ae838294d628eeb7512",
+    "content-hash": "bd8df75ab86c53fdc78ead179f683aaa",
     "packages": [
         {
             "name": "fyre/cookie",
@@ -512,49 +512,6 @@
                 "source": "https://github.com/elusivecodes/FyreUserAgent/tree/v1.0.7"
             },
             "time": "2022-03-20T07:47:39+00:00"
-        },
-        {
-            "name": "fyre/view",
-            "version": "v1.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/elusivecodes/FyreView.git",
-                "reference": "06d9c5aba14821fbc7568d17ecebc76aede953e5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/elusivecodes/FyreView/zipball/06d9c5aba14821fbc7568d17ecebc76aede953e5",
-                "reference": "06d9c5aba14821fbc7568d17ecebc76aede953e5",
-                "shasum": ""
-            },
-            "require": {
-                "fyre/path": "^1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Fyre\\View\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "elusivecodes",
-                    "email": "elusivecodes@gmail.com"
-                }
-            ],
-            "description": "A template rendering library.",
-            "support": {
-                "issues": "https://github.com/elusivecodes/FyreView/issues",
-                "source": "https://github.com/elusivecodes/FyreView/tree/v1.0.4"
-            },
-            "time": "2022-02-24T08:59:45+00:00"
         }
     ],
     "packages-dev": [
@@ -671,6 +628,49 @@
                 "source": "https://github.com/elusivecodes/FyreController/tree/v1.0.6"
             },
             "time": "2022-04-04T08:16:25+00:00"
+        },
+        {
+            "name": "fyre/view",
+            "version": "v1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/elusivecodes/FyreView.git",
+                "reference": "06d9c5aba14821fbc7568d17ecebc76aede953e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/elusivecodes/FyreView/zipball/06d9c5aba14821fbc7568d17ecebc76aede953e5",
+                "reference": "06d9c5aba14821fbc7568d17ecebc76aede953e5",
+                "shasum": ""
+            },
+            "require": {
+                "fyre/path": "^1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Fyre\\View\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "elusivecodes",
+                    "email": "elusivecodes@gmail.com"
+                }
+            ],
+            "description": "A template rendering library.",
+            "support": {
+                "issues": "https://github.com/elusivecodes/FyreView/issues",
+                "source": "https://github.com/elusivecodes/FyreView/tree/v1.0.4"
+            },
+            "time": "2022-02-24T08:59:45+00:00"
         },
         {
             "name": "myclabs/deep-copy",
