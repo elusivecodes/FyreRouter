@@ -561,7 +561,7 @@ abstract class Router
     }
 
     /**
-     * Conver a string as a class name.
+     * Convert a string as a class name.
      * @param string $string The input string.
      * @return string The class name.
      */
