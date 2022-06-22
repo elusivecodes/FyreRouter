@@ -76,7 +76,7 @@ abstract class Router
     {
         $namespace = static::normalizeNamespace($namespace);
 
-        static::$namespaces[$namespace] = static::normalizePath($pathPrefix);
+        static::$namespaces[$namespace] = static::normalizePath($pathPrefix, true);
     }
 
     /**
@@ -186,7 +186,7 @@ abstract class Router
         $options['method'] ??= [];
         $options['redirect'] ??= false;
 
-        $path = static::normalizePath($path);
+        $path = static::normalizePath($path, true);
 
         if (static::$pathPrefixes !== []) {
             $path = '/'.implode('/', static::$pathPrefixes).$path;
@@ -306,6 +306,7 @@ abstract class Router
 
             if (str_starts_with($path, $basePath)) {
                 $path = substr($path, strlen($basePath));
+                $path = static::normalizePath($path);
             }
         }
 
@@ -604,13 +605,18 @@ abstract class Router
     /**
      * Normalize a path
      * @param string $path The path.
+     * @param bool $decoded Whether to decode the path.
      * @return string The normalized path.
      */
-    protected static function normalizePath(string $path): string
+    protected static function normalizePath(string $path, bool $decode = false): string
     {
         $path = trim($path, '/');
 
-        return '/'.rawurldecode($path);
+        if ($decode) {
+            $path = rawurldecode($path);
+        }
+
+        return '/'.$path;
     }
 
     /**
