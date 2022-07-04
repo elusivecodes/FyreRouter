@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Controller\Deep;
+namespace Tests\Mock\Controller\Deep;
 
 use
     Fyre\Controller\Controller;
 
-class Example extends Controller
+class ExampleController extends Controller
 {
 
     public function index()

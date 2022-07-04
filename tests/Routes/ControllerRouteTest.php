@@ -25,7 +25,7 @@ final class ControllerRouteTest extends TestCase
         $route = new ControllerRoute('Controller::test/$1');
 
         $this->assertSame(
-            '\Tests\Controller\Controller',
+            '\Tests\Mock\Controller\ControllerController',
             $route->getController()
         );
     }
@@ -35,7 +35,7 @@ final class ControllerRouteTest extends TestCase
         $route = new ControllerRoute('Controller::test/$1');
 
         $this->assertSame(
-            '\Tests\Controller\Controller::test/$1',
+            '\Tests\Mock\Controller\Controller::test/$1',
             $route->getDestination()
         );
     }
@@ -72,7 +72,7 @@ final class ControllerRouteTest extends TestCase
 
     protected function setUp(): void
     {
-        Router::setDefaultNamespace('Tests\Controller');
+        Router::setDefaultNamespace('Tests\Mock\Controller');
     }
 
 }

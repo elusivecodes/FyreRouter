@@ -30,7 +30,7 @@ trait GroupTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
     }
@@ -56,7 +56,7 @@ trait GroupTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
     }
@@ -80,7 +80,7 @@ trait GroupTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
     }
@@ -104,7 +104,7 @@ trait GroupTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
     }

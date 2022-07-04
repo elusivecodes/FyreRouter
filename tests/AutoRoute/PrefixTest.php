@@ -15,7 +15,7 @@ trait PrefixTest
     public function testNamespacePrefix(): void
     {
         Router::clear();
-        Router::addNamespace('Tests\Controller', 'prefix');
+        Router::addNamespace('Tests\Mock\Controller', 'prefix');
 
         $request = new ServerRequest;
         $request->getUri()->setPath('prefix/deep/example/alt-method');
@@ -30,7 +30,7 @@ trait PrefixTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Deep\Example',
+            '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
 
@@ -43,7 +43,7 @@ trait PrefixTest
     public function testNamespacePrefixLeadingSlash(): void
     {
         Router::clear();
-        Router::addNamespace('Tests\Controller', '/prefix');
+        Router::addNamespace('Tests\Mock\Controller', '/prefix');
 
         $request = new ServerRequest;
         $request->getUri()->setPath('prefix/deep/example/alt-method');
@@ -58,7 +58,7 @@ trait PrefixTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Deep\Example',
+            '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
 
@@ -71,7 +71,7 @@ trait PrefixTest
     public function testNamespacePrefixTrailingSlash(): void
     {
         Router::clear();
-        Router::addNamespace('Tests\Controller', 'prefix/');
+        Router::addNamespace('Tests\Mock\Controller', 'prefix/');
 
         $request = new ServerRequest;
         $request->getUri()->setPath('prefix/deep/example/alt-method');
@@ -86,7 +86,7 @@ trait PrefixTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Deep\Example',
+            '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
 
@@ -99,12 +99,12 @@ trait PrefixTest
     public function testNamespacePrefixBuild(): void
     {
         Router::clear();
-        Router::addNamespace('Tests\Controller', 'prefix');
+        Router::addNamespace('Tests\Mock\Controller', 'prefix');
 
         $this->assertSame(
             '/prefix/deep/example/alt-method',
             Router::build([
-                'controller' => '\Tests\Controller\Deep\Example',
+                'controller' => '\Tests\Mock\Controller\Deep\Example',
                 'action' => 'altMethod'
             ])
         );

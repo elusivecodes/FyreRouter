@@ -104,7 +104,7 @@ abstract class Router
             unset($destination['#']);
 
             if (static::$route && static::$route instanceof ControllerRoute) {
-                $controller ??= static::$route->getController();
+                $controller ??= preg_replace('/Controller$/', '', static::$route->getController());        
             }
 
             $arguments = $destination;
@@ -479,13 +479,13 @@ abstract class Router
                 }
 
                 $classSuffix = implode('\\', $classSegments);
-                $class = $namespace.$classSuffix;
+                $class = $namespace.$classSuffix.'Controller';
 
                 if (!class_exists($class) || !method_exists($class, $method)) {
                     continue;
                 }
 
-                $route = new ControllerRoute($class.'::'.$method);
+                $route = new ControllerRoute($namespace.$classSuffix.'::'.$method);
                 $route->setArguments($arguments);
 
                 static::$route = $route;
@@ -536,6 +536,8 @@ abstract class Router
                 $segments = explode('/', $pathPrefix);
             }
         }
+
+        $controller = preg_replace('/Controller$/', '', $controller);
 
         $controllerSegments = explode('\\', $controller);
 

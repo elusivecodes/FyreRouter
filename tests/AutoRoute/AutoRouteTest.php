@@ -35,7 +35,7 @@ final class AutoRouteTest extends TestCase
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
 
@@ -64,7 +64,7 @@ final class AutoRouteTest extends TestCase
         Router::setAutoRoute(true);
         Router::setDefaultNamespace('');
         Router::setDelimiter('-');
-        Router::addNamespace('Tests\Controller');
+        Router::addNamespace('Tests\Mock\Controller');
     }
 
 }

@@ -45,7 +45,7 @@ class ControllerRoute extends Route
         $destination = array_shift($arguments);
         $destination = explode('::', $destination, 2);
 
-        $this->controller = array_shift($destination);
+        $this->controller = array_shift($destination).'Controller';
         $this->action = array_shift($destination) ?? 'index';
         $this->arguments = $arguments;
     }

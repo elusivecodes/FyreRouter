@@ -14,7 +14,7 @@ trait BuildTest
         $this->assertSame(
             '/home',
             Router::build([
-                'controller' => 'Tests\Controller\Home'
+                'controller' => 'Tests\Mock\Controller\Home'
             ])
         );
     }
@@ -24,7 +24,7 @@ trait BuildTest
         $this->assertSame(
             '/home/alt-method',
             Router::build([
-                'controller' => 'Tests\Controller\Home',
+                'controller' => 'Tests\Mock\Controller\Home',
                 'action' => 'altMethod'
             ])
         );
@@ -35,7 +35,7 @@ trait BuildTest
         $this->assertSame(
             '/deep/example',
             Router::build([
-                'controller' => 'Tests\Controller\Deep\Example'
+                'controller' => 'Tests\Mock\Controller\Deep\Example'
             ])
         );
     }
@@ -45,7 +45,7 @@ trait BuildTest
         $this->assertSame(
             '/deep/example/alt-method',
             Router::build([
-                'controller' => 'Tests\Controller\Deep\Example',
+                'controller' => 'Tests\Mock\Controller\Deep\Example',
                 'action' => 'altMethod'
             ])
         );
@@ -56,7 +56,7 @@ trait BuildTest
         $this->assertSame(
             '/deep/example/alt-method/test/a/2',
             Router::build([
-                'controller' => 'Tests\Controller\Deep\Example',
+                'controller' => 'Tests\Mock\Controller\Deep\Example',
                 'action' => 'altMethod',
                 'test',
                 'a',
@@ -70,7 +70,7 @@ trait BuildTest
         $this->assertSame(
             '/home?test=value',
             Router::build([
-                'controller' => 'Tests\Controller\Home',
+                'controller' => 'Tests\Mock\Controller\Home',
                 '?' => [
                     'test' => 'value'
                 ]
@@ -83,7 +83,7 @@ trait BuildTest
         $this->assertSame(
             '/home#test',
             Router::build([
-                'controller' => 'Tests\Controller\Home',
+                'controller' => 'Tests\Mock\Controller\Home',
                 '#' => 'test'
             ])
         );
@@ -96,7 +96,7 @@ trait BuildTest
         $this->assertSame(
             'https://test.com/home',
             Router::build([
-                'controller' => 'Tests\Controller\Home'
+                'controller' => 'Tests\Mock\Controller\Home'
             ], [
                 'fullBase' => true
             ])
@@ -110,7 +110,7 @@ trait BuildTest
         $this->assertSame(
             'https://test.com/deep/home',
             Router::build([
-                'controller' => 'Tests\Controller\Home'
+                'controller' => 'Tests\Mock\Controller\Home'
             ], [
                 'fullBase' => true
             ])
@@ -122,7 +122,7 @@ trait BuildTest
         $this->assertSame(
             '/deep/example/alt-method/test/a/2',
             Router::build([
-                'controller' => '\Tests\Controller\Deep\Example',
+                'controller' => '\Tests\Mock\Controller\Deep\Example',
                 'action' => 'altMethod',
                 'test',
                 'a',
@@ -134,12 +134,12 @@ trait BuildTest
     public function testBuildDefaultNamespace(): void
     {
         Router::clear();
-        Router::setDefaultNamespace('Tests\Controller');
+        Router::setDefaultNamespace('Tests\Mock\Controller');
 
         $this->assertSame(
             '/deep/example/alt-method',
             Router::build([
-                'controller' => '\Tests\Controller\Deep\Example',
+                'controller' => '\Tests\Mock\Controller\Deep\Example',
                 'action' => 'altMethod'
             ])
         );

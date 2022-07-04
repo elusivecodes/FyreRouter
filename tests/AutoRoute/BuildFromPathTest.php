@@ -13,7 +13,7 @@ trait BuildFromPathTest
     {
         $this->assertSame(
             '/home',
-            Router::buildFromPath('Tests\Controller\Home')
+            Router::buildFromPath('Tests\Mock\Controller\Home')
         );
     }
 
@@ -21,7 +21,7 @@ trait BuildFromPathTest
     {
         $this->assertSame(
             '/home/alt-method',
-            Router::buildFromPath('Tests\Controller\Home::altMethod')
+            Router::buildFromPath('Tests\Mock\Controller\Home::altMethod')
         );
     }
 
@@ -29,7 +29,7 @@ trait BuildFromPathTest
     {
         $this->assertSame(
             '/deep/example',
-            Router::buildFromPath('Tests\Controller\Deep\Example')
+            Router::buildFromPath('Tests\Mock\Controller\Deep\Example')
         );
     }
 
@@ -37,7 +37,7 @@ trait BuildFromPathTest
     {
         $this->assertSame(
             '/deep/example/alt-method',
-            Router::buildFromPath('Tests\Controller\Deep\Example::altMethod')
+            Router::buildFromPath('Tests\Mock\Controller\Deep\Example::altMethod')
         );
     }
 
@@ -45,7 +45,7 @@ trait BuildFromPathTest
     {
         $this->assertSame(
             '/deep/example/alt-method/test/a/2',
-            Router::buildFromPath('Tests\Controller\Deep\Example::altMethod/test/a/2')
+            Router::buildFromPath('Tests\Mock\Controller\Deep\Example::altMethod/test/a/2')
         );
     }
 
@@ -55,7 +55,7 @@ trait BuildFromPathTest
 
         $this->assertSame(
             'https://test.com/home',
-            Router::buildFromPath('Tests\Controller\Home', [
+            Router::buildFromPath('Tests\Mock\Controller\Home', [
                 'fullBase' => true
             ])
         );
@@ -67,7 +67,7 @@ trait BuildFromPathTest
 
         $this->assertSame(
             'https://test.com/deep/home',
-            Router::buildFromPath('Tests\Controller\Home', [
+            Router::buildFromPath('Tests\Mock\Controller\Home', [
                 'fullBase' => true
             ])
         );
@@ -77,18 +77,18 @@ trait BuildFromPathTest
     {
         $this->assertSame(
             '/deep/example/alt-method/test/a/2',
-            Router::buildFromPath('\Tests\Controller\Deep\Example::altMethod/test/a/2')
+            Router::buildFromPath('\Tests\Mock\Controller\Deep\Example::altMethod/test/a/2')
         );
     }
 
     public function testBuildFromPathDefaultNamespace(): void
     {
         Router::clear();
-        Router::setDefaultNamespace('Tests\Controller');
+        Router::setDefaultNamespace('Tests\Mock\Controller');
 
         $this->assertSame(
             '/deep/example/alt-method',
-            Router::buildFromPath('\Tests\Controller\Deep\Example::altMethod')
+            Router::buildFromPath('\Tests\Mock\Controller\Deep\Example::altMethod')
         );
     }
 

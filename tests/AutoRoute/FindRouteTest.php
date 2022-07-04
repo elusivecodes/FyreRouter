@@ -27,7 +27,7 @@ trait FindRouteTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
 
@@ -52,7 +52,7 @@ trait FindRouteTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
 
@@ -77,7 +77,7 @@ trait FindRouteTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Deep\Example',
+            '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
 
@@ -102,7 +102,7 @@ trait FindRouteTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Deep\Example',
+            '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
 
@@ -127,7 +127,7 @@ trait FindRouteTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Deep\Example',
+            '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
 
@@ -148,7 +148,7 @@ trait FindRouteTest
     public function testFindRouteDefaultNamespace(): void
     {
         Router::clear();
-        Router::setDefaultNamespace('Tests\Controller');
+        Router::setDefaultNamespace('Tests\Mock\Controller');
 
         $request = new ServerRequest;
         $request->getUri()->setPath('deep/example/alt-method');
@@ -163,7 +163,7 @@ trait FindRouteTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Deep\Example',
+            '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
     }

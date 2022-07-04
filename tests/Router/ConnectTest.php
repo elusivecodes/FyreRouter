@@ -28,7 +28,7 @@ trait ConnectTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
     }
@@ -50,7 +50,7 @@ trait ConnectTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
     }

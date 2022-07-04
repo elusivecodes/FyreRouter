@@ -30,7 +30,7 @@ trait BaseUriTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Test',
+            '\Tests\Mock\Controller\TestController',
             $route->getController()
         );
     }

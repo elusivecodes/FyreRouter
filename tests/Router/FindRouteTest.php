@@ -30,7 +30,7 @@ trait FindRouteTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
     }

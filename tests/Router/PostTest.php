@@ -30,7 +30,7 @@ trait PostTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
 
@@ -58,7 +58,7 @@ trait PostTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
 
@@ -86,7 +86,7 @@ trait PostTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Deep\Example',
+            '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
     }
@@ -109,7 +109,7 @@ trait PostTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Deep\Example',
+            '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
 
@@ -137,7 +137,7 @@ trait PostTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Deep\Example',
+            '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
 

@@ -29,14 +29,14 @@ trait DefaultNamespaceTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
     }
 
     public function testDefaultNamespaceLeadingSlash(): void
     {
-        Router::setDefaultNamespace('\Tests\Controller');
+        Router::setDefaultNamespace('\Tests\Mock\Controller');
         Router::get('home', 'Home');
 
         $request = new ServerRequest;
@@ -52,14 +52,14 @@ trait DefaultNamespaceTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
     }
 
     public function testDefaultNamespaceTrailingSlash(): void
     {
-        Router::setDefaultNamespace('Tests\Controller\\');
+        Router::setDefaultNamespace('Tests\Mock\Controller\\');
         Router::get('home', 'Home');
 
         $request = new ServerRequest;
@@ -75,7 +75,7 @@ trait DefaultNamespaceTest
         );
 
         $this->assertSame(
-            '\Tests\Controller\Home',
+            '\Tests\Mock\Controller\HomeController',
             $route->getController()
         );
     }
