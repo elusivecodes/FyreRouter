@@ -26,7 +26,8 @@ final class RouterTest extends TestCase
         PatchTest,
         PostTest,
         PutTest,
-        RedirectTest;
+        RedirectTest,
+        ServerRequestTest;
 
     public function testDefaultRoute(): void
     {

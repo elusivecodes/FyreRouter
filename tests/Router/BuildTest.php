@@ -168,6 +168,22 @@ trait BuildTest
 
     public function testBuildDefaultController(): void
     {
+        Router::setDefaultRoute('Home');
+
+        Router::get('home', 'Home');
+
+        $this->assertSame(
+            '/',
+            Router::build([
+                'controller' => 'Home'
+            ])
+        );
+    }
+
+    public function testBuildDefaultControllerAction(): void
+    {
+        Router::setDefaultRoute('Home');
+
         Router::get('home', 'Home');
         Router::get('home/alternate', 'Home::altMethod');
 

@@ -55,6 +55,10 @@ abstract class Router
 
     protected static string $defaultNamespace = '\\';
 
+    protected static ServerRequest|null $request = null;
+
+    protected static Uri|null $baseUri = null;
+
     protected static Route|null $route = null;
 
     protected static Route|null $defaultRoute = null;
@@ -62,8 +66,6 @@ abstract class Router
     protected static Route|null $errorRoute = null;
 
     protected static string $delimiter = '-';
-
-    protected static Uri|null $baseUri = null;
 
     protected static bool $autoRoute = true;
 
@@ -266,6 +268,15 @@ abstract class Router
     }
 
     /**
+     * Get the ServerRequest.
+     * @return ServerRequest The ServerRequest.
+     */
+    public static function getRequest(): ServerRequest|null
+    {
+        return static::$request;
+    }
+
+    /**
      * Get the current route.
      * @return Route|null The current route.
      */
@@ -294,6 +305,8 @@ abstract class Router
      */
     public static function loadRoute(ServerRequest $request): void
     {
+        static::$request = $request;
+
         $path = $request->getUri()->getPath();
         $method = $request->getMethod();
 
@@ -433,6 +446,15 @@ abstract class Router
     public static function setErrorRoute(string $destination): void
     {
         static::$errorRoute = new ControllerRoute($destination);
+    }
+
+    /**
+     * Set the ServerRequest.
+     * @param ServerRequest $request
+     */
+    public static function setRequest(ServerRequest $request): void
+    {
+        static::$request = $request;
     }
 
     /**
@@ -632,6 +654,15 @@ abstract class Router
         $action = $destinationRoute->getAction();
         $arguments = $destinationRoute->getArguments();
         $argumentCount = count($arguments);
+
+        if (
+            static::$defaultRoute &&
+            static::$defaultRoute->getController() === $controller &&
+            static::$defaultRoute->getAction() === $action &&
+            $argumentCount === 0
+        ) {
+            return '/';
+        }
 
         foreach (static::$routes AS $route) {
             if (

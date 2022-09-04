@@ -191,6 +191,16 @@ $errorRoute = Router::getErrorRoute();
 
 This method will return a *Route*.
 
+**Get Request**
+
+Get the server request.
+
+```php
+$request = Router::getRequest();
+```
+
+This method will return a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests).
+
 **Get Route**
 
 Get the loaded route.
@@ -275,6 +285,16 @@ Router::setErrorRoute($destination);
 ```
 
 See the [Controller Routes](#controller-routes) section for supported destination formats.
+
+**Set Request**
+
+Set the server request.
+
+- `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests).
+
+```php
+Router::setRequest($request);
+```
 
 
 ## Routes
