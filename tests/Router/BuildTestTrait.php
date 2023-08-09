@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Router,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Server\ServerRequest;
 
-trait BuildTest
+trait BuildTestTrait
 {
 
     public function testBuild(): void
@@ -187,8 +186,13 @@ trait BuildTest
         Router::get('home', 'Home');
         Router::get('home/alternate', 'Home::altMethod');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 

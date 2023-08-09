@@ -3,22 +3,26 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ClosureRoute,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ClosureRoute;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
 
-trait PutTest
+trait DeleteTestTrait
 {
 
-    public function testPut(): void
+    public function testDelete(): void
     {
-        Router::put('home', 'Home');
+        Router::delete('home', 'Home');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home');
-        $request->setMethod('put');
+        $request = new ServerRequest([
+            'method' => 'delete',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -40,13 +44,18 @@ trait PutTest
         );
     }
 
-    public function testPutAction(): void
+    public function testDeleteAction(): void
     {
-        Router::put('home/alternate', 'Home::altMethod');
+        Router::delete('home/alternate', 'Home::altMethod');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home/alternate');
-        $request->setMethod('put');
+        $request = new ServerRequest([
+            'method' => 'delete',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home/alternate'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -68,13 +77,18 @@ trait PutTest
         );
     }
 
-    public function testPutDeep(): void
+    public function testDeleteDeep(): void
     {
-        Router::put('example', 'Deep\Example');
+        Router::delete('example', 'Deep\Example');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example');
-        $request->setMethod('put');
+        $request = new ServerRequest([
+            'method' => 'delete',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/example'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -91,13 +105,18 @@ trait PutTest
         );
     }
 
-    public function testPutDeepAction(): void
+    public function testDeleteDeepAction(): void
     {
-        Router::put('example/alternate', 'Deep\Example::altMethod');
+        Router::delete('example/alternate', 'Deep\Example::altMethod');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example/alternate');
-        $request->setMethod('put');
+        $request = new ServerRequest([
+            'method' => 'delete',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/example/alternate'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -119,13 +138,18 @@ trait PutTest
         );
     }
 
-    public function testPutArguments(): void
+    public function testDeleteArguments(): void
     {
-        Router::put('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
+        Router::delete('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example/alternate/test/a/2');
-        $request->setMethod('put');
+        $request = new ServerRequest([
+            'method' => 'delete',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/example/alternate/test/a/2'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -155,15 +179,20 @@ trait PutTest
         );
     }
 
-    public function testPutClosure(): void
+    public function testDeleteClosure(): void
     {
         $callback = function() {};
 
-        Router::put('test', $callback);
+        Router::delete('test', $callback);
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
-        $request->setMethod('put');
+        $request = new ServerRequest([
+            'method' => 'delete',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -180,15 +209,20 @@ trait PutTest
         );
     }
 
-    public function testPutClosureArguments(): void
+    public function testDeleteClosureArguments(): void
     {
         $callback = function() {};
 
-        Router::put('test/(.*)/(.*)', $callback);
+        Router::delete('test/(.*)/(.*)', $callback);
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test/a/2');
-        $request->setMethod('put');
+        $request = new ServerRequest([
+            'method' => 'delete',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test/a/2'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 

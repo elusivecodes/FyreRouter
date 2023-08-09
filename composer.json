@@ -20,12 +20,11 @@
         }
     },
     "require": {
-        "fyre/middleware": "^1.0",
-        "fyre/server": "^1.0",
-        "fyre/uri": "^2.0"
+        "fyre/middleware": "^2.0",
+        "fyre/server": "^2.0",
+        "fyre/uri": "^3.0"
     },
     "require-dev": {
-        "fyre/controller": "^1.0",
-        "phpunit/phpunit": "^9"
+        "phpunit/phpunit": "^10"
     }
 }

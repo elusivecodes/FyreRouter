@@ -3,21 +3,26 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ClosureRoute,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ClosureRoute;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
 
-trait GetTest
+trait PostTestTrait
 {
 
-    public function testGet(): void
+    public function testPost(): void
     {
-        Router::get('home', 'Home');
+        Router::post('home', 'Home');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home');
+        $request = new ServerRequest([
+            'method' => 'post',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -39,12 +44,18 @@ trait GetTest
         );
     }
 
-    public function testGetAction(): void
+    public function testPostAction(): void
     {
-        Router::get('home/alternate', 'Home::altMethod');
+        Router::post('home/alternate', 'Home::altMethod');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home/alternate');
+        $request = new ServerRequest([
+            'method' => 'post',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home/alternate'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -66,12 +77,18 @@ trait GetTest
         );
     }
 
-    public function testGetDeep(): void
+    public function testPostDeep(): void
     {
-        Router::get('example', 'Deep\Example');
+        Router::post('example', 'Deep\Example');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example');
+        $request = new ServerRequest([
+            'method' => 'post',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/example'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -88,12 +105,18 @@ trait GetTest
         );
     }
 
-    public function testGetDeepAction(): void
+    public function testPostDeepAction(): void
     {
-        Router::get('example/alternate', 'Deep\Example::altMethod');
+        Router::post('example/alternate', 'Deep\Example::altMethod');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example/alternate');
+        $request = new ServerRequest([
+            'method' => 'post',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/example/alternate'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -115,12 +138,18 @@ trait GetTest
         );
     }
 
-    public function testGetArguments(): void
+    public function testPostArguments(): void
     {
-        Router::get('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
+        Router::post('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example/alternate/test/a/2');
+        $request = new ServerRequest([
+            'method' => 'post',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/example/alternate/test/a/2'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -150,14 +179,20 @@ trait GetTest
         );
     }
 
-    public function testGetClosure(): void
+    public function testPostClosure(): void
     {
         $callback = function() {};
 
-        Router::get('test', $callback);
+        Router::post('test', $callback);
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
+        $request = new ServerRequest([
+            'method' => 'post',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -174,14 +209,20 @@ trait GetTest
         );
     }
 
-    public function testGetClosureArguments(): void
+    public function testPostClosureArguments(): void
     {
         $callback = function() {};
 
-        Router::get('test/(.*)/(.*)', $callback);
+        Router::post('test/(.*)/(.*)', $callback);
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test/a/2');
+        $request = new ServerRequest([
+            'method' => 'post',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test/a/2'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 

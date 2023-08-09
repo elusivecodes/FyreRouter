@@ -3,15 +3,14 @@ declare(strict_types=1);
 
 namespace Fyre\Router;
 
-use
-    Closure,
-    Fyre\Server\ClientResponse,
-    Fyre\Server\ServerRequest;
+use Closure;
+use Fyre\Server\ClientResponse;
+use Fyre\Server\ServerRequest;
 
-
-use function
-    in_array,
-    strtolower;
+use function array_slice;
+use function in_array;
+use function preg_match;
+use function strtolower;
 
 /**
  * Route
@@ -109,27 +108,31 @@ abstract class Route
     /**
      * Set the route arguments.
      * @param array $arguments The route arguments.
-     * @return Route The Route.
+     * @return Route A bew Route.
      */
     public function setArguments(array $arguments): static
     {
-        $this->arguments = $arguments;
+        $temp = clone $this;
 
-        return $this;
+        $temp->arguments = $arguments;
+
+        return $temp;
     }
 
     /**
      * Set the route arguments from a path.
      * @param string $path The path.
-     * @return Route The Route.
+     * @return Route A new Route.
      */
     public function setArgumentsFromPath(string $path): static
     {
-        preg_match($this->getPathRegExp(), $path, $match);
+        $temp = clone $this;
 
-        $this->arguments = array_slice($match, 1);
+        preg_match($temp->getPathRegExp(), $path, $match);
 
-        return $this;
+        $temp->arguments = array_slice($match, 1);
+
+        return $temp;
     }
 
     /**

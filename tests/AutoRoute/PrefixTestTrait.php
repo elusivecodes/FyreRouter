@@ -3,13 +3,11 @@ declare(strict_types=1);
 
 namespace Tests\AutoRoute;
 
-use
-    Fyre\Router\Exceptions\RouterException,
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
 
-trait PrefixTest
+trait PrefixTestTrait
 {
 
     public function testNamespacePrefix(): void
@@ -17,8 +15,13 @@ trait PrefixTest
         Router::clear();
         Router::addNamespace('Tests\Mock\Controller', 'prefix');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('prefix/deep/example/alt-method');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/prefix/deep/example/alt-method'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -45,8 +48,13 @@ trait PrefixTest
         Router::clear();
         Router::addNamespace('Tests\Mock\Controller', '/prefix');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('prefix/deep/example/alt-method');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/prefix/deep/example/alt-method'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -73,8 +81,13 @@ trait PrefixTest
         Router::clear();
         Router::addNamespace('Tests\Mock\Controller', 'prefix/');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('prefix/deep/example/alt-method');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/prefix/deep/example/alt-method'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 

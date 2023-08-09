@@ -3,22 +3,25 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ClosureRoute,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ClosureRoute;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
 
-trait PatchTest
+trait GetTestTrait
 {
 
-    public function testPatch(): void
+    public function testGet(): void
     {
-        Router::patch('home', 'Home');
+        Router::get('home', 'Home');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home');
-        $request->setMethod('patch');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -40,13 +43,17 @@ trait PatchTest
         );
     }
 
-    public function testPatchAction(): void
+    public function testGetAction(): void
     {
-        Router::patch('home/alternate', 'Home::altMethod');
+        Router::get('home/alternate', 'Home::altMethod');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home/alternate');
-        $request->setMethod('patch');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home/alternate'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -68,13 +75,17 @@ trait PatchTest
         );
     }
 
-    public function testPatchDeep(): void
+    public function testGetDeep(): void
     {
-        Router::patch('example', 'Deep\Example');
+        Router::get('example', 'Deep\Example');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example');
-        $request->setMethod('patch');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/example'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -91,13 +102,17 @@ trait PatchTest
         );
     }
 
-    public function testPatchDeepAction(): void
+    public function testGetDeepAction(): void
     {
-        Router::patch('example/alternate', 'Deep\Example::altMethod');
+        Router::get('example/alternate', 'Deep\Example::altMethod');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example/alternate');
-        $request->setMethod('patch');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/example/alternate'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -119,13 +134,17 @@ trait PatchTest
         );
     }
 
-    public function testPatchArguments(): void
+    public function testGetArguments(): void
     {
-        Router::patch('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
+        Router::get('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example/alternate/test/a/2');
-        $request->setMethod('patch');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/example/alternate/test/a/2'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -155,15 +174,19 @@ trait PatchTest
         );
     }
 
-    public function testPatchClosure(): void
+    public function testGetClosure(): void
     {
         $callback = function() {};
 
-        Router::patch('test', $callback);
+        Router::get('test', $callback);
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
-        $request->setMethod('patch');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -180,15 +203,19 @@ trait PatchTest
         );
     }
 
-    public function testPatchClosureArguments(): void
+    public function testGetClosureArguments(): void
     {
         $callback = function() {};
 
-        Router::patch('test/(.*)/(.*)', $callback);
+        Router::get('test/(.*)/(.*)', $callback);
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test/a/2');
-        $request->setMethod('patch');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test/a/2'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 

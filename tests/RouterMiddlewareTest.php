@@ -3,17 +3,13 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use
-    Fyre\Middleware\MiddlewareQueue,
-    Fyre\Middleware\RequestHandler,
-    Fyre\Router\Middleware\RouterMiddleware,
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ClosureRoute,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Router\Routes\RedirectRoute,
-    Fyre\Server\ClientResponse,
-    Fyre\Server\ServerRequest,
-    PHPUnit\Framework\TestCase;
+use Fyre\Middleware\MiddlewareQueue;
+use Fyre\Middleware\RequestHandler;
+use Fyre\Router\Middleware\RouterMiddleware;
+use Fyre\Router\Router;
+use Fyre\Server\ClientResponse;
+use Fyre\Server\ServerRequest;
+use PHPUnit\Framework\TestCase;
 
 final class RouterMiddlewareTest extends TestCase
 {
@@ -30,13 +26,18 @@ final class RouterMiddlewareTest extends TestCase
 
         Router::connect('test', $function);
 
-        $queue = new MiddlewareQueue;
-        $queue->add(new RouterMiddleware);
+        $queue = new MiddlewareQueue();
+        $queue->add(new RouterMiddleware());
 
         $handler = new RequestHandler($queue);
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test'
+                ]
+            ]
+        ]);
 
         $this->assertInstanceOf(
             ClientResponse::class,
@@ -50,13 +51,18 @@ final class RouterMiddlewareTest extends TestCase
     {
         Router::connect('test', 'Home');
 
-        $queue = new MiddlewareQueue;
-        $queue->add(new RouterMiddleware);
+        $queue = new MiddlewareQueue();
+        $queue->add(new RouterMiddleware());
 
         $handler = new RequestHandler($queue);
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test'
+                ]
+            ]
+        ]);
 
         $this->assertInstanceOf(
             ClientResponse::class,
@@ -68,13 +74,18 @@ final class RouterMiddlewareTest extends TestCase
     {
         Router::redirect('test', 'https://test.com/');
 
-        $queue = new MiddlewareQueue;
-        $queue->add(new RouterMiddleware);
+        $queue = new MiddlewareQueue();
+        $queue->add(new RouterMiddleware());
 
         $handler = new RequestHandler($queue);
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test'
+                ]
+            ]
+        ]);
 
         $response = $handler->handle($request);
 

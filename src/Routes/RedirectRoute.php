@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace Fyre\Router\Routes;
 
-use
-    Fyre\Router\Route,
-    Fyre\Server\ClientResponse,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Route;
+use Fyre\Server\ClientResponse;
+use Fyre\Server\RedirectResponse;
+use Fyre\Server\ServerRequest;
 
-use function
-    preg_replace;
+use function preg_replace;
 
 /**
  * RedirectRoute
@@ -36,19 +35,21 @@ class RedirectRoute extends Route
      */
     public function process(ServerRequest $request, ClientResponse $response): ClientResponse
     {
-        return $response->redirect($this->destination);
+        return new RedirectResponse($this->destination);
     }
 
     /**
      * Set the route arguments from a path.
      * @param string $path The path.
-     * @return Route The Route.
+     * @return Route A new Route.
      */
     public function setArgumentsFromPath(string $path): static
     {
-        $this->destination = preg_replace($this->getPathRegExp(), $this->destination, $path);
+        $temp = clone $this;
 
-        return $this;
+        $temp->destination = preg_replace($temp->getPathRegExp(), $temp->destination, $path);
+
+        return $temp;
     }
 
 }

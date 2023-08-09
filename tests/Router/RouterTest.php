@@ -3,31 +3,28 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Exceptions\RouterException,
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest,
-    PHPUnit\Framework\TestCase;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
+use PHPUnit\Framework\TestCase;
 
 final class RouterTest extends TestCase
 {
 
-    use
-        BaseUriTest,
-        BuildFromPathTest,
-        BuildTest,
-        ConnectTest,
-        DefaultNamespaceTest,
-        DeleteTest,
-        FindRouteTest,
-        GetTest,
-        GroupTest,
-        PatchTest,
-        PostTest,
-        PutTest,
-        RedirectTest,
-        ServerRequestTest;
+    use BaseUriTestTrait;
+    use BuildFromPathTestTrait;
+    use BuildTestTrait;
+    use ConnectTestTrait;
+    use DefaultNamespaceTestTrait;
+    use DeleteTestTrait;
+    use FindRouteTestTrait;
+    use GetTestTrait;
+    use GroupTestTrait;
+    use PatchTestTrait;
+    use PostTestTrait;
+    use PutTestTrait;
+    use RedirectTestTrait;
+    use ServerRequestTestTrait;
 
     public function testDefaultRoute(): void
     {
@@ -50,7 +47,7 @@ final class RouterTest extends TestCase
     {
         Router::setDefaultRoute('Home');
 
-        $request = new ServerRequest;
+        $request = new ServerRequest();
 
         Router::loadRoute($request);
 
@@ -74,6 +71,51 @@ final class RouterTest extends TestCase
         $this->assertSame(
             '\Tests\Mock\Controller\ErrorController',
             $errorRoute->getController()
+        );
+    }
+
+    public function testGetNamespaces(): void
+    {
+        Router::addNamespace('Tests\Mock\Controller');
+
+        $this->assertSame(
+            [
+                '\Tests\Mock\Controller\\' => '/'
+            ],
+            Router::getNamespaces()
+        );
+    }
+
+    public function tesHasNamespaces(): void
+    {
+        Router::addNamespace('Tests\Mock\Controller');
+
+        $this->assertTrue(
+            Router::hasNamespace('Tests\Mock\Controller')
+        );
+
+    }
+
+    public function testHasNamespaceInvalid(): void
+    {
+        $this->assertFalse(
+            Router::hasNamespace('Tests\Mock\Invalid')
+        );
+    }
+
+    public function tesRemoveNamespaces(): void
+    {
+        Router::addNamespace('Tests\Mock\Controller');
+
+        $this->assertTrue(
+            Router::removeNamespace('Tests\Mock\Controller')
+        );
+    }
+
+    public function testRemoveNamespaceInvalid(): void
+    {
+        $this->assertFalse(
+            Router::removeNamespace('Tests\Mock\Invalid')
         );
     }
 

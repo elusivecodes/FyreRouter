@@ -3,43 +3,42 @@ declare(strict_types=1);
 
 namespace Fyre\Router;
 
-use
-    Closure,
-    Fyre\Router\Exceptions\RouterException,
-    Fyre\Router\Routes\ClosureRoute,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Router\Routes\RedirectRoute,
-    Fyre\Server\ServerRequest,
-    Fyre\URI\Uri;
+use Closure;
+use Fyre\Http\Uri;
+use Fyre\Router\Exceptions\RouterException;
+use Fyre\Router\Routes\ClosureRoute;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Router\Routes\RedirectRoute;
+use Fyre\Server\ServerRequest;
 
-use function
-    array_filter,
-    array_map,
-    array_merge,
-    array_pop,
-    array_shift,
-    array_slice,
-    array_unshift,
-    class_exists,
-    count,
-    explode,
-    implode,
-    is_array,
-    is_string,
-    lcfirst,
-    method_exists,
-    preg_match_all,
-    preg_replace,
-    preg_replace_callback,
-    rawurldecode,
-    rawurlencode,
-    str_replace,
-    str_starts_with,
-    strlen,
-    strtolower,
-    substr,
-    trim,
-    ucwords;
+use function array_filter;
+use function array_key_exists;
+use function array_map;
+use function array_merge;
+use function array_pop;
+use function array_shift;
+use function array_slice;
+use function array_unshift;
+use function class_exists;
+use function count;
+use function explode;
+use function implode;
+use function is_array;
+use function is_string;
+use function lcfirst;
+use function method_exists;
+use function preg_match_all;
+use function preg_replace;
+use function preg_replace_callback;
+use function rawurldecode;
+use function rawurlencode;
+use function str_replace;
+use function str_starts_with;
+use function strlen;
+use function strtolower;
+use function substr;
+use function trim;
+use function ucwords;
 
 /**
  * Router
@@ -118,7 +117,7 @@ abstract class Router
             }
 
             $destinationRoute = new ControllerRoute($destination);
-            $destinationRoute->setArguments($arguments);
+            $destinationRoute = $destinationRoute->setArguments($arguments);
 
             $destination = static::reversePath($destinationRoute);
 
@@ -130,15 +129,15 @@ abstract class Router
         if ($options['fullBase'] && static::$baseUri) {
             $uri = static::$baseUri->resolveRelativeUri($destination);
         } else {
-            $uri = Uri::create($destination);
+            $uri = Uri::fromString($destination);
         }
 
         if ($query) {
-            $uri->setQuery($query);
+            $uri = $uri->setQuery($query);
         }
 
         if ($fragment) {
-            $uri->setFragment($fragment);
+            $uri = $uri->setFragment($fragment);
         }
 
         return $uri->getUri();
@@ -268,6 +267,15 @@ abstract class Router
     }
 
     /**
+     * Get the namespaces.
+     * @return array The namespaces.
+     */
+    public static function getNamespaces(): array
+    {
+        return static::$namespaces;
+    }
+
+    /**
      * Get the ServerRequest.
      * @return ServerRequest The ServerRequest.
      */
@@ -287,7 +295,7 @@ abstract class Router
 
     /**
      * Create a group of routes.
-     * @param string $prefix The route prefix.
+     * @param string $pathPrefix The route prefix.
      * @param Closure $callback The callback to define routes.
      */
     public static function group(string $pathPrefix, Closure $callback): void
@@ -297,6 +305,18 @@ abstract class Router
         $callback();
 
         array_pop(static::$pathPrefixes);
+    }
+
+    /**
+     * Determine if a namespace exists.
+     * @param string $namespace The namespace.
+     * @return bool TRUE if the namespace exists, otherwise FALSE.
+     */
+    public static function hasNamespace(string $namespace): bool
+    {
+        $namespace = static::normalizeNamespace($namespace);
+
+        return array_key_exists($namespace, static::$namespaces);
     }
 
     /**
@@ -334,9 +354,7 @@ abstract class Router
                 continue;
             }
 
-            $route->setArgumentsFromPath($path);
-
-            static::$route = $route;
+            static::$route = $route->setArgumentsFromPath($path);
 
             return;
         }
@@ -395,6 +413,24 @@ abstract class Router
     }
 
     /**
+     * Remove a namespace.
+     * @param string $namespace The namespace.
+     * @return bool TRUE If the namespace was removed, otherwise FALSE.
+     */
+    public static function removeNamespace(string $namespace): bool
+    {
+        $namespace = static::normalizeNamespace($namespace);
+
+        if (!array_key_exists($namespace, static::$namespaces)) {
+            return false;
+        }
+
+        unset(static::$namespaces[$namespace]);
+
+        return true;
+    }
+
+    /**
      * Configure whether auto-routing will be used.
      * @param bool $autoRoute Whether auto-routing will be used.
      */
@@ -409,7 +445,7 @@ abstract class Router
      */
     public static function setBaseUri(string $baseUri): void
     {
-        static::$baseUri = Uri::create($baseUri);
+        static::$baseUri = Uri::fromString($baseUri);
     }
 
     /**
@@ -455,6 +491,64 @@ abstract class Router
     public static function setRequest(ServerRequest $request): void
     {
         static::$request = $request;
+    }
+
+    /**
+     * Build an auto-route path from a destination route.
+     * @param ControllerRoute $destinationRoute The destination route.
+     * @return string|null The route path.
+     */
+    protected static function autoLoadPath(ControllerRoute $destinationRoute): string|null
+    {
+        $namespaces = static::getAllNamespaces();
+
+        $controller = $destinationRoute->getController();
+        $action = $destinationRoute->getAction();
+        $arguments = $destinationRoute->getArguments();
+
+        $segments = [];
+
+        foreach ($namespaces AS $namespace => $pathPrefix) {
+            if ($namespace === '\\') {
+                continue;
+            }
+
+            if (!str_starts_with($controller, $namespace)) {
+                continue;
+            }
+
+            $namespaceLength = strlen($namespace);
+            $controller = substr($controller, $namespaceLength);
+
+            if ($pathPrefix) {
+                $segments = explode('/', $pathPrefix);
+            }
+        }
+
+        $controller = preg_replace('/Controller$/', '', $controller);
+
+        $controllerSegments = explode('\\', $controller);
+
+        if ($action !== 'index') {
+            $controllerSegments[] = $action;
+        }
+
+        $controllerSegments = array_map(
+            fn(string $segment): string => static::slug($segment),
+            $controllerSegments
+        );
+
+        $segments = array_merge($segments, $controllerSegments);
+        $segments = array_filter($segments);
+
+        $segments = array_merge($segments, $arguments);
+
+        $segments = array_map(
+            fn(string $segment): string => rawurlencode($segment),
+            $segments
+        );
+
+        return implode('/', $segments);
     }
 
     /**
@@ -508,9 +602,7 @@ abstract class Router
                 }
 
                 $route = new ControllerRoute($namespace.$classSuffix.'::'.$method);
-                $route->setArguments($arguments);
-
-                static::$route = $route;
+                static::$route = $route->setArguments($arguments);
 
                 return;
             }
@@ -526,63 +618,6 @@ abstract class Router
         }
 
         throw RouterException::forInvalidRoute($path);
-    }
-
-    /**
-     * Build an auto-route path from a destination route.
-     * @param ControllerRoute $destinationRoute The destination route.
-     * @return string|null The route path.
-     */
-    protected static function autoLoadPath(ControllerRoute $destinationRoute): string|null
-    {
-        $controller = $destinationRoute->getController();
-        $action = $destinationRoute->getAction();
-        $arguments = $destinationRoute->getArguments();
-        $namespaces = static::getAllNamespaces();
-
-        $segments = [];
-
-        foreach ($namespaces AS $namespace => $pathPrefix) {
-            if ($namespace === '\\') {
-                continue;
-            }
-
-            if (!str_starts_with($controller, $namespace)) {
-                continue;
-            }
-
-            $namespaceLength = strlen($namespace);
-            $controller = substr($controller, $namespaceLength);
-
-            if ($pathPrefix) {
-                $segments = explode('/', $pathPrefix);
-            }
-        }
-
-        $controller = preg_replace('/Controller$/', '', $controller);
-
-        $controllerSegments = explode('\\', $controller);
-
-        if ($action !== 'index') {
-            $controllerSegments[] = $action;
-        }
-
-        $controllerSegments = array_map(
-            fn(string $segment): string => static::slug($segment),
-            $controllerSegments
-        );
-
-        $segments = array_merge($segments, $controllerSegments);
-        $segments = array_filter($segments);
-
-        $segments = array_merge($segments, $arguments);
-
-        $segments = array_map(
-            fn(string $segment): string => rawurlencode($segment),
-            $segments
-        );
-
-        return implode('/', $segments);
     }
 
     /**

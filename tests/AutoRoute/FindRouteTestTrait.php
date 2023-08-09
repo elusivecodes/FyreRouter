@@ -1,24 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Router;
+namespace Tests\AutoRoute;
 
-use
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ClosureRoute,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Exceptions\RouterException;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
 
-trait PostTest
+trait FindRouteTestTrait
 {
 
-    public function testPost(): void
+    public function testFindRoute(): void
     {
-        Router::post('home', 'Home');
-
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home');
-        $request->setMethod('post');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -40,13 +41,15 @@ trait PostTest
         );
     }
 
-    public function testPostAction(): void
+    public function testFindRouteAction(): void
     {
-        Router::post('home/alternate', 'Home::altMethod');
-
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home/alternate');
-        $request->setMethod('post');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home/alt-method'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -68,13 +71,15 @@ trait PostTest
         );
     }
 
-    public function testPostDeep(): void
+    public function testFindRouteDeep(): void
     {
-        Router::post('example', 'Deep\Example');
-
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example');
-        $request->setMethod('post');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/deep/example'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -89,15 +94,22 @@ trait PostTest
             '\Tests\Mock\Controller\Deep\ExampleController',
             $route->getController()
         );
+
+        $this->assertSame(
+            'index',
+            $route->getAction()
+        );
     }
 
-    public function testPostDeepAction(): void
+    public function testFindRouteDeepAction(): void
     {
-        Router::post('example/alternate', 'Deep\Example::altMethod');
-
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example/alternate');
-        $request->setMethod('post');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/deep/example/alt-method'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -119,13 +131,15 @@ trait PostTest
         );
     }
 
-    public function testPostArguments(): void
+    public function testFindRouteArguments(): void
     {
-        Router::post('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
-
-        $request = new ServerRequest;
-        $request->getUri()->setPath('example/alternate/test/a/2');
-        $request->setMethod('post');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/deep/example/alt-method/test/a/2'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -149,68 +163,54 @@ trait PostTest
         $this->assertSame(
             [
                 'test',
-                '2'
-            ],
-            $route->getArguments()
-        );
-    }
-
-    public function testPostClosure(): void
-    {
-        $callback = function() {};
-
-        Router::post('test', $callback);
-
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
-        $request->setMethod('post');
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ClosureRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            $callback,
-            $route->getDestination()
-        );
-    }
-
-    public function testPostClosureArguments(): void
-    {
-        $callback = function() {};
-
-        Router::post('test/(.*)/(.*)', $callback);
-
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test/a/2');
-        $request->setMethod('post');
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ClosureRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            $callback,
-            $route->getDestination()
-        );
-
-        $this->assertSame(
-            [
                 'a',
                 '2'
             ],
             $route->getArguments()
         );
+    }
+
+    public function testFindRouteDefaultNamespace(): void
+    {
+        Router::clear();
+        Router::setDefaultNamespace('Tests\Mock\Controller');
+
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/deep/example/alt-method'
+                ]
+            ]
+        ]);
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
+        $this->assertSame(
+            '\Tests\Mock\Controller\Deep\ExampleController',
+            $route->getController()
+        );
+    }
+
+    public function testFindRouteInvalid(): void
+    {
+        $this->expectException(RouterException::class);
+
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/invalid'
+                ]
+            ]
+        ]);
+
+        Router::loadRoute($request);
     }
 
 }

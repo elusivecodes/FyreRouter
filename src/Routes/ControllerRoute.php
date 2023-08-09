@@ -3,19 +3,18 @@ declare(strict_types=1);
 
 namespace Fyre\Router\Routes;
 
-use
-    Fyre\Router\Route,
-    Fyre\Router\Router,
-    Fyre\Server\ClientResponse,
-    Fyre\Server\ServerRequest,
-    RuntimeException;
+use Fyre\Router\Exceptions\RouterException;
+use Fyre\Router\Route;
+use Fyre\Router\Router;
+use Fyre\Server\ClientResponse;
+use Fyre\Server\ServerRequest;
 
-use function
-    array_map,
-    array_shift,
-    class_exists,
-    explode,
-    preg_replace;
+use function array_map;
+use function array_shift;
+use function class_exists;
+use function explode;
+use function method_exists;
+use function preg_replace;
 
 /**
  * ControllerRoute
@@ -73,15 +72,20 @@ class ControllerRoute extends Route
      * @param ServerRequest $request The ServerRequest.
      * @param ClientResponse $response The ClientResponse.
      * @return ClientResponse The ClientResponse.
-     * @throws RuntimeException if the controller class does not exist.
+     * @throws RouterException if the controller class is not valid.
      */
     public function process(ServerRequest $request, ClientResponse $response): ClientResponse
     {
-        if (!class_exists($this->controller)) {
-            throw new RuntimeException('Invalid controller class: '.$this->controller);
+        if (
+            !class_exists($this->controller) ||
+            !method_exists($this->controller, 'invokeAction') ||
+            !method_exists($this->controller, 'getResponse')
+        ) {
+            throw RouterException::forInvalidController($this->controller);
         }
 
         $controller = new $this->controller($request, $response);
+
         $controller->invokeAction($this->action, $this->arguments);
 
         return $controller->getResponse();
@@ -90,18 +94,20 @@ class ControllerRoute extends Route
     /**
      * Set the route arguments from a path.
      * @param string $path The path.
-     * @return Route The Route.
+     * @return Route A new Route.
      */
     public function setArgumentsFromPath(string $path): static
     {
-        $regex = $this->getPathRegExp();
+        $temp = clone $this;
 
-        $this->arguments = array_map(
+        $regex = $temp->getPathRegExp();
+
+        $temp->arguments = array_map(
             fn(string $argument): string => preg_replace($regex, $argument, $path),
-            $this->arguments
+            $temp->arguments
         );
 
-        return $this;
+        return $temp;
     }
 
 }

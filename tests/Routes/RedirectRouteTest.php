@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
-use
-    Fyre\Router\Route,
-    Fyre\Router\Routes\RedirectRoute,
-    PHPUnit\Framework\TestCase;
+use Fyre\Router\Route;
+use Fyre\Router\Routes\RedirectRoute;
+use PHPUnit\Framework\TestCase;
 
 final class RedirectRouteTest extends TestCase
 {
@@ -33,16 +32,17 @@ final class RedirectRouteTest extends TestCase
     {
         $function = function() { };
 
-        $route = new RedirectRoute('https://test.com/$1/$2', 'test/(.*)/(.*)');
+        $route1 = new RedirectRoute('https://test.com/$1/$2', 'test/(.*)/(.*)');
+        $route2 = $route1->setArgumentsFromPath('test/a/1');
 
         $this->assertSame(
-            $route,
-            $route->setArgumentsFromPath('test/a/1')
+            'https://test.com/$1/$2',
+            $route1->getDestination()
         );
 
         $this->assertSame(
             'https://test.com/a/1',
-            $route->getDestination()
+            $route2->getDestination()
         );
     }
 

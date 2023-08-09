@@ -3,12 +3,11 @@ declare(strict_types=1);
 
 namespace Fyre\Router\Middleware;
 
-use
-    Fyre\Middleware\Middleware,
-    Fyre\Middleware\RequestHandler,
-    Fyre\Router\Router,
-    Fyre\Server\ClientResponse,
-    Fyre\Server\ServerRequest;
+use Fyre\Middleware\Middleware;
+use Fyre\Middleware\RequestHandler;
+use Fyre\Router\Router;
+use Fyre\Server\ClientResponse;
+use Fyre\Server\ServerRequest;
 
 /**
  * RouterMiddleware

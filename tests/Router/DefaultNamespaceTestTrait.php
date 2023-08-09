@@ -3,12 +3,11 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
 
-trait DefaultNamespaceTest
+trait DefaultNamespaceTestTrait
 {
 
     public function testDefaultNamespaceNotRetroactive(): void
@@ -16,8 +15,13 @@ trait DefaultNamespaceTest
         Router::get('home', 'Home');
         Router::setDefaultNamespace('Invalid');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -39,8 +43,13 @@ trait DefaultNamespaceTest
         Router::setDefaultNamespace('\Tests\Mock\Controller');
         Router::get('home', 'Home');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -62,8 +71,13 @@ trait DefaultNamespaceTest
         Router::setDefaultNamespace('Tests\Mock\Controller\\');
         Router::get('home', 'Home');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 

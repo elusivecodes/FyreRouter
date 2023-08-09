@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
-use
-    Fyre\Router\Route,
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ControllerRoute,
-    PHPUnit\Framework\TestCase;
+use Fyre\Router\Route;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ControllerRoute;
+use PHPUnit\Framework\TestCase;
 
 final class ControllerRouteTest extends TestCase
 {
@@ -22,27 +21,27 @@ final class ControllerRouteTest extends TestCase
 
     public function testGetController(): void
     {
-        $route = new ControllerRoute('Controller::test/$1');
+        $route = new ControllerRoute('Test::test/$1');
 
         $this->assertSame(
-            '\Tests\Mock\Controller\ControllerController',
+            '\Tests\Mock\Controller\TestController',
             $route->getController()
         );
     }
 
     public function testGetDestination(): void
     {
-        $route = new ControllerRoute('Controller::test/$1');
+        $route = new ControllerRoute('Test::test/$1');
 
         $this->assertSame(
-            '\Tests\Mock\Controller\Controller::test/$1',
+            '\Tests\Mock\Controller\Test::test/$1',
             $route->getDestination()
         );
     }
 
     public function testGetAction(): void
     {
-        $route = new ControllerRoute('Controller::test/$1');
+        $route = new ControllerRoute('Test::test/$1');
 
         $this->assertSame(
             'test',
@@ -52,13 +51,15 @@ final class ControllerRouteTest extends TestCase
 
     public function testSetArgumentsFromPath(): void
     {
-        $function = function() { };
-
-        $route = new ControllerRoute('Controller::test/$1/$2', 'test/(.*)/(.*)');
+        $route1 = new ControllerRoute('Test::test/$1/$2', 'test/(.*)/(.*)');
+        $route2 = $route1->setArgumentsFromPath('test/a/1');
 
         $this->assertSame(
-            $route,
-            $route->setArgumentsFromPath('test/a/1')
+            [
+                '$1',
+                '$2'
+            ],
+            $route1->getArguments()
         );
 
         $this->assertSame(
@@ -66,7 +67,7 @@ final class ControllerRouteTest extends TestCase
                 'a',
                 '1'
             ],
-            $route->getArguments()
+            $route2->getArguments()
         );
     }
 

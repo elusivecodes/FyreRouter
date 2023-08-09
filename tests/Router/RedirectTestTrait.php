@@ -3,20 +3,24 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Router,
-    Fyre\Router\Routes\RedirectRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\RedirectRoute;
+use Fyre\Server\ServerRequest;
 
-trait RedirectTest
+trait RedirectTestTrait
 {
 
     public function testRedirect(): void
     {
         Router::redirect('test', 'https://test.com/');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -37,8 +41,13 @@ trait RedirectTest
     {
         Router::redirect('test/(.*)/(.*)', 'https://test.com/$1/$2');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test/a/2');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test/a/2'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 

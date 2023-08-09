@@ -3,27 +3,30 @@ declare(strict_types=1);
 
 namespace Tests\AutoRoute;
 
-use
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest,
-    PHPUnit\Framework\TestCase;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
+use PHPUnit\Framework\TestCase;
 
 final class AutoRouteTest extends TestCase
 {
 
-    use
-        BuildFromPathTest,
-        BuildTest,
-        FindRouteTest,
-        PrefixTest;
+    use BuildFromPathTestTrait;
+    use BuildTestTrait;
+    use FindRouteTestTrait;
+    use PrefixTestTrait;
 
     public function testDelimiterFindRoute(): void
     {
         Router::setDelimiter('_');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home/alt_method');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home/alt_method'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -50,10 +53,10 @@ final class AutoRouteTest extends TestCase
         Router::setDelimiter('_');
 
         $this->assertSame(
-            '/home/example_method',
+            '/home/alt_method',
             Router::build([
                 'controller' => 'Home',
-                'action' => 'exampleMethod'
+                'action' => 'altMethod'
             ])
         );
     }
@@ -62,7 +65,6 @@ final class AutoRouteTest extends TestCase
     {
         Router::clear();
         Router::setAutoRoute(true);
-        Router::setDefaultNamespace('');
         Router::setDelimiter('-');
         Router::addNamespace('Tests\Mock\Controller');
     }

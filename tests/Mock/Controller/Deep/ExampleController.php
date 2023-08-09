@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Mock\Controller\Deep;
 
-use
-    Fyre\Controller\Controller;
+use Tests\Mock\Controller\Controller;
 
 class ExampleController extends Controller
 {

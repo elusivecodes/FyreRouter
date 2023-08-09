@@ -3,14 +3,12 @@ declare(strict_types=1);
 
 namespace Fyre\Router\Routes;
 
-use
-    Closure,
-    Fyre\Router\Route,
-    Fyre\Server\ClientResponse,
-    Fyre\Server\ServerRequest;
+use Closure;
+use Fyre\Router\Route;
+use Fyre\Server\ClientResponse;
+use Fyre\Server\ServerRequest;
 
-use function
-    call_user_func;
+use function call_user_func;
 
 /**
  * ClosureRoute

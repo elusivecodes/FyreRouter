@@ -3,13 +3,11 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Exceptions\RouterException,
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
 
-trait BaseUriTest
+trait BaseUriTestTrait
 {
 
     public function testRouteBaseUri()
@@ -17,8 +15,13 @@ trait BaseUriTest
         Router::setBaseUri('https://test.com/deep/');
         Router::get('test', 'Test');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('deep/test');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/deep/test'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 

@@ -3,18 +3,17 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Router,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Server\ServerRequest;
 
-trait ServerRequestTest
+trait ServerRequestTestTrait
 {
 
     public function testLoadRouteRequest(): void
     {
         Router::get('(.*)', 'Home');
 
-        $request = new ServerRequest;
+        $request = new ServerRequest();
 
         Router::loadRoute($request);
 
@@ -26,7 +25,7 @@ trait ServerRequestTest
 
     public function testSetRequest(): void
     {
-        $request = new ServerRequest;
+        $request = new ServerRequest();
 
         Router::setRequest($request);
 

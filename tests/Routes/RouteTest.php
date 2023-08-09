@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
-use
-    Fyre\Router\Route,
-    Fyre\Router\Routes\ControllerRoute,
-    PHPUnit\Framework\TestCase;
+use Fyre\Router\Routes\ControllerRoute;
+use PHPUnit\Framework\TestCase;
 
 final class RouteTest extends TestCase
 {
@@ -68,11 +66,11 @@ final class RouteTest extends TestCase
 
     public function testSetArguments(): void
     {
-        $route = new ControllerRoute('');
+        $route1 = new ControllerRoute('');
+        $route2 = $route1->setArguments(['a', '2']);
 
-        $this->assertSame(
-            $route,
-            $route->setArguments(['a', '2'])
+        $this->assertEmpty(
+            $route1->getArguments()
         );
 
         $this->assertSame(
@@ -80,7 +78,7 @@ final class RouteTest extends TestCase
                 'a',
                 '2'
             ],
-            $route->getArguments()
+            $route2->getArguments()
         );
     }
 

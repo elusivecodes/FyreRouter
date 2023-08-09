@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Router;
+use Fyre\Router\Router;
 
-trait BuildFromPathTest
+trait BuildFromPathTestTrait
 {
 
     public function testBuildFromPath(): void

@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
-use
-    Fyre\Router\Route,
-    Fyre\Router\Routes\ClosureRoute,
-    PHPUnit\Framework\TestCase;
+use Fyre\Router\Route;
+use Fyre\Router\Routes\ClosureRoute;
+use PHPUnit\Framework\TestCase;
 
 final class ClosureRouteTest extends TestCase
 {
@@ -37,11 +36,11 @@ final class ClosureRouteTest extends TestCase
     {
         $function = function() { };
 
-        $route = new ClosureRoute($function, 'test/(.*)/(.*)');
+        $route1 = new ClosureRoute($function, 'test/(.*)/(.*)');
+        $route2 = $route1->setArgumentsFromPath('test/a/1');
 
-        $this->assertSame(
-            $route,
-            $route->setArgumentsFromPath('test/a/1')
+        $this->assertEmpty(
+            $route1->getArguments()
         );
 
         $this->assertSame(
@@ -49,7 +48,7 @@ final class ClosureRouteTest extends TestCase
                 'a',
                 '1'
             ],
-            $route->getArguments()
+            $route2->getArguments()
         );
     }
 

@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Exceptions\RouterException,
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Exceptions\RouterException;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
 
-trait FindRouteTest
+trait FindRouteTestTrait
 {
 
     public function testRouteOrder()
@@ -17,8 +16,13 @@ trait FindRouteTest
         Router::get('(.*)', 'Home');
         Router::get('test', 'Test');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -41,9 +45,14 @@ trait FindRouteTest
 
         Router::get('test', 'Test');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
-        $request->setMethod('post');
+        $request = new ServerRequest([
+            'method' => 'post',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
     }
@@ -52,8 +61,13 @@ trait FindRouteTest
     {
         $this->expectException(RouterException::class);
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('test');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
     }

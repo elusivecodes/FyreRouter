@@ -3,20 +3,24 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
 
-trait ConnectTest
+trait ConnectTestTrait
 {
 
     public function testConnectLeadingSlash(): void
     {
         Router::connect('/home', 'Home');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -37,8 +41,13 @@ trait ConnectTest
     {
         Router::connect('home/', 'Home');
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('home');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 

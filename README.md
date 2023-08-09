@@ -1,6 +1,6 @@
 # FyreRouter
 
-**FyreRouter** is a free, URL routing library for *PHP*.
+**FyreRouter** is a free, open-source URL routing library for *PHP*.
 
 
 ## Table Of Contents
@@ -191,6 +191,24 @@ $errorRoute = Router::getErrorRoute();
 
 This method will return a *Route*.
 
+**Get Namespaces**
+
+Get the namespaces.
+
+```php
+$namespaces = Router::getNamespaces();
+```
+
+**Has Namespace**
+
+Check if a namespace exists.
+
+- `$namespace` is a string representing the namespace.
+
+```php
+$hasNamespace = Router::hasNamespace($namespace);
+```
+
 **Get Request**
 
 Get the server request.
@@ -220,6 +238,16 @@ Create a group of routes.
 
 ```php
 Router::group($pathPrefix, $callback);
+```
+
+**Remove Namespace**
+
+Remove a namespace.
+
+- `$namespace` is a string representing the namespace.
+
+```php
+$removed = Router::removeNamespace($namespace);
 ```
 
 **Set Auto Route**
@@ -365,7 +393,7 @@ Set the route arguments.
 - `$arguments` is an array containing the route arguments.
 
 ```php
-$route->setArguments($arguments);
+$newRoute = $route->setArguments($arguments);
 ```
 
 **Set Arguments From Path**
@@ -375,7 +403,7 @@ Set the route arguments from a path.
 - `$path` is a string representing the path.
 
 ```php
-$route->setArgumentsFromPath($path);
+$newRoute = $route->setArgumentsFromPath($path);
 ```
 
 

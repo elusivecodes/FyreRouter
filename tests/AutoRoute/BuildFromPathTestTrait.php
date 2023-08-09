@@ -3,17 +3,16 @@ declare(strict_types=1);
 
 namespace Tests\AutoRoute;
 
-use
-    Fyre\Router\Router;
+use Fyre\Router\Router;
 
-trait BuildFromPathTest
+trait BuildFromPathTestTrait
 {
 
     public function testBuildFromPath(): void
     {
         $this->assertSame(
             '/home',
-            Router::buildFromPath('Tests\Mock\Controller\Home')
+            Router::buildFromPath('\Tests\Mock\Controller\Home')
         );
     }
 
@@ -21,7 +20,7 @@ trait BuildFromPathTest
     {
         $this->assertSame(
             '/home/alt-method',
-            Router::buildFromPath('Tests\Mock\Controller\Home::altMethod')
+            Router::buildFromPath('\Tests\Mock\Controller\Home::altMethod')
         );
     }
 
@@ -29,7 +28,7 @@ trait BuildFromPathTest
     {
         $this->assertSame(
             '/deep/example',
-            Router::buildFromPath('Tests\Mock\Controller\Deep\Example')
+            Router::buildFromPath('\Tests\Mock\Controller\Deep\Example')
         );
     }
 
@@ -37,7 +36,7 @@ trait BuildFromPathTest
     {
         $this->assertSame(
             '/deep/example/alt-method',
-            Router::buildFromPath('Tests\Mock\Controller\Deep\Example::altMethod')
+            Router::buildFromPath('\Tests\Mock\Controller\Deep\Example::altMethod')
         );
     }
 
@@ -45,7 +44,7 @@ trait BuildFromPathTest
     {
         $this->assertSame(
             '/deep/example/alt-method/test/a/2',
-            Router::buildFromPath('Tests\Mock\Controller\Deep\Example::altMethod/test/a/2')
+            Router::buildFromPath('\Tests\Mock\Controller\Deep\Example::altMethod/test/a/2')
         );
     }
 
@@ -55,7 +54,7 @@ trait BuildFromPathTest
 
         $this->assertSame(
             'https://test.com/home',
-            Router::buildFromPath('Tests\Mock\Controller\Home', [
+            Router::buildFromPath('\Tests\Mock\Controller\Home', [
                 'fullBase' => true
             ])
         );
@@ -67,7 +66,7 @@ trait BuildFromPathTest
 
         $this->assertSame(
             'https://test.com/deep/home',
-            Router::buildFromPath('Tests\Mock\Controller\Home', [
+            Router::buildFromPath('\Tests\Mock\Controller\Home', [
                 'fullBase' => true
             ])
         );

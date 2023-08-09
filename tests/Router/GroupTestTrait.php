@@ -3,12 +3,11 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use
-    Fyre\Router\Router,
-    Fyre\Router\Routes\ControllerRoute,
-    Fyre\Server\ServerRequest;
+use Fyre\Router\Router;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Server\ServerRequest;
 
-trait GroupTest
+trait GroupTestTrait
 {
 
     public function testGroup(): void
@@ -17,8 +16,13 @@ trait GroupTest
             Router::get('home', 'Home');
         });
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('prefix/home');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/prefix/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -43,8 +47,13 @@ trait GroupTest
             });
         });
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('prefix/deep/home');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/prefix/deep/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -67,8 +76,13 @@ trait GroupTest
             Router::get('home', 'Home');
         });
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('prefix/home');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/prefix/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
@@ -91,8 +105,13 @@ trait GroupTest
             Router::get('home', 'Home');
         });
 
-        $request = new ServerRequest;
-        $request->getUri()->setPath('prefix/home');
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/prefix/home'
+                ]
+            ]
+        ]);
 
         Router::loadRoute($request);
 
