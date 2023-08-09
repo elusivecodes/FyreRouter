@@ -179,7 +179,7 @@ Get the default route.
 $defaultRoute = Router::getDefaultRoute();
 ```
 
-This method will return a *Route*.
+This method will return a [*Route*](#routes).
 
 **Get Error Route**
 
@@ -189,7 +189,7 @@ Get the error route.
 $errorRoute = Router::getErrorRoute();
 ```
 
-This method will return a *Route*.
+This method will return a [*Route*](#routes).
 
 **Get Namespaces**
 
@@ -227,7 +227,7 @@ Get the loaded route.
 $route = Router::getRoute();
 ```
 
-This method will return a *Route*.
+This method will return a [*Route*](#routes).
 
 **Group**
 
