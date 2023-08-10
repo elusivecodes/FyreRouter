@@ -322,6 +322,7 @@ abstract class Router
     /**
      * Load a route.
      * @param ServerRequest $request The ServerRequest.
+     * @throws RouterException if the route was not found.
      */
     public static function loadRoute(ServerRequest $request): void
     {

@@ -103,12 +103,16 @@ final class RouterTest extends TestCase
         );
     }
 
-    public function tesRemoveNamespaces(): void
+    public function testRemoveNamespace(): void
     {
         Router::addNamespace('Tests\Mock\Controller');
 
         $this->assertTrue(
             Router::removeNamespace('Tests\Mock\Controller')
+        );
+
+        $this->assertFalse(
+            Router::hasNamespace('Tests\Mock\Controller')
         );
     }
 
