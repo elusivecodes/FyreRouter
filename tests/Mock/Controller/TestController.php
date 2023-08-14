@@ -6,12 +6,12 @@ namespace Tests\Mock\Controller;
 class TestController extends Controller
 {
 
-    public function index()
+    public function index(): void
     {
 
     }
 
-    public function test()
+    public function test(): void
     {
 
     }

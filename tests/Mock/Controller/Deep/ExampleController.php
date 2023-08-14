@@ -8,12 +8,12 @@ use Tests\Mock\Controller\Controller;
 class ExampleController extends Controller
 {
 
-    public function index()
+    public function index(): void
     {
 
     }
 
-    public function altMethod()
+    public function altMethod(): void
     {
 
     }

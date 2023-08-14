@@ -10,7 +10,7 @@ use Fyre\Server\ServerRequest;
 trait BaseUriTestTrait
 {
 
-    public function testRouteBaseUri()
+    public function testRouteBaseUri(): void
     {
         Router::setBaseUri('https://test.com/deep/');
         Router::get('test', 'Test');

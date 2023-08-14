@@ -11,7 +11,7 @@ use Fyre\Server\ServerRequest;
 trait FindRouteTestTrait
 {
 
-    public function testRouteOrder()
+    public function testRouteOrder(): void
     {
         Router::get('(.*)', 'Home');
         Router::get('test', 'Test');

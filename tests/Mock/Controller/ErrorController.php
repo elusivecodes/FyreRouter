@@ -6,7 +6,7 @@ namespace Tests\Mock\Controller;
 class ErrorController extends Controller
 {
 
-    public function index()
+    public function index(): void
     {
 
     }
