@@ -114,7 +114,10 @@ abstract class Route
     {
         $temp = clone $this;
 
-        $temp->arguments = $arguments;
+        $temp->arguments = array_map(
+            fn(mixed $argument): string => (string) $argument,
+            $arguments
+        );
 
         return $temp;
     }
