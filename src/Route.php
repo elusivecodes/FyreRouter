@@ -139,12 +139,12 @@ abstract class Route
     }
 
     /**
-     * Get the route path regulat rexpression.
+     * Get the route path regular rexpression.
      * @return string The route path regular expression.
      */
     protected function getPathRegExp(): string
     {
-        return '`^'.$this->path.'$`';
+        return '`^'.$this->path.'$`u';
     }
 
 }

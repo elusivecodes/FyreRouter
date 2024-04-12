@@ -77,7 +77,7 @@ abstract class Router
     {
         $namespace = static::normalizeNamespace($namespace);
 
-        static::$namespaces[$namespace] = static::normalizePath($pathPrefix, true);
+        static::$namespaces[$namespace] = static::normalizePath($pathPrefix);
     }
 
     /**
@@ -331,7 +331,7 @@ abstract class Router
         $path = $request->getUri()->getPath();
         $method = $request->getMethod();
 
-        $path = static::normalizePath($path);
+        $path = static::normalizePath($path, true);
 
         if (static::$baseUri) {
             $basePath = static::$baseUri->getPath();
