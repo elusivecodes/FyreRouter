@@ -373,7 +373,7 @@ abstract class Router
 
             $match = $matches[0];
             $placeholder = $match[0];
-            $placeholderKey = substr($placeholder, 2 -1);
+            $placeholderKey = substr($placeholder, 2, -1);
             $pattern = static::$placeholders[$placeholderKey] ?? $placeholder;
             $value = (string) array_shift($arguments);
 
