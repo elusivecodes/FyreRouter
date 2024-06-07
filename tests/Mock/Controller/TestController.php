@@ -3,17 +3,17 @@ declare(strict_types=1);
 
 namespace Tests\Mock\Controller;
 
-class TestController extends Controller
+class TestController
 {
 
-    public function index(): void
+    public function index(): string
     {
-
+        return '';
     }
 
-    public function test(): void
+    public function test(): string
     {
-
+        return '';
     }
 
 }

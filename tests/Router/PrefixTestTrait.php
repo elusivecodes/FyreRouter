@@ -6,14 +6,15 @@ namespace Tests\Router;
 use Fyre\Router\Router;
 use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Server\ServerRequest;
+use Tests\Mock\Controller\HomeController;
 
-trait GroupTestTrait
+trait PrefixTestTrait
 {
 
-    public function testGroup(): void
+    public function testPrefix(): void
     {
-        Router::group('prefix', function() {
-            Router::get('home', 'Home');
+        Router::group(['prefix' => 'prefix'], function() {
+            Router::get('home', HomeController::class);
         });
 
         $request = new ServerRequest([
@@ -34,16 +35,16 @@ trait GroupTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
     }
 
-    public function testGroupDeep(): void
+    public function testPrefixDeep(): void
     {
-        Router::group('prefix', function() {
-            Router::group('deep', function() {
-                Router::get('home', 'Home');
+        Router::group(['prefix' => 'prefix'], function() {
+            Router::group(['prefix' => 'deep'], function() {
+                Router::get('home', HomeController::class);
             });
         });
 
@@ -65,15 +66,15 @@ trait GroupTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
     }
 
-    public function testGroupLeadingSlash(): void
+    public function testPrefixLeadingSlash(): void
     {
-        Router::group('/prefix', function() {
-            Router::get('home', 'Home');
+        Router::group(['prefix' => '/prefix'], function() {
+            Router::get('home', HomeController::class);
         });
 
         $request = new ServerRequest([
@@ -94,15 +95,15 @@ trait GroupTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
     }
 
-    public function testGroupTrailingSlash(): void
+    public function testPrefixTrailingSlash(): void
     {
-        Router::group('prefix/', function() {
-            Router::get('home', 'Home');
+        Router::group(['prefix' => 'prefix/'], function() {
+            Router::get('home', HomeController::class);
         });
 
         $request = new ServerRequest([
@@ -123,7 +124,7 @@ trait GroupTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
     }

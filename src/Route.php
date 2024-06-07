@@ -7,10 +7,14 @@ use Closure;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
 
+use function array_keys;
+use function array_map;
 use function array_slice;
+use function array_values;
 use function in_array;
 use function preg_match;
 use function strtolower;
+use function str_replace;
 
 /**
  * Route
@@ -18,29 +22,25 @@ use function strtolower;
 abstract class Route
 {
 
-    protected Closure|string $destination;
+    protected Closure|string|array $destination;
 
     protected string $path;
 
-    protected array $methods;
+    protected array $methods = [];
+
+    protected array $middleware = [];
 
     protected array $arguments = [];
 
     /**
      * New Route constructor.
-     * @param Closure|string $destination The route destination.
+     * @param Closure|string|array $destination The route destination.
      * @param string $path The route path.
-     * @param array $methods The Route methods.
      */
-    public function __construct(Closure|string $destination, string $path = '', array $methods = [])
+    public function __construct(Closure|string|array $destination, string $path = '')
     {
         $this->destination = $destination;
         $this->path = $path;
-
-        $this->methods = array_map(
-            fn(string $method): string => strtolower($method),
-            $methods
-        );
     }
 
     /**
@@ -80,11 +80,20 @@ abstract class Route
 
     /**
      * Get the route destination.
-     * @return Closure|string The route destination.
+     * @return Closure|string|array The route destination.
      */
-    public function getDestination(): Closure|string
+    public function getDestination(): Closure|string|array
     {
         return $this->destination;
+    }
+
+    /**
+     * Get the route middleware.
+     * @return array The route middleware.
+     */
+    public function getMiddleware(): array
+    {
+        return $this->middleware;
     }
 
     /**
@@ -100,27 +109,9 @@ abstract class Route
      * Process the route.
      * @param ServerRequest $request The ServerRequest.
      * @param ClientResponse $response The ClientResponse.
-     * @return ClientResponse The ClientResponse.
+     * @return ClientResponse|string The ClientResponse or string response.
      */
-    abstract public function process(ServerRequest $request, ClientResponse $response): ClientResponse;
-
-
-    /**
-     * Set the route arguments.
-     * @param array $arguments The route arguments.
-     * @return Route A bew Route.
-     */
-    public function setArguments(array $arguments): static
-    {
-        $temp = clone $this;
-
-        $temp->arguments = array_map(
-            fn(mixed $argument): string => (string) $argument,
-            $arguments
-        );
-
-        return $temp;
-    }
+    abstract public function process(ServerRequest $request, ClientResponse $response): ClientResponse|string;
 
     /**
      * Set the route arguments from a path.
@@ -139,12 +130,53 @@ abstract class Route
     }
 
     /**
+     * Set the route methods.
+     * @param array $methods The route methods.
+     * @return Route A new Route.
+     */
+    public function setMethods(array $methods): static
+    {
+        $temp = clone $this;
+
+        $temp->methods = array_map(
+            fn(string $method): string => strtolower($method),
+            $methods
+        );
+
+        return $temp;
+    }
+
+    /**
+     * Set the route middleware.
+     * @param array $middleware The route middleware.
+     * @return Route A new Route.
+     */
+    public function setMiddleware(array $middleware): static
+    {
+        $temp = clone $this;
+
+        $temp->middleware = $middleware;
+
+        return $temp;
+    }
+
+    /**
      * Get the route path regular rexpression.
      * @return string The route path regular expression.
      */
     protected function getPathRegExp(): string
     {
-        return '`^'.$this->path.'$`u';
+        $placeholders = Router::getPlaceholders();
+
+        $placeholderKeys = array_map(
+            fn(string $key): string => ':'.$key,
+            array_keys($placeholders)
+        );
+        $placeholderValues = array_values($placeholders);
+
+        $path = str_replace($placeholderKeys, $placeholderValues, $this->path);
+
+        return '`^'.$path.'$`u';
     }
 
 }

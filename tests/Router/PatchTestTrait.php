@@ -13,7 +13,7 @@ trait PatchTestTrait
 
     public function testPatch(): void
     {
-        Router::patch('home', 'Home');
+        Router::patch('home', HomeController::class);
 
         $request = new ServerRequest([
             'method' => 'patch',
@@ -34,7 +34,7 @@ trait PatchTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -46,7 +46,7 @@ trait PatchTestTrait
 
     public function testPatchAction(): void
     {
-        Router::patch('home/alternate', 'Home::altMethod');
+        Router::patch('home/alternate', [HomeController::class, 'altMethod']);
 
         $request = new ServerRequest([
             'method' => 'patch',
@@ -67,68 +67,7 @@ trait PatchTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
-            $route->getController()
-        );
-
-        $this->assertSame(
-            'altMethod',
-            $route->getAction()
-        );
-    }
-
-    public function testPatchDeep(): void
-    {
-        Router::patch('example', 'Deep\Example');
-
-        $request = new ServerRequest([
-            'method' => 'patch',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/example'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ControllerRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
-            $route->getController()
-        );
-    }
-
-    public function testPatchDeepAction(): void
-    {
-        Router::patch('example/alternate', 'Deep\Example::altMethod');
-
-        $request = new ServerRequest([
-            'method' => 'patch',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/example/alternate'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ControllerRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -140,13 +79,13 @@ trait PatchTestTrait
 
     public function testPatchArguments(): void
     {
-        Router::patch('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
+        Router::patch('home/alternate/(.*)/(.*)/(.*)', [HomeController::class, 'altMethod']);
 
         $request = new ServerRequest([
             'method' => 'patch',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/example/alternate/test/a/2'
+                    'REQUEST_URI' => '/home/alternate/test/a/2'
                 ]
             ]
         ]);
@@ -161,7 +100,7 @@ trait PatchTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -173,6 +112,7 @@ trait PatchTestTrait
         $this->assertSame(
             [
                 'test',
+                'a',
                 '2'
             ],
             $route->getArguments()

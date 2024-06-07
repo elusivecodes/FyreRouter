@@ -5,16 +5,13 @@ namespace Fyre\Router\Routes;
 
 use Fyre\Router\Exceptions\RouterException;
 use Fyre\Router\Route;
-use Fyre\Router\Router;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
 
-use function array_map;
 use function array_shift;
+use function call_user_func;
 use function class_exists;
-use function explode;
 use function method_exists;
-use function preg_replace;
 
 /**
  * ControllerRoute
@@ -28,25 +25,15 @@ class ControllerRoute extends Route
 
     /**
      * New ControllerRoute constructor.
-     * @param string $destination The route destination.
+     * @param array $destination The route destination.
      * @param string $path The route path.
-     * @param array $methods The Route methods.
      */
-    public function __construct(string $destination, string $path = '', array $methods = [])
+    public function __construct(array $destination, string $path = '')
     {
-        if ($destination && $destination[0] !== '\\') {
-            $destination = Router::getDefaultNamespace().$destination;
-        }
+        parent::__construct($destination, $path);
 
-        parent::__construct($destination, $path, $methods);
-
-        $arguments = explode('/', $destination);
-        $destination = array_shift($arguments);
-        $destination = explode('::', $destination, 2);
-
-        $this->controller = array_shift($destination).'Controller';
+        $this->controller = array_shift($destination);
         $this->action = array_shift($destination) ?? 'index';
-        $this->arguments = $arguments;
     }
 
     /**
@@ -70,44 +57,22 @@ class ControllerRoute extends Route
     /**
      * Process the route.
      * @param ServerRequest $request The ServerRequest.
-     * @param ClientResponse $response The ClientResponse.
-     * @return ClientResponse The ClientResponse.
-     * @throws RouterException if the controller class is not valid.
+     * @return ClientResponse|string The ClientResponse or string response.
+     * @throws RouterException if the controller class or method is not valid.
      */
-    public function process(ServerRequest $request, ClientResponse $response): ClientResponse
+    public function process(ServerRequest $request, ClientResponse $response): ClientResponse|string
     {
-        if (
-            !class_exists($this->controller) ||
-            !method_exists($this->controller, 'invokeAction') ||
-            !method_exists($this->controller, 'getResponse')
-        ) {
+        if (!class_exists($this->controller)) {
             throw RouterException::forInvalidController($this->controller);
+        }
+
+        if (!method_exists($this->controller, $this->action)) {
+            throw RouterException::forInvalidMethod($this->controller, $this->action);
         }
 
         $controller = new $this->controller($request, $response);
 
-        $controller->invokeAction($this->action, $this->arguments);
-
-        return $controller->getResponse();
-    }
-
-    /**
-     * Set the route arguments from a path.
-     * @param string $path The path.
-     * @return Route A new Route.
-     */
-    public function setArgumentsFromPath(string $path): static
-    {
-        $temp = clone $this;
-
-        $regex = $temp->getPathRegExp();
-
-        $temp->arguments = array_map(
-            fn(string $argument): string => preg_replace($regex, $argument, $path),
-            $temp->arguments
-        );
-
-        return $temp;
+        return call_user_func([$controller, $this->action], ...$this->arguments);
     }
 
 }

@@ -6,13 +6,14 @@ namespace Tests\Router;
 use Fyre\Router\Router;
 use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Server\ServerRequest;
+use Tests\Mock\Controller\HomeController;
 
 trait ConnectTestTrait
 {
 
     public function testConnectLeadingSlash(): void
     {
-        Router::connect('/home', 'Home');
+        Router::connect('/home', HomeController::class);
 
         $request = new ServerRequest([
             'globals' => [
@@ -32,14 +33,14 @@ trait ConnectTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
     }
 
     public function testConnectTrailingSlash(): void
     {
-        Router::connect('home/', 'Home');
+        Router::connect('home/', HomeController::class);
 
         $request = new ServerRequest([
             'globals' => [
@@ -59,7 +60,7 @@ trait ConnectTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
     }

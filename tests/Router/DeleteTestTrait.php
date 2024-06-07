@@ -7,13 +7,15 @@ use Fyre\Router\Router;
 use Fyre\Router\Routes\ClosureRoute;
 use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Server\ServerRequest;
+use Tests\Mock\Controller\Deep\ExampleController;
+use Tests\Mock\Controller\HomeController;
 
 trait DeleteTestTrait
 {
 
     public function testDelete(): void
     {
-        Router::delete('home', 'Home');
+        Router::delete('home', HomeController::class);
 
         $request = new ServerRequest([
             'method' => 'delete',
@@ -34,7 +36,7 @@ trait DeleteTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -46,7 +48,7 @@ trait DeleteTestTrait
 
     public function testDeleteAction(): void
     {
-        Router::delete('home/alternate', 'Home::altMethod');
+        Router::delete('home/alternate', [HomeController::class, 'altMethod']);
 
         $request = new ServerRequest([
             'method' => 'delete',
@@ -67,68 +69,7 @@ trait DeleteTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
-            $route->getController()
-        );
-
-        $this->assertSame(
-            'altMethod',
-            $route->getAction()
-        );
-    }
-
-    public function testDeleteDeep(): void
-    {
-        Router::delete('example', 'Deep\Example');
-
-        $request = new ServerRequest([
-            'method' => 'delete',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/example'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ControllerRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
-            $route->getController()
-        );
-    }
-
-    public function testDeleteDeepAction(): void
-    {
-        Router::delete('example/alternate', 'Deep\Example::altMethod');
-
-        $request = new ServerRequest([
-            'method' => 'delete',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/example/alternate'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ControllerRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -140,13 +81,13 @@ trait DeleteTestTrait
 
     public function testDeleteArguments(): void
     {
-        Router::delete('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
+        Router::delete('home/alternate/(.*)/(.*)/(.*)', [HomeController::class, 'altMethod']);
 
         $request = new ServerRequest([
             'method' => 'delete',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/example/alternate/test/a/2'
+                    'REQUEST_URI' => '/home/alternate/test/a/2'
                 ]
             ]
         ]);
@@ -161,7 +102,7 @@ trait DeleteTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -173,6 +114,7 @@ trait DeleteTestTrait
         $this->assertSame(
             [
                 'test',
+                'a',
                 '2'
             ],
             $route->getArguments()

@@ -5,6 +5,7 @@ namespace Tests\Router;
 
 use Fyre\Router\Router;
 use Fyre\Router\Routes\RedirectRoute;
+use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
 
 trait RedirectTestTrait
@@ -58,9 +59,21 @@ trait RedirectTestTrait
             $route
         );
 
+        $response = $route->process($request, new ClientResponse());
+
+        $this->assertInstanceOf(
+            ClientResponse::class,
+            $response
+        );
+
+        $this->assertSame(
+            302,
+            $response->getStatusCode()
+        );
+
         $this->assertSame(
             'https://test.com/a/2',
-            $route->getDestination()
+            $response->getHeaderValue('Location')
         );
     }
 

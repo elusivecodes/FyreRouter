@@ -31,88 +31,20 @@ use Fyre\Router\Router;
 
 ## Methods
 
-**Add Namespace**
+**Add Placeholer**
 
-Add a namespace for auto routing.
+Add a placeholder.
 
-- `$namespace` is a string representing the namespace.
-- `$pathPrefix` is a string representing the path prefix, and will default to "".
-
-```php
-Router::addNamespace($namespace, $pathPrefix);
-```
-
-**Build**
-
-Generate a URL for a destination.
-
-- `$destination` is a string or array containing the destination.
-- `$options` is an array containing the route options.
-    - `fullBase` is a boolean indicating whether to use the full base URI and will default to *false*.
+- `$placeholder` is a string representing the placeholder.
+- `$pattern` is a string representing the regular expression.
 
 ```php
-$url = Router::build($destination, $options);
-```
-
-Route destinations can be expressed in the following formats:
-
-```php
-Router::build([
-    'controller' => 'MyClass'
-]);
-Router::build([
-    'controller' => 'MyClass',
-    'action' => 'myMethod'
-]);
-Router::build([
-    'controller' => 'MyClass',
-    'action' => 'myMethod',
-    'arg1',
-    'arg2'
-]);
-Router::build([
-    'controller' => '\MyNamespace\MyClass',
-    'action' => 'myMethod'
-]);
-Router::build([
-    'controller' => 'MyClass',
-    'action' => 'myMethod',
-    '?' => [
-        'key' => 'value'
-    ]
-]);
-Router::build([
-    'controller' => 'MyClass',
-    'action' => 'myMethod',
-    '#' => 'anchor'
-]);
-Router::build('assets/file.ext');
-```
-
-**Build From Path**
-
-Generate a URL for a destination path.
-
-- `$destination` is a string representing the destination path.
-- `$options` is an array containing the route options.
-    - `fullBase` is a boolean indicating whether to use the full base URI and will default to *false*.
-
-```php
-$url = Router::build($destination, $options);
-```
-
-Route destinations can be expressed in the following formats:
-
-```php
-Router::buildFromPath('MyClass');
-Router::buildFromPath('MyClass::myMethod');
-Router::buildFromPath('MyClass::myMethod/arg1/arg2');
-Router::buildFromPath('\MyNamespace\MyClass::myMethod');
+Router::addPlaceholder($placeholder, $pattern);
 ```
 
 **Clear**
 
-Clear all routes and namespaces.
+Clear all routes and aliases.
 
 ```php
 Router::clear();
@@ -122,9 +54,11 @@ Router::clear();
 
 Connect a route.
 
-- `$path` is a string representing the route path, and can include regular expressions.
-- `$destination` can be either a string representing the route destination, or a *Closure*.
+- `$path` is a string representing the route path, and can include placeholders or regular expressions (that will be passed to the destination).
+- `$destination` can be either a string representing the destination, an array containing the class name and method or a *Closure*.
 - `$options` is an array containing configuration options.
+    - `as` is a string representing the route alias, and will default to *null*.
+    - `middleware` is an array of middleware to be applied to the route, and will default to *[]*.
     - `method` is an array of strings representing the matching methods, and will default to *[]*.
     - `redirect` is a boolean indicating whether the route is a redirect, and will default to *false*.
 
@@ -145,16 +79,6 @@ Router::redirect($path, $destination, $options);
 
 See the [Routes](#routes) section for supported destination formats.
 
-**Load Route**
-
-Load a route.
-
-- `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests).
-
-```php
-Router::loadRoute($request);
-```
-
 **Get Base Uri**
 
 Get the base uri.
@@ -162,24 +86,6 @@ Get the base uri.
 ```php
 $baseUri = Router::getBaseUri();
 ```
-
-**Get Default Namespace**
-
-Get the default namespace.
-
-```php
-$defaultNamespace = Router::getDefaultNamespace();
-```
-
-**Get Default Route**
-
-Get the default route.
-
-```php
-$defaultRoute = Router::getDefaultRoute();
-```
-
-This method will return a [*Route*](#routes).
 
 **Get Error Route**
 
@@ -191,22 +97,12 @@ $errorRoute = Router::getErrorRoute();
 
 This method will return a [*Route*](#routes).
 
-**Get Namespaces**
+**Get Placeholders**
 
-Get the namespaces.
-
-```php
-$namespaces = Router::getNamespaces();
-```
-
-**Has Namespace**
-
-Check if a namespace exists.
-
-- `$namespace` is a string representing the namespace.
+Get the placeholders.
 
 ```php
-$hasNamespace = Router::hasNamespace($namespace);
+$placeholders = Router::getPlaceholders();
 ```
 
 **Get Request**
@@ -233,31 +129,24 @@ This method will return a [*Route*](#routes).
 
 Create a group of routes.
 
-- `$pathPrefix` is a string representing the path prefix.
+- `$options` is an array containing the group options.
+    - `prefix` is a string representing the route group path prefix, and will default to *null*.
+    - `as` is a string representing the route group alias prefix, and will default to *null*.
+    - `middleware` is an array of middleware to be applied to the route group, and will default to *[]*.
 - `$callback` is a *Closure* where routes can be defined using the prefix.
 
 ```php
-Router::group($pathPrefix, $callback);
+Router::group($options, $callback);
 ```
 
-**Remove Namespace**
+**Load Route**
 
-Remove a namespace.
+Load a route.
 
-- `$namespace` is a string representing the namespace.
-
-```php
-$removed = Router::removeNamespace($namespace);
-```
-
-**Set Auto Route**
-
-Configure whether auto-routing will be used.
-
-- `$autoRoute` is a boolean indicating whether to enable auto-routes, and will default to *true*.
+- `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests).
 
 ```php
-Router::setAutoRoute($autoRoute);
+Router::loadRoute($request);
 ```
 
 **Set Base Uri**
@@ -270,43 +159,11 @@ Set the base uri.
 Router::getBaseUri($baseUri);
 ```
 
-**Set Default Namespace**
-
-- `$namespace` is a string representing the namespace.
-
-Set the default namespace.
-
-```php
-Router::setDefaultNamespace($namespace);
-```
-
-**Set Default Route**
-
-Set the default route.
-
-- `$destination` is a string representing the route destination.
-
-```php
-Router::setDefaultRoute($destination);
-```
-
-See the [Controller Routes](#controller-routes) section for supported destination formats.
-
-**Set Delimiter**
-
-Set the auto-routing delimiter.
-
-- `$delimiter` is a string representing the delimiter.
-
-```php
-Router::setDelimiter($delimiter);
-```
-
 **Set Error Route**
 
 Set the error route.
 
-- `$destination` is a string representing the route destination.
+- `$destination` can be either a string representing the destination, an array containing the class name and method or a *Closure*.
 
 ```php
 Router::setErrorRoute($destination);
@@ -322,6 +179,21 @@ Set the server request.
 
 ```php
 Router::setRequest($request);
+```
+
+**Url**
+
+Generate a URL for a named route.
+
+- `$name` is a string representing the route alias.
+- `$arguments` is an array containing the route arguments.
+    - `?` is an array containing route query parameters.
+    - `#` is a string representing the fragment component of the URI.
+- `$options` is an array containing the route options.
+    - `fullBase` is a boolean indicating whether to use the full base URI and will default to false.
+
+```php
+$url = Router::url($name, $arguments, $options)
 ```
 
 
@@ -365,6 +237,14 @@ Get the route destination.
 $destination = $route->getDestination();
 ```
 
+**Get Middleware**
+
+Get the route middleware.
+
+```php
+$middleware = $route->getMiddleware();
+```
+
 **Get Path**
 
 Get the route path.
@@ -386,16 +266,6 @@ $response = $route->process($request, $response);
 
 This method will return a [*ClientResponse*](https://github.com/elusivecodes/FyreServer#client-responses).
 
-**Set Arguments**
-
-Set the route arguments.
-
-- `$arguments` is an array containing the route arguments.
-
-```php
-$newRoute = $route->setArguments($arguments);
-```
-
 **Set Arguments From Path**
 
 Set the route arguments from a path.
@@ -404,6 +274,22 @@ Set the route arguments from a path.
 
 ```php
 $newRoute = $route->setArgumentsFromPath($path);
+```
+
+**Set Methods**
+
+- `$methods` is an array containing the route methods.
+
+```php
+`$newRoute = $route->setMethods($methods);
+```
+
+**Set Middleware**
+
+- `$middleware` is an array containing the route middleware.
+
+```php
+`$newRoute = $route->setMiddleware($middleware);
 ```
 
 
@@ -415,16 +301,15 @@ use Fyre\Router\Routes\ClosureRoute;
 
 - `$destination` is a *Closure*.
 - `$path` is a string representing the route path, and will default to "".
-- `$methods` is an array containing the route methods.
 
 ```php
-$route = new ClosureRoute($destination, $path, $methods);
+$route = new ClosureRoute($destination, $path);
 ```
 
 The `$destination` should be expressed in the following format:
 
 ```php
-$destination = function(ServerRequest $request, ClientResponse $response, ...$args) {
+$destination = function(...$args) {
     return $response;
 };
 ```
@@ -436,21 +321,18 @@ $destination = function(ServerRequest $request, ClientResponse $response, ...$ar
 use Fyre\Router\Routes\ControllerRoute;
 ```
 
-- `$destination` is a string representing the destination.
+- `$destination` is an array containing the controller class name and method.
 - `$path` is a string representing the route path, and will default to "".
-- `$methods` is an array containing the route methods.
 
 ```php
-$route = new ControllerRoute($destination, $path, $methods);
+$route = new ControllerRoute($destination, $path,);
 ```
 
 The `$destination` can be expressed in the following formats:
 
 ```php
-$destination = 'MyClass';
-$destination = 'MyClass::myMethod';
-$destination = 'MyClass::myMethod/$1/$2';
-$destination = '\MyNamespace\MyClass::myMethod';
+$destination = [MyClass::class]; // defaults to index method
+$destination = [MyClass::class, 'method'];
 ```
 
 **Get Action**
@@ -478,10 +360,9 @@ use Fyre\Router\Routes\RedirectRoute;
 
 - `$destination` is a string representing the destination.
 - `$path` is a string representing the route path, and will default to "".
-- `$methods` is an array containing the route methods.
 
 ```php
-$route = new RedirectRoute($destination, $path, $methods);
+$route = new RedirectRoute($destination, $path);
 ```
 
 The `$destination` can be expressed in the following formats:

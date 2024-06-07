@@ -13,7 +13,7 @@ trait PutTestTrait
 
     public function testPut(): void
     {
-        Router::put('home', 'Home');
+        Router::put('home', HomeController::class);
 
         $request = new ServerRequest([
             'method' => 'put',
@@ -34,7 +34,7 @@ trait PutTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -46,7 +46,7 @@ trait PutTestTrait
 
     public function testPutAction(): void
     {
-        Router::put('home/alternate', 'Home::altMethod');
+        Router::put('home/alternate', [HomeController::class, 'altMethod']);
 
         $request = new ServerRequest([
             'method' => 'put',
@@ -67,68 +67,7 @@ trait PutTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
-            $route->getController()
-        );
-
-        $this->assertSame(
-            'altMethod',
-            $route->getAction()
-        );
-    }
-
-    public function testPutDeep(): void
-    {
-        Router::put('example', 'Deep\Example');
-
-        $request = new ServerRequest([
-            'method' => 'put',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/example'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ControllerRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
-            $route->getController()
-        );
-    }
-
-    public function testPutDeepAction(): void
-    {
-        Router::put('example/alternate', 'Deep\Example::altMethod');
-
-        $request = new ServerRequest([
-            'method' => 'put',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/example/alternate'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ControllerRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -140,13 +79,13 @@ trait PutTestTrait
 
     public function testPutArguments(): void
     {
-        Router::put('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
+        Router::put('home/alternate/(.*)/(.*)/(.*)', [HomeController::class, 'altMethod']);
 
         $request = new ServerRequest([
             'method' => 'put',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/example/alternate/test/a/2'
+                    'REQUEST_URI' => '/home/alternate/test/a/2'
                 ]
             ]
         ]);
@@ -161,7 +100,7 @@ trait PutTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -173,6 +112,7 @@ trait PutTestTrait
         $this->assertSame(
             [
                 'test',
+                'a',
                 '2'
             ],
             $route->getArguments()

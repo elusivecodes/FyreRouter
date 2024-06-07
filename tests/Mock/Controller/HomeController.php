@@ -3,17 +3,17 @@ declare(strict_types=1);
 
 namespace Tests\Mock\Controller;
 
-class HomeController extends Controller
+class HomeController
 {
 
-    public function index(): void
+    public function index(): string
     {
-
+        return '';
     }
 
-    public function altMethod(): void
+    public function altMethod(): string
     {
-
+        return '';
     }
 
 }

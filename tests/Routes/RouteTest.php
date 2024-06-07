@@ -5,13 +5,14 @@ namespace Tests\Routes;
 
 use Fyre\Router\Routes\ControllerRoute;
 use PHPUnit\Framework\TestCase;
+use Tests\Mock\Controller\TestController;
 
 final class RouteTest extends TestCase
 {
 
     public function testCheckMethod(): void
     {
-        $route = new ControllerRoute('', '', ['get']);
+        $route = (new ControllerRoute([TestController::class]))->setMethods(['get']);
 
         $this->assertTrue(
             $route->checkMethod('get')
@@ -20,7 +21,7 @@ final class RouteTest extends TestCase
 
     public function testCheckMethodInvalid(): void
     {
-        $route = new ControllerRoute('', '', ['get']);
+        $route = (new ControllerRoute([TestController::class]))->setMethods(['get']);
 
         $this->assertFalse(
             $route->checkMethod('post')
@@ -29,7 +30,7 @@ final class RouteTest extends TestCase
 
     public function testCheckMethodNoMethods(): void
     {
-        $route = new ControllerRoute('');
+        $route = new ControllerRoute([TestController::class]);
 
         $this->assertTrue(
             $route->checkMethod('get')
@@ -38,7 +39,7 @@ final class RouteTest extends TestCase
 
     public function testCheckPath(): void
     {
-        $route = new ControllerRoute('', 'test/(.*)');
+        $route = new ControllerRoute([TestController::class], 'test/(.*)');
 
         $this->assertTrue(
             $route->checkPath('test/a')
@@ -47,7 +48,7 @@ final class RouteTest extends TestCase
 
     public function testCheckPathInvalid(): void
     {
-        $route = new ControllerRoute('', 'test/(.*)');
+        $route = new ControllerRoute([TestController::class], 'test/(.*)');
 
         $this->assertFalse(
             $route->checkPath('invalid')
@@ -56,29 +57,11 @@ final class RouteTest extends TestCase
 
     public function testGetPath(): void
     {
-        $route = new ControllerRoute('', 'test/(.*)');
+        $route = new ControllerRoute([TestController::class], 'test/(.*)');
 
         $this->assertSame(
             'test/(.*)',
             $route->getPath()
-        );
-    }
-
-    public function testSetArguments(): void
-    {
-        $route1 = new ControllerRoute('');
-        $route2 = $route1->setArguments(['a', '2']);
-
-        $this->assertEmpty(
-            $route1->getArguments()
-        );
-
-        $this->assertSame(
-            [
-                'a',
-                '2'
-            ],
-            $route2->getArguments()
         );
     }
 

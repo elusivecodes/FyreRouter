@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Tests\Routes;
 
 use Fyre\Router\Route;
-use Fyre\Router\Router;
 use Fyre\Router\Routes\ControllerRoute;
 use PHPUnit\Framework\TestCase;
+use Tests\Mock\Controller\TestController;
 
 final class ControllerRouteTest extends TestCase
 {
@@ -15,33 +15,33 @@ final class ControllerRouteTest extends TestCase
     {
         $this->assertInstanceOf(
             Route::class,
-            new ControllerRoute('')
+            new ControllerRoute([TestController::class])
         );
     }
 
     public function testGetController(): void
     {
-        $route = new ControllerRoute('Test::test/$1');
+        $route = new ControllerRoute([TestController::class, 'test']);
 
         $this->assertSame(
-            '\Tests\Mock\Controller\TestController',
+            TestController::class,
             $route->getController()
         );
     }
 
     public function testGetDestination(): void
     {
-        $route = new ControllerRoute('Test::test/$1');
+        $route = new ControllerRoute([TestController::class, 'test']);
 
         $this->assertSame(
-            '\Tests\Mock\Controller\Test::test/$1',
+            [TestController::class, 'test'],
             $route->getDestination()
         );
     }
 
     public function testGetAction(): void
     {
-        $route = new ControllerRoute('Test::test/$1');
+        $route = new ControllerRoute([TestController::class, 'test']);
 
         $this->assertSame(
             'test',
@@ -51,14 +51,11 @@ final class ControllerRouteTest extends TestCase
 
     public function testSetArgumentsFromPath(): void
     {
-        $route1 = new ControllerRoute('Test::test/$1/$2', 'test/(.*)/(.*)');
+        $route1 = new ControllerRoute([TestController::class, 'test'], 'test/(.*)/(.*)');
         $route2 = $route1->setArgumentsFromPath('test/a/1');
 
         $this->assertSame(
-            [
-                '$1',
-                '$2'
-            ],
+            [],
             $route1->getArguments()
         );
 
@@ -69,11 +66,6 @@ final class ControllerRouteTest extends TestCase
             ],
             $route2->getArguments()
         );
-    }
-
-    protected function setUp(): void
-    {
-        Router::setDefaultNamespace('Tests\Mock\Controller');
     }
 
 }

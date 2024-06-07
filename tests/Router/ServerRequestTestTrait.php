@@ -5,13 +5,14 @@ namespace Tests\Router;
 
 use Fyre\Router\Router;
 use Fyre\Server\ServerRequest;
+use Tests\Mock\Controller\HomeController;
 
 trait ServerRequestTestTrait
 {
 
     public function testLoadRouteRequest(): void
     {
-        Router::get('(.*)', 'Home');
+        Router::get('(.*)', HomeController::class);
 
         $request = new ServerRequest();
 

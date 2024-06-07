@@ -21,7 +21,7 @@
     },
     "require": {
         "fyre/middleware": "^2.0",
-        "fyre/server": "^2.0",
+        "fyre/server": "^3.0",
         "fyre/uri": "^3.0"
     },
     "require-dev": {

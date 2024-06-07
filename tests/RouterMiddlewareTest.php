@@ -10,6 +10,7 @@ use Fyre\Router\Router;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Tests\Mock\Controller\HomeController;
 
 final class RouterMiddlewareTest extends TestCase
 {
@@ -18,16 +19,17 @@ final class RouterMiddlewareTest extends TestCase
     {
         $ran = false;
 
-        $function = function(ServerRequest $request, ClientResponse $response) use (&$ran) {
+        $function = function() use (&$ran) {
             $ran = true;
 
-            return $response;
+            return '';
         };
 
         Router::connect('test', $function);
 
-        $queue = new MiddlewareQueue();
-        $queue->add(new RouterMiddleware());
+        $queue = new MiddlewareQueue([
+            RouterMiddleware::class
+        ]);
 
         $handler = new RequestHandler($queue);
 
@@ -49,10 +51,11 @@ final class RouterMiddlewareTest extends TestCase
 
     public function testProcessControllerRoute(): void
     {
-        Router::connect('test', 'Home');
+        Router::connect('test', HomeController::class);
 
-        $queue = new MiddlewareQueue();
-        $queue->add(new RouterMiddleware());
+        $queue = new MiddlewareQueue([
+            RouterMiddleware::class
+        ]);
 
         $handler = new RequestHandler($queue);
 
@@ -74,8 +77,9 @@ final class RouterMiddlewareTest extends TestCase
     {
         Router::redirect('test', 'https://test.com/');
 
-        $queue = new MiddlewareQueue();
-        $queue->add(new RouterMiddleware());
+        $queue = new MiddlewareQueue([
+            RouterMiddleware::class
+        ]);
 
         $handler = new RequestHandler($queue);
 

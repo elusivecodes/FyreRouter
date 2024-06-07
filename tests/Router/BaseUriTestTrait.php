@@ -6,6 +6,7 @@ namespace Tests\Router;
 use Fyre\Router\Router;
 use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Server\ServerRequest;
+use Tests\Mock\Controller\TestController;
 
 trait BaseUriTestTrait
 {
@@ -13,7 +14,7 @@ trait BaseUriTestTrait
     public function testRouteBaseUri(): void
     {
         Router::setBaseUri('https://test.com/deep/');
-        Router::get('test', 'Test');
+        Router::get('test', TestController::class);
 
         $request = new ServerRequest([
             'globals' => [
@@ -33,7 +34,7 @@ trait BaseUriTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\TestController',
+            TestController::class,
             $route->getController()
         );
     }

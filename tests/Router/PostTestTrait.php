@@ -7,13 +7,14 @@ use Fyre\Router\Router;
 use Fyre\Router\Routes\ClosureRoute;
 use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Server\ServerRequest;
+use Tests\Mock\Controller\HomeController;
 
 trait PostTestTrait
 {
 
     public function testPost(): void
     {
-        Router::post('home', 'Home');
+        Router::post('home', HomeController::class);
 
         $request = new ServerRequest([
             'method' => 'post',
@@ -34,7 +35,7 @@ trait PostTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -46,7 +47,7 @@ trait PostTestTrait
 
     public function testPostAction(): void
     {
-        Router::post('home/alternate', 'Home::altMethod');
+        Router::post('home/alternate', [HomeController::class, 'altMethod']);
 
         $request = new ServerRequest([
             'method' => 'post',
@@ -67,68 +68,7 @@ trait PostTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
-            $route->getController()
-        );
-
-        $this->assertSame(
-            'altMethod',
-            $route->getAction()
-        );
-    }
-
-    public function testPostDeep(): void
-    {
-        Router::post('example', 'Deep\Example');
-
-        $request = new ServerRequest([
-            'method' => 'post',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/example'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ControllerRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
-            $route->getController()
-        );
-    }
-
-    public function testPostDeepAction(): void
-    {
-        Router::post('example/alternate', 'Deep\Example::altMethod');
-
-        $request = new ServerRequest([
-            'method' => 'post',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/example/alternate'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ControllerRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -140,13 +80,13 @@ trait PostTestTrait
 
     public function testPostArguments(): void
     {
-        Router::post('example/alternate/(.*)/(.*)/(.*)', 'Deep\Example::altMethod/$1/$3');
+        Router::post('home/alternate/(.*)/(.*)/(.*)', [HomeController::class, 'altMethod']);
 
         $request = new ServerRequest([
             'method' => 'post',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/example/alternate/test/a/2'
+                    'REQUEST_URI' => '/home/alternate/test/a/2'
                 ]
             ]
         ]);
@@ -161,7 +101,7 @@ trait PostTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\Deep\ExampleController',
+            HomeController::class,
             $route->getController()
         );
 
@@ -173,6 +113,7 @@ trait PostTestTrait
         $this->assertSame(
             [
                 'test',
+                'a',
                 '2'
             ],
             $route->getArguments()

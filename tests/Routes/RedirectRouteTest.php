@@ -30,19 +30,20 @@ final class RedirectRouteTest extends TestCase
 
     public function testSetArgumentsFromPath(): void
     {
-        $function = function() { };
-
         $route1 = new RedirectRoute('https://test.com/$1/$2', 'test/(.*)/(.*)');
         $route2 = $route1->setArgumentsFromPath('test/a/1');
 
         $this->assertSame(
-            'https://test.com/$1/$2',
-            $route1->getDestination()
+            [],
+            $route1->getArguments()
         );
 
         $this->assertSame(
-            'https://test.com/a/1',
-            $route2->getDestination()
+            [
+                'a',
+                '1'
+            ],
+            $route2->getArguments()
         );
     }
 

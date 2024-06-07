@@ -4,10 +4,13 @@ declare(strict_types=1);
 namespace Fyre\Router\Middleware;
 
 use Fyre\Middleware\Middleware;
+use Fyre\Middleware\MiddlewareQueue;
 use Fyre\Middleware\RequestHandler;
 use Fyre\Router\Router;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
+
+use function is_string;
 
 /**
  * RouterMiddleware
@@ -27,7 +30,29 @@ class RouterMiddleware extends Middleware
 
         $response = $handler->handle($request);
 
-        return Router::getRoute()->process($request, $response);
+        $route = Router::getRoute();
+        $middleware = $route->getMiddleware();
+
+        $processRoute = function() use ($route, $request, $response): ClientResponse {
+            $result = $route->process($request, $response);
+
+            if (is_string($result)) {
+                return $response->setBody($result);
+            }
+
+            return $result;
+        };
+
+        if ($middleware === []) {
+            return $processRoute();
+        }
+
+        $middleware[] = $processRoute;
+
+        $queue = new MiddlewareQueue($middleware);
+        $handler = new RequestHandler($queue, $response);
+
+        return $handler->handle($request);
     }
 
 }

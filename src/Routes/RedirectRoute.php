@@ -8,7 +8,7 @@ use Fyre\Server\ClientResponse;
 use Fyre\Server\RedirectResponse;
 use Fyre\Server\ServerRequest;
 
-use function preg_replace;
+use function preg_replace_callback;
 
 /**
  * RedirectRoute
@@ -20,11 +20,10 @@ class RedirectRoute extends Route
      * New RedirectRoute constructor.
      * @param string $destination The route destination.
      * @param string $path The route path.
-     * @param array $methods The Route methods.
      */
-    public function __construct(string $destination, string $path = '', array $methods = [])
+    public function __construct(string $destination, string $path = '')
     {
-        parent::__construct($destination, $path, $methods);
+        parent::__construct($destination, $path);
     }
 
     /**
@@ -35,21 +34,13 @@ class RedirectRoute extends Route
      */
     public function process(ServerRequest $request, ClientResponse $response): ClientResponse
     {
-        return new RedirectResponse($this->destination);
-    }
+        $destination = preg_replace_callback(
+            '/\\$(\d+)/',
+            fn(array $match): string => $this->arguments[$match[1] - 1] ?? '',
+            $this->destination
+        );
 
-    /**
-     * Set the route arguments from a path.
-     * @param string $path The path.
-     * @return Route A new Route.
-     */
-    public function setArgumentsFromPath(string $path): static
-    {
-        $temp = clone $this;
-
-        $temp->destination = preg_replace($temp->getPathRegExp(), $temp->destination, $path);
-
-        return $temp;
+        return new RedirectResponse($destination);
     }
 
 }

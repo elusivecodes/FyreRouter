@@ -7,14 +7,16 @@ use Fyre\Router\Exceptions\RouterException;
 use Fyre\Router\Router;
 use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Server\ServerRequest;
+use Tests\Mock\Controller\HomeController;
+use Tests\Mock\Controller\TestController;
 
 trait FindRouteTestTrait
 {
 
     public function testRouteOrder(): void
     {
-        Router::get('(.*)', 'Home');
-        Router::get('test', 'Test');
+        Router::get('(.*)', HomeController::class);
+        Router::get('test', TestController::class);
 
         $request = new ServerRequest([
             'globals' => [
@@ -34,7 +36,7 @@ trait FindRouteTestTrait
         );
 
         $this->assertSame(
-            '\Tests\Mock\Controller\HomeController',
+            HomeController::class,
             $route->getController()
         );
     }
@@ -43,7 +45,7 @@ trait FindRouteTestTrait
     {
         $this->expectException(RouterException::class);
 
-        Router::get('test', 'Test');
+        Router::get('test', TestController::class);
 
         $request = new ServerRequest([
             'method' => 'post',
