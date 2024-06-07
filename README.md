@@ -281,7 +281,7 @@ $newRoute = $route->setArgumentsFromPath($path);
 - `$methods` is an array containing the route methods.
 
 ```php
-`$newRoute = $route->setMethods($methods);
+$newRoute = $route->setMethods($methods);
 ```
 
 **Set Middleware**
@@ -289,7 +289,7 @@ $newRoute = $route->setArgumentsFromPath($path);
 - `$middleware` is an array containing the route middleware.
 
 ```php
-`$newRoute = $route->setMiddleware($middleware);
+$newRoute = $route->setMiddleware($middleware);
 ```
 
 
@@ -325,7 +325,7 @@ use Fyre\Router\Routes\ControllerRoute;
 - `$path` is a string representing the route path, and will default to "".
 
 ```php
-$route = new ControllerRoute($destination, $path,);
+$route = new ControllerRoute($destination, $path);
 ```
 
 The `$destination` can be expressed in the following formats:
