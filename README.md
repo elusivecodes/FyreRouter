@@ -190,7 +190,7 @@ Generate a URL for a named route.
     - `?` is an array containing route query parameters.
     - `#` is a string representing the fragment component of the URI.
 - `$options` is an array containing the route options.
-    - `fullBase` is a boolean indicating whether to use the full base URI and will default to false.
+    - `fullBase` is a boolean indicating whether to use the full base URI and will default to *false*.
 
 ```php
 $url = Router::url($name, $arguments, $options)

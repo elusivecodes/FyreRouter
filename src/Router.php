@@ -54,7 +54,7 @@ abstract class Router
 
     protected static Route|null $currentRoute = null;
 
-    protected static ControllerRoute|null $errorRoute = null;
+    protected static ClosureRoute|ControllerRoute|null $errorRoute = null;
 
     /**
      * Add a placeholder.
@@ -345,9 +345,10 @@ abstract class Router
      * @param string $name The name.
      * @param array $arguments The route arguments
      * @param array $options The route options.
-     * @return string|null The URL.
+     * @return string The URL.
+     * @throws RouterException for invalid alias, or invalid arguments.
      */
-    public static function url(string $name, array $arguments = [], array $options = []): string|null
+    public static function url(string $name, array $arguments = [], array $options = []): string
     {
         $options['fullBase'] ??= false;
 
