@@ -129,4 +129,33 @@ trait PrefixTestTrait
         );
     }
 
+    public function testPrefixEmptyRoute(): void
+    {
+        Router::group(['prefix' => 'prefix'], function() {
+            Router::get('', HomeController::class);
+        });
+
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/prefix'
+                ]
+            ]
+        ]);
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
+        $this->assertSame(
+            HomeController::class,
+            $route->getController()
+        );
+    }
+
 }

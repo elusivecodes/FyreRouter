@@ -102,7 +102,7 @@ abstract class Router
                 $groupAliases[] = $group['as'];
             }
 
-            if ($group['prefix']) {
+            if ($group['prefix'] && $group['prefix'] !== '/') {
                 $groupPrefixes[] = static::normalizePath($group['prefix']);
             }
 
@@ -117,6 +117,7 @@ abstract class Router
 
         if ($groupPrefixes !== []) {
             $path = implode('', $groupPrefixes).$path;
+            $path = static::normalizePath($path);
         }
 
         $middleware = array_merge($groupMiddleware, $middleware);
