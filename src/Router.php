@@ -54,8 +54,6 @@ abstract class Router
 
     protected static Route|null $currentRoute = null;
 
-    protected static ClosureRoute|ControllerRoute|null $errorRoute = null;
-
     /**
      * Add a placeholder.
      * @param string $placeholder The placeholder.
@@ -74,7 +72,6 @@ abstract class Router
         static::$routes = [];
         static::$routeAliases = [];
         static::$currentRoute = null;
-        static::$errorRoute = null;
         static::$baseUri = null;
     }
 
@@ -171,15 +168,6 @@ abstract class Router
         return static::$baseUri ?
             static::$baseUri->getUri() :
             null;
-    }
-
-    /**
-     * Get the error route.
-     * @return ClosureRoute|ControllerRoute|null The error route.
-     */
-    public static function getErrorRoute(): ClosureRoute|ControllerRoute|null
-    {
-        return static::$errorRoute;
     }
 
     /**
@@ -317,19 +305,6 @@ abstract class Router
     public static function setBaseUri(string $baseUri): void
     {
         static::$baseUri = Uri::fromString($baseUri);
-    }
-
-    /**
-     * Set the error route.
-     * @param Closure|string|array $destination The route destination.
-     */
-    public static function setErrorRoute(Closure|string|array $destination): void
-    {
-        if ($destination instanceof Closure) {
-            static::$errorRoute = new ClosureRoute($destination);
-        } else {
-            static::$errorRoute = new ControllerRoute((array) $destination);
-        }
     }
 
     /**

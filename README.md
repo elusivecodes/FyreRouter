@@ -87,16 +87,6 @@ Get the base uri.
 $baseUri = Router::getBaseUri();
 ```
 
-**Get Error Route**
-
-Get the error route.
-
-```php
-$errorRoute = Router::getErrorRoute();
-```
-
-This method will return a [*Route*](#routes).
-
 **Get Placeholders**
 
 Get the placeholders.
@@ -158,18 +148,6 @@ Set the base uri.
 ```php
 Router::getBaseUri($baseUri);
 ```
-
-**Set Error Route**
-
-Set the error route.
-
-- `$destination` can be either a string representing the destination, an array containing the class name and method or a *Closure*.
-
-```php
-Router::setErrorRoute($destination);
-```
-
-See the [Controller Routes](#controller-routes) section for supported destination formats.
 
 **Set Request**
 
