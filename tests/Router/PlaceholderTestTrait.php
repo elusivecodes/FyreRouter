@@ -10,7 +10,6 @@ use Tests\Mock\Controller\HomeController;
 
 trait PlaceholderTestTrait
 {
-
     public function testPlaceholders(): void
     {
         Router::get('home/alternate/(:segment)/(:alpha)/(:num)', [HomeController::class, 'altMethod']);
@@ -18,9 +17,9 @@ trait PlaceholderTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home/alternate/test/a/2'
-                ]
-            ]
+                    'REQUEST_URI' => '/home/alternate/test/a/2',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -46,10 +45,9 @@ trait PlaceholderTestTrait
             [
                 'test',
                 'a',
-                '2'
+                '2',
             ],
             $route->getArguments()
         );
     }
-
 }

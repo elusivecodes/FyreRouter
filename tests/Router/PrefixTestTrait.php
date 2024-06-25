@@ -10,7 +10,6 @@ use Tests\Mock\Controller\HomeController;
 
 trait PrefixTestTrait
 {
-
     public function testPrefix(): void
     {
         Router::group(['prefix' => 'prefix'], function() {
@@ -20,9 +19,9 @@ trait PrefixTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/prefix/home'
-                ]
-            ]
+                    'REQUEST_URI' => '/prefix/home',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -51,67 +50,9 @@ trait PrefixTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/prefix/deep/home'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ControllerRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            HomeController::class,
-            $route->getController()
-        );
-    }
-
-    public function testPrefixLeadingSlash(): void
-    {
-        Router::group(['prefix' => '/prefix'], function() {
-            Router::get('home', HomeController::class);
-        });
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/prefix/home'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
-        $this->assertInstanceOf(
-            ControllerRoute::class,
-            $route
-        );
-
-        $this->assertSame(
-            HomeController::class,
-            $route->getController()
-        );
-    }
-
-    public function testPrefixTrailingSlash(): void
-    {
-        Router::group(['prefix' => 'prefix/'], function() {
-            Router::get('home', HomeController::class);
-        });
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/prefix/home'
-                ]
-            ]
+                    'REQUEST_URI' => '/prefix/deep/home',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -138,9 +79,9 @@ trait PrefixTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/prefix'
-                ]
-            ]
+                    'REQUEST_URI' => '/prefix',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -158,4 +99,61 @@ trait PrefixTestTrait
         );
     }
 
+    public function testPrefixLeadingSlash(): void
+    {
+        Router::group(['prefix' => '/prefix'], function() {
+            Router::get('home', HomeController::class);
+        });
+
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/prefix/home',
+                ],
+            ],
+        ]);
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
+        $this->assertSame(
+            HomeController::class,
+            $route->getController()
+        );
+    }
+
+    public function testPrefixTrailingSlash(): void
+    {
+        Router::group(['prefix' => 'prefix/'], function() {
+            Router::get('home', HomeController::class);
+        });
+
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/prefix/home',
+                ],
+            ],
+        ]);
+
+        Router::loadRoute($request);
+
+        $route = Router::getRoute();
+
+        $this->assertInstanceOf(
+            ControllerRoute::class,
+            $route
+        );
+
+        $this->assertSame(
+            HomeController::class,
+            $route->getController()
+        );
+    }
 }

@@ -9,7 +9,6 @@ use Tests\Mock\Controller\HomeController;
 
 trait ServerRequestTestTrait
 {
-
     public function testLoadRouteRequest(): void
     {
         Router::get('(.*)', HomeController::class);
@@ -35,5 +34,4 @@ trait ServerRequestTestTrait
             Router::getRequest()
         );
     }
-
 }

@@ -9,15 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 final class RedirectRouteTest extends TestCase
 {
-
-    public function testRoute(): void
-    {
-        $this->assertInstanceOf(
-            Route::class,
-            new RedirectRoute('')
-        );
-    }
-
     public function testGetDestination(): void
     {
         $route = new RedirectRoute('https://test.com/');
@@ -25,6 +16,14 @@ final class RedirectRouteTest extends TestCase
         $this->assertSame(
             'https://test.com/',
             $route->getDestination()
+        );
+    }
+
+    public function testRoute(): void
+    {
+        $this->assertInstanceOf(
+            Route::class,
+            new RedirectRoute('')
         );
     }
 
@@ -41,10 +40,9 @@ final class RedirectRouteTest extends TestCase
         $this->assertSame(
             [
                 'a',
-                '1'
+                '1',
             ],
             $route2->getArguments()
         );
     }
-
 }

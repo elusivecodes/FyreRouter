@@ -11,7 +11,6 @@ use Tests\Mock\Controller\HomeController;
 
 trait GetTestTrait
 {
-
     public function testGet(): void
     {
         Router::get('home', HomeController::class);
@@ -19,9 +18,9 @@ trait GetTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home'
-                ]
-            ]
+                    'REQUEST_URI' => '/home',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -51,9 +50,9 @@ trait GetTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home/alternate'
-                ]
-            ]
+                    'REQUEST_URI' => '/home/alternate',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -83,9 +82,9 @@ trait GetTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home/alternate/test/a/2'
-                ]
-            ]
+                    'REQUEST_URI' => '/home/alternate/test/a/2',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -111,7 +110,7 @@ trait GetTestTrait
             [
                 'test',
                 'a',
-                '2'
+                '2',
             ],
             $route->getArguments()
         );
@@ -126,9 +125,9 @@ trait GetTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -155,9 +154,9 @@ trait GetTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test/a/2'
-                ]
-            ]
+                    'REQUEST_URI' => '/test/a/2',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -177,10 +176,9 @@ trait GetTestTrait
         $this->assertSame(
             [
                 'a',
-                '2'
+                '2',
             ],
             $route->getArguments()
         );
     }
-
 }

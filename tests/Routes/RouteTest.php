@@ -9,7 +9,6 @@ use Tests\Mock\Controller\TestController;
 
 final class RouteTest extends TestCase
 {
-
     public function testCheckMethod(): void
     {
         $route = (new ControllerRoute([TestController::class]))->setMethods(['get']);
@@ -64,5 +63,4 @@ final class RouteTest extends TestCase
             $route->getPath()
         );
     }
-
 }

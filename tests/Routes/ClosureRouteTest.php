@@ -9,20 +9,9 @@ use PHPUnit\Framework\TestCase;
 
 final class ClosureRouteTest extends TestCase
 {
-
-    public function testRoute(): void
-    {
-        $function = function() { };
-
-        $this->assertInstanceOf(
-            Route::class,
-            new ClosureRoute($function)
-        );
-    }
-
     public function testGetDestination(): void
     {
-        $function = function() { };
+        $function = function() {};
 
         $route = new ClosureRoute($function);
 
@@ -32,9 +21,19 @@ final class ClosureRouteTest extends TestCase
         );
     }
 
+    public function testRoute(): void
+    {
+        $function = function() {};
+
+        $this->assertInstanceOf(
+            Route::class,
+            new ClosureRoute($function)
+        );
+    }
+
     public function testSetArgumentsFromPath(): void
     {
-        $function = function() { };
+        $function = function() {};
 
         $route1 = new ClosureRoute($function, 'test/(.*)/(.*)');
         $route2 = $route1->setArgumentsFromPath('test/a/1');
@@ -46,10 +45,9 @@ final class ClosureRouteTest extends TestCase
         $this->assertSame(
             [
                 'a',
-                '1'
+                '1',
             ],
             $route2->getArguments()
         );
     }
-
 }

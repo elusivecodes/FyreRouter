@@ -9,7 +9,6 @@ use Tests\Mock\Controller\HomeController;
 
 trait UrlTestTrait
 {
-
     public function testUrl(): void
     {
         Router::connect('home', HomeController::class, ['as' => 'home']);
@@ -27,16 +26,6 @@ trait UrlTestTrait
         $this->assertSame(
             '/home/alternate/test/a/2',
             Router::url('alternate', ['test', 'a', 2])
-        );
-    }
-
-    public function testUrlQuery(): void
-    {
-        Router::connect('home/alternate/(.*)', [HomeController::class, 'altMethod'], ['as' => 'alternate']);
-
-        $this->assertSame(
-            '/home/alternate/1?test=2',
-            Router::url('alternate', [1, '?' => ['test' => 2]])
         );
     }
 
@@ -95,15 +84,6 @@ trait UrlTestTrait
         Router::url('alternate');
     }
 
-    public function testUrlMissingArgument(): void
-    {
-        $this->expectException(RouterException::class);
-
-        Router::connect('home/alternate/(.*)/(.*)/(.*)', [HomeController::class, 'altMethod'], ['as' => 'alternate']);
-
-        Router::url('alternate', ['test', 'a']);
-    }
-
     public function testUrlInvalidArgument(): void
     {
         $this->expectException(RouterException::class);
@@ -113,4 +93,22 @@ trait UrlTestTrait
         Router::url('alternate', ['test']);
     }
 
+    public function testUrlMissingArgument(): void
+    {
+        $this->expectException(RouterException::class);
+
+        Router::connect('home/alternate/(.*)/(.*)/(.*)', [HomeController::class, 'altMethod'], ['as' => 'alternate']);
+
+        Router::url('alternate', ['test', 'a']);
+    }
+
+    public function testUrlQuery(): void
+    {
+        Router::connect('home/alternate/(.*)', [HomeController::class, 'altMethod'], ['as' => 'alternate']);
+
+        $this->assertSame(
+            '/home/alternate/1?test=2',
+            Router::url('alternate', [1, '?' => ['test' => 2]])
+        );
+    }
 }

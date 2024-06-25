@@ -10,7 +10,6 @@ use Fyre\Server\ServerRequest;
 
 trait PutTestTrait
 {
-
     public function testPut(): void
     {
         Router::put('home', HomeController::class);
@@ -19,9 +18,9 @@ trait PutTestTrait
             'method' => 'put',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home'
-                ]
-            ]
+                    'REQUEST_URI' => '/home',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -52,9 +51,9 @@ trait PutTestTrait
             'method' => 'put',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home/alternate'
-                ]
-            ]
+                    'REQUEST_URI' => '/home/alternate',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -85,9 +84,9 @@ trait PutTestTrait
             'method' => 'put',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home/alternate/test/a/2'
-                ]
-            ]
+                    'REQUEST_URI' => '/home/alternate/test/a/2',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -113,7 +112,7 @@ trait PutTestTrait
             [
                 'test',
                 'a',
-                '2'
+                '2',
             ],
             $route->getArguments()
         );
@@ -129,9 +128,9 @@ trait PutTestTrait
             'method' => 'put',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -159,9 +158,9 @@ trait PutTestTrait
             'method' => 'put',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test/a/2'
-                ]
-            ]
+                    'REQUEST_URI' => '/test/a/2',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -181,10 +180,9 @@ trait PutTestTrait
         $this->assertSame(
             [
                 'a',
-                '2'
+                '2',
             ],
             $route->getArguments()
         );
     }
-
 }

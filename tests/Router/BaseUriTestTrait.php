@@ -10,7 +10,6 @@ use Tests\Mock\Controller\TestController;
 
 trait BaseUriTestTrait
 {
-
     public function testRouteBaseUri(): void
     {
         Router::setBaseUri('https://test.com/deep/');
@@ -19,9 +18,9 @@ trait BaseUriTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/deep/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/deep/test',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -38,6 +37,4 @@ trait BaseUriTestTrait
             $route->getController()
         );
     }
-
 }
-

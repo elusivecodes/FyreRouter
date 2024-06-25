@@ -5,7 +5,6 @@ namespace Tests\Mock\Controller;
 
 class TestController
 {
-
     public function index(): string
     {
         return '';
@@ -15,5 +14,4 @@ class TestController
     {
         return '';
     }
-
 }

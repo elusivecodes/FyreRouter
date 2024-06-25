@@ -13,41 +13,6 @@ use Tests\Mock\Controller\HomeController;
 
 trait MiddlewareTestTrait
 {
-
-    public function testMiddleware(): void
-    {
-        $ran = false;
-
-        Router::connect('test', HomeController::class, [
-            'middleware' => function(ServerRequest $request, RequestHandler $handler) use (&$ran) {
-                $ran = true;
-
-                return $handler->handle($request);
-            }
-        ]);
-
-        $queue = new MiddlewareQueue([
-            RouterMiddleware::class
-        ]);
-
-        $handler = new RequestHandler($queue);
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
-        ]);
-
-        $this->assertInstanceOf(
-            ClientResponse::class,
-            $handler->handle($request)
-        );
-
-        $this->assertTrue($ran);
-    }
-
     public function testGroupMiddleware(): void
     {
         $results = [];
@@ -58,8 +23,8 @@ trait MiddlewareTestTrait
                     $results[] = 'test1';
 
                     return $handler->handle($request);
-                }
-            ]
+                },
+            ],
         ], function() use (&$results): void {
             Router::connect('test', HomeController::class, [
                 'middleware' => [
@@ -67,13 +32,13 @@ trait MiddlewareTestTrait
                         $results[] = 'test2';
 
                         return $handler->handle($request);
-                    }
-                ]
+                    },
+                ],
             ]);
         });
 
         $queue = new MiddlewareQueue([
-            RouterMiddleware::class
+            RouterMiddleware::class,
         ]);
 
         $handler = new RequestHandler($queue);
@@ -81,9 +46,9 @@ trait MiddlewareTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
         ]);
 
         $this->assertInstanceOf(
@@ -94,7 +59,7 @@ trait MiddlewareTestTrait
         $this->assertSame(
             [
                 'test1',
-                'test2'
+                'test2',
             ],
             $results
         );
@@ -110,17 +75,17 @@ trait MiddlewareTestTrait
                     $results[] = 'test1';
 
                     return $handler->handle($request);
-                }
-            ]
+                },
+            ],
         ], function() use (&$results): void {
             Router::group([
                 'middleware' => [
                     function(ServerRequest $request, RequestHandler $handler) use (&$results): ClientResponse {
                         $results[] = 'test2';
-    
+
                         return $handler->handle($request);
-                    }
-                ]
+                    },
+                ],
             ], function() use (&$results): void {
                 Router::connect('test', HomeController::class, [
                     'middleware' => [
@@ -128,14 +93,14 @@ trait MiddlewareTestTrait
                             $results[] = 'test3';
 
                             return $handler->handle($request);
-                        }
-                    ]
+                        },
+                    ],
                 ]);
             });
         });
 
         $queue = new MiddlewareQueue([
-            RouterMiddleware::class
+            RouterMiddleware::class,
         ]);
 
         $handler = new RequestHandler($queue);
@@ -143,9 +108,9 @@ trait MiddlewareTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
         ]);
 
         $this->assertInstanceOf(
@@ -157,10 +122,43 @@ trait MiddlewareTestTrait
             [
                 'test1',
                 'test2',
-                'test3'
+                'test3',
             ],
             $results
         );
     }
 
+    public function testMiddleware(): void
+    {
+        $ran = false;
+
+        Router::connect('test', HomeController::class, [
+            'middleware' => function(ServerRequest $request, RequestHandler $handler) use (&$ran) {
+                $ran = true;
+
+                return $handler->handle($request);
+            },
+        ]);
+
+        $queue = new MiddlewareQueue([
+            RouterMiddleware::class,
+        ]);
+
+        $handler = new RequestHandler($queue);
+
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
+        ]);
+
+        $this->assertInstanceOf(
+            ClientResponse::class,
+            $handler->handle($request)
+        );
+
+        $this->assertTrue($ran);
+    }
 }

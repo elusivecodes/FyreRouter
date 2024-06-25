@@ -14,7 +14,6 @@ use Tests\Mock\Controller\HomeController;
 
 final class RouterMiddlewareTest extends TestCase
 {
-
     public function testProcessClosureRoute(): void
     {
         $ran = false;
@@ -28,7 +27,7 @@ final class RouterMiddlewareTest extends TestCase
         Router::connect('test', $function);
 
         $queue = new MiddlewareQueue([
-            RouterMiddleware::class
+            RouterMiddleware::class,
         ]);
 
         $handler = new RequestHandler($queue);
@@ -36,9 +35,9 @@ final class RouterMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
         ]);
 
         $this->assertInstanceOf(
@@ -54,7 +53,7 @@ final class RouterMiddlewareTest extends TestCase
         Router::connect('test', HomeController::class);
 
         $queue = new MiddlewareQueue([
-            RouterMiddleware::class
+            RouterMiddleware::class,
         ]);
 
         $handler = new RequestHandler($queue);
@@ -62,9 +61,9 @@ final class RouterMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
         ]);
 
         $this->assertInstanceOf(
@@ -78,7 +77,7 @@ final class RouterMiddlewareTest extends TestCase
         Router::redirect('test', 'https://test.com/');
 
         $queue = new MiddlewareQueue([
-            RouterMiddleware::class
+            RouterMiddleware::class,
         ]);
 
         $handler = new RequestHandler($queue);
@@ -86,9 +85,9 @@ final class RouterMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
         ]);
 
         $response = $handler->handle($request);
@@ -113,5 +112,4 @@ final class RouterMiddlewareTest extends TestCase
     {
         Router::clear();
     }
-
 }

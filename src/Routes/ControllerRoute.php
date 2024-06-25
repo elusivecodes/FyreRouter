@@ -18,13 +18,13 @@ use function method_exists;
  */
 class ControllerRoute extends Route
 {
+    protected string $action;
 
     protected string $controller;
 
-    protected string $action;
-
     /**
      * New ControllerRoute constructor.
+     *
      * @param array $destination The route destination.
      * @param string $path The route path.
      */
@@ -38,6 +38,7 @@ class ControllerRoute extends Route
 
     /**
      * Get the route controller action.
+     *
      * @return string The route controller action.
      */
     public function getAction(): string
@@ -47,6 +48,7 @@ class ControllerRoute extends Route
 
     /**
      * Get the route controller class name.
+     *
      * @return string The route controller class name.
      */
     public function getController(): string
@@ -56,8 +58,10 @@ class ControllerRoute extends Route
 
     /**
      * Process the route.
+     *
      * @param ServerRequest $request The ServerRequest.
      * @return ClientResponse|string The ClientResponse or string response.
+     *
      * @throws RouterException if the controller class or method is not valid.
      */
     public function process(ServerRequest $request, ClientResponse $response): ClientResponse|string
@@ -74,5 +78,4 @@ class ControllerRoute extends Route
 
         return call_user_func([$controller, $this->action], ...$this->arguments);
     }
-
 }

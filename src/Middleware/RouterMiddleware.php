@@ -17,9 +17,9 @@ use function is_string;
  */
 class RouterMiddleware extends Middleware
 {
-
     /**
      * Process a ServerRequest.
+     *
      * @param ServerRequest $request The ServerRequest.
      * @param RequestHandler $handler The RequestHandler.
      * @return ClientResponse The ClientResponse.
@@ -54,5 +54,4 @@ class RouterMiddleware extends Middleware
 
         return $handler->handle($request);
     }
-
 }

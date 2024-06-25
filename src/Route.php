@@ -13,31 +13,31 @@ use function array_slice;
 use function array_values;
 use function in_array;
 use function preg_match;
-use function strtolower;
 use function str_replace;
+use function strtolower;
 
 /**
  * Route
  */
 abstract class Route
 {
+    protected array $arguments = [];
 
-    protected Closure|string|array $destination;
-
-    protected string $path;
+    protected array|Closure|string $destination;
 
     protected array $methods = [];
 
     protected array $middleware = [];
 
-    protected array $arguments = [];
+    protected string $path;
 
     /**
      * New Route constructor.
+     *
      * @param Closure|string|array $destination The route destination.
      * @param string $path The route path.
      */
-    public function __construct(Closure|string|array $destination, string $path = '')
+    public function __construct(array|Closure|string $destination, string $path = '')
     {
         $this->destination = $destination;
         $this->path = $path;
@@ -45,6 +45,7 @@ abstract class Route
 
     /**
      * Check if the route matches a test method.
+     *
      * @param string $method The test method.
      * @return bool TRUE if the method matches, otherwise FALSE.
      */
@@ -61,16 +62,18 @@ abstract class Route
 
     /**
      * Check if the route matches a test path.
+     *
      * @param string $path The test path.
      * @return bool TRUE if the path matches, otherwise FALSE.
      */
     public function checkPath(string $path): bool
     {
-        return !!preg_match($this->getPathRegExp(), $path);
+        return (bool) preg_match($this->getPathRegExp(), $path);
     }
 
     /**
      * Get the route arguments.
+     *
      * @return array The route arguments.
      */
     public function getArguments(): array
@@ -80,15 +83,17 @@ abstract class Route
 
     /**
      * Get the route destination.
+     *
      * @return Closure|string|array The route destination.
      */
-    public function getDestination(): Closure|string|array
+    public function getDestination(): array|Closure|string
     {
         return $this->destination;
     }
 
     /**
      * Get the route middleware.
+     *
      * @return array The route middleware.
      */
     public function getMiddleware(): array
@@ -98,6 +103,7 @@ abstract class Route
 
     /**
      * Get the route path.
+     *
      * @return string The route path.
      */
     public function getPath(): string
@@ -107,6 +113,7 @@ abstract class Route
 
     /**
      * Process the route.
+     *
      * @param ServerRequest $request The ServerRequest.
      * @param ClientResponse $response The ClientResponse.
      * @return ClientResponse|string The ClientResponse or string response.
@@ -115,6 +122,7 @@ abstract class Route
 
     /**
      * Set the route arguments from a path.
+     *
      * @param string $path The path.
      * @return Route A new Route.
      */
@@ -131,6 +139,7 @@ abstract class Route
 
     /**
      * Set the route methods.
+     *
      * @param array $methods The route methods.
      * @return Route A new Route.
      */
@@ -148,6 +157,7 @@ abstract class Route
 
     /**
      * Set the route middleware.
+     *
      * @param array $middleware The route middleware.
      * @return Route A new Route.
      */
@@ -162,6 +172,7 @@ abstract class Route
 
     /**
      * Get the route path regular rexpression.
+     *
      * @return string The route path regular expression.
      */
     protected function getPathRegExp(): string
@@ -178,5 +189,4 @@ abstract class Route
 
         return '`^'.$path.'$`u';
     }
-
 }

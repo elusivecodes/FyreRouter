@@ -10,7 +10,6 @@ use Fyre\Server\ServerRequest;
 
 trait RedirectTestTrait
 {
-
     public function testRedirect(): void
     {
         Router::redirect('test', 'https://test.com/');
@@ -18,9 +17,9 @@ trait RedirectTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -45,9 +44,9 @@ trait RedirectTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test/a/2'
-                ]
-            ]
+                    'REQUEST_URI' => '/test/a/2',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -76,5 +75,4 @@ trait RedirectTestTrait
             $response->getHeaderValue('Location')
         );
     }
-
 }

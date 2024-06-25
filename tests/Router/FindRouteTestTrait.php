@@ -12,6 +12,38 @@ use Tests\Mock\Controller\TestController;
 
 trait FindRouteTestTrait
 {
+    public function testInvalidAction(): void
+    {
+        $this->expectException(RouterException::class);
+
+        Router::get('test', TestController::class);
+
+        $request = new ServerRequest([
+            'method' => 'post',
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
+        ]);
+
+        Router::loadRoute($request);
+    }
+
+    public function testInvalidRoute(): void
+    {
+        $this->expectException(RouterException::class);
+
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
+        ]);
+
+        Router::loadRoute($request);
+    }
 
     public function testRouteOrder(): void
     {
@@ -21,9 +53,9 @@ trait FindRouteTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -40,38 +72,4 @@ trait FindRouteTestTrait
             $route->getController()
         );
     }
-
-    public function testInvalidAction(): void
-    {
-        $this->expectException(RouterException::class);
-
-        Router::get('test', TestController::class);
-
-        $request = new ServerRequest([
-            'method' => 'post',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-    }
-
-    public function testInvalidRoute(): void
-    {
-        $this->expectException(RouterException::class);
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
-        ]);
-
-        Router::loadRoute($request);
-    }
-
 }

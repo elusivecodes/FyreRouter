@@ -10,7 +10,6 @@ use RuntimeException;
  */
 class RouterException extends RuntimeException
 {
-
     public static function forInvalidController(string $controller): static
     {
         return new static('Invalid controller class: '.$controller);
@@ -40,5 +39,4 @@ class RouterException extends RuntimeException
     {
         return new static('Missing route parameter');
     }
-
 }

@@ -5,15 +5,13 @@ namespace Tests\Mock\Controller;
 
 class HomeController
 {
-
-    public function index(): string
-    {
-        return '';
-    }
-
     public function altMethod(): string
     {
         return '';
     }
 
+    public function index(): string
+    {
+        return '';
+    }
 }

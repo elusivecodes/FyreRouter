@@ -10,12 +10,13 @@ use Tests\Mock\Controller\TestController;
 
 final class ControllerRouteTest extends TestCase
 {
-
-    public function testRoute(): void
+    public function testGetAction(): void
     {
-        $this->assertInstanceOf(
-            Route::class,
-            new ControllerRoute([TestController::class])
+        $route = new ControllerRoute([TestController::class, 'test']);
+
+        $this->assertSame(
+            'test',
+            $route->getAction()
         );
     }
 
@@ -39,13 +40,11 @@ final class ControllerRouteTest extends TestCase
         );
     }
 
-    public function testGetAction(): void
+    public function testRoute(): void
     {
-        $route = new ControllerRoute([TestController::class, 'test']);
-
-        $this->assertSame(
-            'test',
-            $route->getAction()
+        $this->assertInstanceOf(
+            Route::class,
+            new ControllerRoute([TestController::class])
         );
     }
 
@@ -62,10 +61,9 @@ final class ControllerRouteTest extends TestCase
         $this->assertSame(
             [
                 'a',
-                '1'
+                '1',
             ],
             $route2->getArguments()
         );
     }
-
 }

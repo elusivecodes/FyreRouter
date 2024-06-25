@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 final class RouterTest extends TestCase
 {
-
     use BaseUriTestTrait;
     use ConnectTestTrait;
     use DeleteTestTrait;
@@ -28,5 +27,4 @@ final class RouterTest extends TestCase
     {
         Router::clear();
     }
-
 }

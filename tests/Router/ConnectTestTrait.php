@@ -10,7 +10,6 @@ use Tests\Mock\Controller\HomeController;
 
 trait ConnectTestTrait
 {
-
     public function testConnectLeadingSlash(): void
     {
         Router::connect('/home', HomeController::class);
@@ -18,9 +17,9 @@ trait ConnectTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home'
-                ]
-            ]
+                    'REQUEST_URI' => '/home',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -45,9 +44,9 @@ trait ConnectTestTrait
         $request = new ServerRequest([
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home'
-                ]
-            ]
+                    'REQUEST_URI' => '/home',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -64,5 +63,4 @@ trait ConnectTestTrait
             $route->getController()
         );
     }
-
 }

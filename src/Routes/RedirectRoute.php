@@ -15,9 +15,9 @@ use function preg_replace_callback;
  */
 class RedirectRoute extends Route
 {
-
     /**
      * New RedirectRoute constructor.
+     *
      * @param string $destination The route destination.
      * @param string $path The route path.
      */
@@ -28,6 +28,7 @@ class RedirectRoute extends Route
 
     /**
      * Process the route.
+     *
      * @param ServerRequest $request The ServerRequest.
      * @param ClientResponse $response The ClientResponse.
      * @return ClientResponse The ClientResponse.
@@ -42,5 +43,4 @@ class RedirectRoute extends Route
 
         return new RedirectResponse($destination);
     }
-
 }

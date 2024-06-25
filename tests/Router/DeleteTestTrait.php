@@ -7,12 +7,10 @@ use Fyre\Router\Router;
 use Fyre\Router\Routes\ClosureRoute;
 use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Server\ServerRequest;
-use Tests\Mock\Controller\Deep\ExampleController;
 use Tests\Mock\Controller\HomeController;
 
 trait DeleteTestTrait
 {
-
     public function testDelete(): void
     {
         Router::delete('home', HomeController::class);
@@ -21,9 +19,9 @@ trait DeleteTestTrait
             'method' => 'delete',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home'
-                ]
-            ]
+                    'REQUEST_URI' => '/home',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -54,9 +52,9 @@ trait DeleteTestTrait
             'method' => 'delete',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home/alternate'
-                ]
-            ]
+                    'REQUEST_URI' => '/home/alternate',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -87,9 +85,9 @@ trait DeleteTestTrait
             'method' => 'delete',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/home/alternate/test/a/2'
-                ]
-            ]
+                    'REQUEST_URI' => '/home/alternate/test/a/2',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -115,7 +113,7 @@ trait DeleteTestTrait
             [
                 'test',
                 'a',
-                '2'
+                '2',
             ],
             $route->getArguments()
         );
@@ -131,9 +129,9 @@ trait DeleteTestTrait
             'method' => 'delete',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test'
-                ]
-            ]
+                    'REQUEST_URI' => '/test',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -161,9 +159,9 @@ trait DeleteTestTrait
             'method' => 'delete',
             'globals' => [
                 'server' => [
-                    'REQUEST_URI' => '/test/a/2'
-                ]
-            ]
+                    'REQUEST_URI' => '/test/a/2',
+                ],
+            ],
         ]);
 
         Router::loadRoute($request);
@@ -183,10 +181,9 @@ trait DeleteTestTrait
         $this->assertSame(
             [
                 'a',
-                '2'
+                '2',
             ],
             $route->getArguments()
         );
     }
-
 }

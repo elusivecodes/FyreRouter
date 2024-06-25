@@ -15,9 +15,9 @@ use function call_user_func;
  */
 class ClosureRoute extends Route
 {
-
     /**
      * New ClosureRoute constructor.
+     *
      * @param Closure $destination The route destination.
      * @param string $path The route path.
      */
@@ -28,6 +28,7 @@ class ClosureRoute extends Route
 
     /**
      * Process the route.
+     *
      * @param ServerRequest $request The ServerRequest.
      * @param ClientResponse $response The ClientResponse.
      * @return ClientResponse|string The ClientResponse or string response.
@@ -36,5 +37,4 @@ class ClosureRoute extends Route
     {
         return call_user_func($this->destination, ...$this->arguments);
     }
-
 }

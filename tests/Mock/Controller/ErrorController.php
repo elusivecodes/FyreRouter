@@ -5,10 +5,8 @@ namespace Tests\Mock\Controller;
 
 class ErrorController
 {
-
     public function index(): string
     {
         return '';
     }
-
 }

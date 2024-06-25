@@ -11,8 +11,6 @@ use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Router\Routes\RedirectRoute;
 use Fyre\Server\ServerRequest;
 
-use const PREG_OFFSET_CAPTURE;
-
 use function array_key_exists;
 use function array_map;
 use function array_merge;
@@ -29,33 +27,35 @@ use function substr;
 use function substr_replace;
 use function trim;
 
+use const PREG_OFFSET_CAPTURE;
+
 /**
  * Router
  */
 abstract class Router
 {
+    protected static Uri|null $baseUri = null;
+
+    protected static Route|null $currentRoute = null;
+
+    protected static array $groups = [];
 
     protected static array $placeholders = [
         'alpha' => '[a-zA-Z]+',
         'alphanum' => '[a-zA-Z0-9]+',
         'num' => '\d+',
-        'segment' => '[^/]+'
+        'segment' => '[^/]+',
     ];
-
-    protected static array $routes = [];
-
-    protected static array $routeAliases = [];
-
-    protected static array $groups = [];
 
     protected static ServerRequest|null $request = null;
 
-    protected static Uri|null $baseUri = null;
+    protected static array $routeAliases = [];
 
-    protected static Route|null $currentRoute = null;
+    protected static array $routes = [];
 
     /**
      * Add a placeholder.
+     *
      * @param string $placeholder The placeholder.
      * @param string $pattern The placeholder pattern.
      */
@@ -77,11 +77,12 @@ abstract class Router
 
     /**
      * Connect a route.
+     *
      * @param string $path The route path.
      * @param Closure|string|array $destination The route destination.
      * @param array $options Options for configuring the route.
      */
-    public static function connect(string $path, Closure|string|array $destination, array $options = []): void
+    public static function connect(string $path, array|Closure|string $destination, array $options = []): void
     {
         $options['redirect'] ??= false;
 
@@ -94,7 +95,7 @@ abstract class Router
         $groupPrefixes = [];
         $groupMiddleware = [];
 
-        foreach (static::$groups AS $group) {
+        foreach (static::$groups as $group) {
             if ($group['as']) {
                 $groupAliases[] = $group['as'];
             }
@@ -103,7 +104,7 @@ abstract class Router
                 $groupPrefixes[] = static::normalizePath($group['prefix']);
             }
 
-            foreach ((array) $group['middleware'] AS $tempMiddleware) {
+            foreach ((array) $group['middleware'] as $tempMiddleware) {
                 $groupMiddleware[] = $tempMiddleware;
             }
         }
@@ -139,28 +140,31 @@ abstract class Router
 
     /**
      * Connect a DELETE route.
+     *
      * @param string $path The route path.
      * @param Closure|string|array $destination The route destination.
      * @param array $options Options for configuring the route.
      */
-    public static function delete(string $path, Closure|string|array $destination, array $options = []): void
+    public static function delete(string $path, array|Closure|string $destination, array $options = []): void
     {
         static::connect($path, $destination, $options + ['method' => 'delete']);
     }
 
     /**
      * Connect a GET route.
+     *
      * @param string $path The route path.
      * @param Closure|string|array $destination The route destination.
      * @param array $options Options for configuring the route.
      */
-    public static function get(string $path, Closure|string|array $destination, array $options = []): void
+    public static function get(string $path, array|Closure|string $destination, array $options = []): void
     {
         static::connect($path, $destination, $options + ['method' => 'get']);
     }
 
     /**
      * Get the base uri.
+     *
      * @return string|null The base uri.
      */
     public static function getBaseUri(): string|null
@@ -172,6 +176,7 @@ abstract class Router
 
     /**
      * Get the placeholders.
+     *
      * @return array The placeholders.
      */
     public static function getPlaceholders(): array
@@ -181,6 +186,7 @@ abstract class Router
 
     /**
      * Get the ServerRequest.
+     *
      * @return ServerRequest The ServerRequest.
      */
     public static function getRequest(): ServerRequest|null
@@ -190,6 +196,7 @@ abstract class Router
 
     /**
      * Get the current route.
+     *
      * @return Route|null The current route.
      */
     public static function getRoute(): Route|null
@@ -199,6 +206,7 @@ abstract class Router
 
     /**
      * Create a group of routes.
+     *
      * @param array $options The group options.
      * @param Closure $callback The callback to define routes.
      */
@@ -217,7 +225,9 @@ abstract class Router
 
     /**
      * Load a route.
+     *
      * @param ServerRequest $request The ServerRequest.
+     *
      * @throws RouterException if the route was not found.
      */
     public static function loadRoute(ServerRequest $request): void
@@ -241,7 +251,7 @@ abstract class Router
             }
         }
 
-        foreach (static::$routes AS $route) {
+        foreach (static::$routes as $route) {
             if (!$route->checkMethod($method) || !$route->checkPath($path)) {
                 continue;
             }
@@ -256,39 +266,43 @@ abstract class Router
 
     /**
      * Connect a PATCH route.
+     *
      * @param string $path The route path.
      * @param Closure|string|array $destination The route destination.
      * @param array $options Options for configuring the route.
      */
-    public static function patch(string $path, Closure|string|array $destination, array $options = []): void
+    public static function patch(string $path, array|Closure|string $destination, array $options = []): void
     {
         static::connect($path, $destination, $options + ['method' => 'patch']);
     }
 
     /**
      * Connect a POST route.
+     *
      * @param string $path The route path.
      * @param Closure|string|array $destination The route destination.
      * @param array $options Options for configuring the route.
      */
-    public static function post(string $path, Closure|string|array $destination, array $options = []): void
+    public static function post(string $path, array|Closure|string $destination, array $options = []): void
     {
         static::connect($path, $destination, $options + ['method' => 'post']);
     }
 
     /**
      * Connect a PUT route.
+     *
      * @param string $path The route path.
      * @param Closure|string|array $destination The route destination.
      * @param array $options Options for configuring the route.
      */
-    public static function put(string $path, Closure|string|array $destination, array $options = []): void
+    public static function put(string $path, array|Closure|string $destination, array $options = []): void
     {
         static::connect($path, $destination, $options + ['method' => 'put']);
     }
 
     /**
      * Connect a redirect route.
+     *
      * @param string $path The route path.
      * @param string $destination The route destination.
      * @param array $options Options for configuring the route.
@@ -300,6 +314,7 @@ abstract class Router
 
     /**
      * Set the base uri.
+     *
      * @param string $baseUri The uri.
      */
     public static function setBaseUri(string $baseUri): void
@@ -309,7 +324,6 @@ abstract class Router
 
     /**
      * Set the ServerRequest.
-     * @param ServerRequest $request
      */
     public static function setRequest(ServerRequest $request): void
     {
@@ -318,10 +332,12 @@ abstract class Router
 
     /**
      * Generate a URL for a named route.
+     *
      * @param string $name The name.
      * @param array $arguments The route arguments
      * @param array $options The route options.
      * @return string The URL.
+     *
      * @throws RouterException for invalid alias, or invalid arguments.
      */
     public static function url(string $name, array $arguments = [], array $options = []): string
@@ -388,6 +404,7 @@ abstract class Router
 
     /**
      * Normalize a path
+     *
      * @param string $path The path.
      * @return string The normalized path.
      */
@@ -395,5 +412,4 @@ abstract class Router
     {
         return '/'.trim($path, '/');
     }
-
 }
