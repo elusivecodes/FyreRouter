@@ -79,7 +79,7 @@ abstract class Router
      * Connect a route.
      *
      * @param string $path The route path.
-     * @param Closure|string|array $destination The route destination.
+     * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
      */
     public static function connect(string $path, array|Closure|string $destination, array $options = []): void
@@ -142,7 +142,7 @@ abstract class Router
      * Connect a DELETE route.
      *
      * @param string $path The route path.
-     * @param Closure|string|array $destination The route destination.
+     * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
      */
     public static function delete(string $path, array|Closure|string $destination, array $options = []): void
@@ -154,7 +154,7 @@ abstract class Router
      * Connect a GET route.
      *
      * @param string $path The route path.
-     * @param Closure|string|array $destination The route destination.
+     * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
      */
     public static function get(string $path, array|Closure|string $destination, array $options = []): void
@@ -268,7 +268,7 @@ abstract class Router
      * Connect a PATCH route.
      *
      * @param string $path The route path.
-     * @param Closure|string|array $destination The route destination.
+     * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
      */
     public static function patch(string $path, array|Closure|string $destination, array $options = []): void
@@ -280,7 +280,7 @@ abstract class Router
      * Connect a POST route.
      *
      * @param string $path The route path.
-     * @param Closure|string|array $destination The route destination.
+     * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
      */
     public static function post(string $path, array|Closure|string $destination, array $options = []): void
@@ -292,7 +292,7 @@ abstract class Router
      * Connect a PUT route.
      *
      * @param string $path The route path.
-     * @param Closure|string|array $destination The route destination.
+     * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
      */
     public static function put(string $path, array|Closure|string $destination, array $options = []): void

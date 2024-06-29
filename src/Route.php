@@ -34,7 +34,7 @@ abstract class Route
     /**
      * New Route constructor.
      *
-     * @param Closure|string|array $destination The route destination.
+     * @param array|Closure|string $destination The route destination.
      * @param string $path The route path.
      */
     public function __construct(array|Closure|string $destination, string $path = '')
@@ -84,7 +84,7 @@ abstract class Route
     /**
      * Get the route destination.
      *
-     * @return Closure|string|array The route destination.
+     * @return array|Closure|string The route destination.
      */
     public function getDestination(): array|Closure|string
     {
