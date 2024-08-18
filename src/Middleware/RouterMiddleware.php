@@ -28,13 +28,12 @@ class RouterMiddleware extends Middleware
     {
         Router::loadRoute($request);
 
-        $response = $handler->handle($request);
+        $middleware = Router::getRoute()->getMiddleware();
 
-        $route = Router::getRoute();
-        $middleware = $route->getMiddleware();
+        $processRoute = function(ServerRequest $request, RequestHandler $handler): ClientResponse {
+            $response = $handler->handle($request);
 
-        $processRoute = function() use ($route, $request, $response): ClientResponse {
-            $result = $route->process($request, $response);
+            $result = Router::getRoute()->process($request, $response);
 
             if (is_string($result)) {
                 return $response->setBody($result);
@@ -44,14 +43,16 @@ class RouterMiddleware extends Middleware
         };
 
         if ($middleware === []) {
-            return $processRoute();
+            return $processRoute($request, $handler);
         }
 
         $middleware[] = $processRoute;
 
-        $queue = new MiddlewareQueue($middleware);
-        $handler = new RequestHandler($queue, $response);
+        $response = $handler->handle($request);
 
-        return $handler->handle($request);
+        $queue = new MiddlewareQueue($middleware);
+        $innerHandler = new RequestHandler($queue, $response);
+
+        return $innerHandler->handle($request);
     }
 }
