@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
+use Fyre\Middleware\ClosureMiddleware;
+use Fyre\Middleware\Middleware;
 use Fyre\Middleware\MiddlewareQueue;
+use Fyre\Middleware\MiddlewareRegistry;
 use Fyre\Middleware\RequestHandler;
 use Fyre\Router\Middleware\RouterMiddleware;
 use Fyre\Router\Router;
@@ -160,5 +163,48 @@ trait MiddlewareTestTrait
         );
 
         $this->assertTrue($ran);
+    }
+
+    public function testMiddlewareArgs(): void
+    {
+        $results = null;
+
+        MiddlewareRegistry::map('test', function() use (&$results): Middleware {
+            return new ClosureMiddleware(function(ServerRequest $request, RequestHandler $handler, string ...$args) use (&$results) {
+                $results = $args;
+
+                return $handler->handle($request);
+            });
+        });
+
+        Router::connect('test/(:segment)', HomeController::class, [
+            'middleware' => [
+                'test:{1},1',
+            ],
+        ]);
+
+        $queue = new MiddlewareQueue([
+            RouterMiddleware::class,
+        ]);
+
+        $handler = new RequestHandler($queue);
+
+        $request = new ServerRequest([
+            'globals' => [
+                'server' => [
+                    'REQUEST_URI' => '/test/2',
+                ],
+            ],
+        ]);
+
+        $this->assertInstanceOf(
+            ClientResponse::class,
+            $handler->handle($request)
+        );
+
+        $this->assertSame(
+            ['2', '1'],
+            $results
+        );
     }
 }

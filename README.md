@@ -79,6 +79,12 @@ Router::redirect($path, $destination, $options);
 
 See the [Routes](#routes) section for supported destination formats.
 
+You can also pass additional arguments to the middleware by appending a colon followed by a comma-separated list of arguments to the string. You can use route placeholders as arguments by referencing the route placeholder index surrounded by curly braces.
+
+```php
+Router::get('test/(.*)', 'test', ['middleware' => 'alias:test,{1}']);
+```
+
 **Get Base Uri**
 
 Get the base uri.
