@@ -101,26 +101,6 @@ Get the placeholders.
 $placeholders = Router::getPlaceholders();
 ```
 
-**Get Request**
-
-Get the server request.
-
-```php
-$request = Router::getRequest();
-```
-
-This method will return a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests).
-
-**Get Route**
-
-Get the loaded route.
-
-```php
-$route = Router::getRoute();
-```
-
-This method will return a [*Route*](#routes).
-
 **Group**
 
 Create a group of routes.
@@ -142,8 +122,10 @@ Load a route.
 - `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests).
 
 ```php
-Router::loadRoute($request);
+$request = Router::loadRoute($request);
 ```
+
+This method will return a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests), with the `route` parameter set to the loaded route.
 
 **Set Base Uri**
 
@@ -153,16 +135,6 @@ Set the base uri.
 
 ```php
 Router::getBaseUri($baseUri);
-```
-
-**Set Request**
-
-Set the server request.
-
-- `$request` is a [*ServerRequest*](https://github.com/elusivecodes/FyreServer#server-requests).
-
-```php
-Router::setRequest($request);
 ```
 
 **Url**

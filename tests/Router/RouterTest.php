@@ -20,7 +20,6 @@ final class RouterTest extends TestCase
     use PrefixTestTrait;
     use PutTestTrait;
     use RedirectTestTrait;
-    use ServerRequestTestTrait;
     use UrlTestTrait;
 
     protected function setUp(): void

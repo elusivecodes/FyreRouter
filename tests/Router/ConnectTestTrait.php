@@ -22,9 +22,7 @@ trait ConnectTestTrait
             ],
         ]);
 
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
+        $route = Router::loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -49,9 +47,7 @@ trait ConnectTestTrait
             ],
         ]);
 
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
+        $route = Router::loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,

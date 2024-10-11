@@ -10,6 +10,7 @@ use Fyre\Router\Router;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
 
+use function call_user_func_array;
 use function explode;
 use function implode;
 use function is_string;
@@ -30,15 +31,15 @@ class RouterMiddleware extends Middleware
      */
     public function process(ServerRequest $request, RequestHandler $handler): ClientResponse
     {
-        Router::loadRoute($request);
+        $request = Router::loadRoute($request);
 
-        $route = Router::getRoute();
+        $route = $request->getParam('route');
         $routeMiddleware = $route->getMiddleware();
 
-        $processRoute = function(ServerRequest $request, RequestHandler $handler): ClientResponse {
+        $processRoute = function(ServerRequest $request, RequestHandler $handler) use ($route): ClientResponse {
             $response = $handler->handle($request);
 
-            $result = Router::getRoute()->process($request, $response);
+            $result = $route->process($request, $response);
 
             if (is_string($result)) {
                 return $response->setBody($result);
@@ -48,7 +49,7 @@ class RouterMiddleware extends Middleware
         };
 
         if ($routeMiddleware === []) {
-            return $processRoute($request, $handler);
+            return call_user_func_array($processRoute, [$request, $handler]);
         }
 
         foreach ($routeMiddleware as $i => $middleware) {

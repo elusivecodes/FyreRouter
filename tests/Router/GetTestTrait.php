@@ -23,9 +23,7 @@ trait GetTestTrait
             ],
         ]);
 
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
+        $route = Router::loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -55,9 +53,7 @@ trait GetTestTrait
             ],
         ]);
 
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
+        $route = Router::loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -87,9 +83,7 @@ trait GetTestTrait
             ],
         ]);
 
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
+        $route = Router::loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -130,9 +124,7 @@ trait GetTestTrait
             ],
         ]);
 
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
+        $route = Router::loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ClosureRoute::class,
@@ -159,9 +151,7 @@ trait GetTestTrait
             ],
         ]);
 
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
+        $route = Router::loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ClosureRoute::class,

@@ -22,9 +22,7 @@ trait RedirectTestTrait
             ],
         ]);
 
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
+        $route = Router::loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             RedirectRoute::class,
@@ -48,11 +46,7 @@ trait RedirectTestTrait
                 ],
             ],
         ]);
-
-        Router::loadRoute($request);
-
-        $route = Router::getRoute();
-
+        $route = Router::loadRoute($request)->getParam('route');
         $this->assertInstanceOf(
             RedirectRoute::class,
             $route

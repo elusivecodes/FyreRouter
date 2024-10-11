@@ -36,8 +36,6 @@ abstract class Router
 {
     protected static Uri|null $baseUri = null;
 
-    protected static Route|null $currentRoute = null;
-
     protected static array $groups = [];
 
     protected static array $placeholders = [
@@ -46,8 +44,6 @@ abstract class Router
         'num' => '\d+',
         'segment' => '[^/]+',
     ];
-
-    protected static ServerRequest|null $request = null;
 
     protected static array $routeAliases = [];
 
@@ -71,7 +67,6 @@ abstract class Router
     {
         static::$routes = [];
         static::$routeAliases = [];
-        static::$currentRoute = null;
         static::$baseUri = null;
     }
 
@@ -185,26 +180,6 @@ abstract class Router
     }
 
     /**
-     * Get the ServerRequest.
-     *
-     * @return ServerRequest The ServerRequest.
-     */
-    public static function getRequest(): ServerRequest|null
-    {
-        return static::$request;
-    }
-
-    /**
-     * Get the current route.
-     *
-     * @return Route|null The current route.
-     */
-    public static function getRoute(): Route|null
-    {
-        return static::$currentRoute;
-    }
-
-    /**
      * Create a group of routes.
      *
      * @param array $options The group options.
@@ -227,13 +202,12 @@ abstract class Router
      * Load a route.
      *
      * @param ServerRequest $request The ServerRequest.
+     * @return ServerRequest The ServerRequest.
      *
      * @throws RouterException if the route was not found.
      */
-    public static function loadRoute(ServerRequest $request): void
+    public static function loadRoute(ServerRequest $request): ServerRequest
     {
-        static::$request = $request;
-
         $path = $request->getUri()->getPath();
         $method = $request->getMethod();
 
@@ -256,9 +230,9 @@ abstract class Router
                 continue;
             }
 
-            static::$currentRoute = $route->setArgumentsFromPath($path);
+            $route = $route->setArgumentsFromPath($path);
 
-            return;
+            return $request->setParam('route', $route);
         }
 
         throw RouterException::forInvalidRoute($path);
@@ -320,14 +294,6 @@ abstract class Router
     public static function setBaseUri(string $baseUri): void
     {
         static::$baseUri = Uri::fromString($baseUri);
-    }
-
-    /**
-     * Set the ServerRequest.
-     */
-    public static function setRequest(ServerRequest $request): void
-    {
-        static::$request = $request;
     }
 
     /**
