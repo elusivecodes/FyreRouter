@@ -39,12 +39,13 @@ class RouterMiddleware extends Middleware
             Closure::bind(function() use ($route, $routeMiddleware): void {
                 $this->queue = clone $this->queue;
 
-                foreach ($routeMiddleware AS $middleware) {
+                foreach ($routeMiddleware as $middleware) {
                     if (!is_string($middleware) || !str_contains($middleware, ':')) {
                         $this->queue->add($middleware);
+
                         continue;
                     }
-                
+
                     $routeArgs ??= $route->getArguments();
                     [$alias, $args] = explode(':', $middleware, 2);
 

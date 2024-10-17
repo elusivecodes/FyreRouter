@@ -8,8 +8,6 @@ use Fyre\Router\Route;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
 
-use function call_user_func;
-
 /**
  * ClosureRoute
  */
@@ -35,6 +33,6 @@ class ClosureRoute extends Route
      */
     public function process(ServerRequest $request, ClientResponse $response): ClientResponse|string
     {
-        return call_user_func($this->destination, ...$this->arguments);
+        return ($this->destination)(...$this->arguments);
     }
 }

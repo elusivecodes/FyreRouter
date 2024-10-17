@@ -9,7 +9,6 @@ use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
 
 use function array_shift;
-use function call_user_func;
 use function class_exists;
 use function method_exists;
 
@@ -76,6 +75,6 @@ class ControllerRoute extends Route
 
         $controller = new $this->controller($request, $response);
 
-        return call_user_func([$controller, $this->action], ...$this->arguments);
+        return $controller->{$this->action}(...$this->arguments);
     }
 }
