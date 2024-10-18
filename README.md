@@ -275,7 +275,7 @@ You can also use custom [*Entity*](https://github.com/elusivecodes/FyreEntities)
 ```php
 use App\Entities\Item;
 
-Router::connect('/items/(:num:)', function(Item $item) {
+Router::connect('/items/(:num)', function(Item $item) {
     return $response;
 });
 ```
@@ -304,7 +304,7 @@ $destination = [MyClass::class, 'method'];
 You can also use custom [*Entity*](https://github.com/elusivecodes/FyreEntities) types for your controller method arguments, where the entity will be looked up automatically using the path parameter via the [*Model*](https://github.com/elusivecodes/FyreORM#models).
 
 ```php
-Router::connect('/items/(:num:)', [ItemsController::class, 'view']);
+Router::connect('/items/(:num)', [ItemsController::class, 'view']);
 
 use App\Entities\Item;
 
