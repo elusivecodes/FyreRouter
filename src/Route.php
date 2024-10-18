@@ -4,14 +4,21 @@ declare(strict_types=1);
 namespace Fyre\Router;
 
 use Closure;
+use Fyre\Entity\Entity;
+use Fyre\Error\Exceptions\NotFoundException;
+use Fyre\ORM\ModelRegistry;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
+use Fyre\Utility\Inflector;
+use ReflectionClass;
+use ReflectionNamedType;
 
 use function array_keys;
 use function array_map;
 use function array_slice;
 use function array_values;
 use function in_array;
+use function is_subclass_of;
 use function preg_match;
 use function str_replace;
 use function strtolower;
@@ -128,11 +135,46 @@ abstract class Route
      */
     public function setArgumentsFromPath(string $path): static
     {
+        preg_match($this->getPathRegExp(), $path, $match);
+
+        $arguments = array_slice($match, 1);
+
+        $params = $this->getParameters();
+
+        foreach ($params as $param) {
+            $i = $param->getPosition();
+            $value = $arguments[$i] ?? null;
+
+            if ($value === null) {
+                continue;
+            }
+
+            $type = $param->getType();
+
+            if (!($type instanceof ReflectionNamedType)) {
+                continue;
+            }
+
+            $name = $type->getName();
+
+            if (!is_subclass_of($name, Entity::class)) {
+                continue;
+            }
+
+            $reflect = new ReflectionClass($name);
+            $alias = $reflect->getProperty('source')->getDefaultValue() ?? Inflector::pluralize($reflect->getShortName());
+            $entity = ModelRegistry::use($alias)->get($arguments[$i]);
+
+            if (!$entity && !$type->allowsNull()) {
+                throw new NotFoundException();
+            }
+
+            $arguments[$i] = $entity;
+        }
+
         $temp = clone $this;
 
-        preg_match($temp->getPathRegExp(), $path, $match);
-
-        $temp->arguments = array_slice($match, 1);
+        $temp->arguments = $arguments;
 
         return $temp;
     }
@@ -168,6 +210,16 @@ abstract class Route
         $temp->middleware = $middleware;
 
         return $temp;
+    }
+
+    /**
+     * Get the reflection parameters.
+     *
+     * @return array The reflection parameters.
+     */
+    protected function getParameters(): array
+    {
+        return [];
     }
 
     /**

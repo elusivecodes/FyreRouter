@@ -7,6 +7,7 @@ use Closure;
 use Fyre\Router\Route;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
+use ReflectionFunction;
 
 /**
  * ClosureRoute
@@ -34,5 +35,15 @@ class ClosureRoute extends Route
     public function process(ServerRequest $request, ClientResponse $response): ClientResponse|string
     {
         return ($this->destination)(...$this->arguments);
+    }
+
+    /**
+     * Get the reflection parameters.
+     *
+     * @return array The reflection parameters.
+     */
+    protected function getParameters(): array
+    {
+        return (new ReflectionFunction($this->destination))->getParameters();
     }
 }

@@ -5,13 +5,13 @@ namespace Fyre\Router\Middleware;
 
 use Closure;
 use Fyre\Middleware\Middleware;
+use Fyre\Middleware\MiddlewareRegistry;
 use Fyre\Middleware\RequestHandler;
 use Fyre\Router\Router;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
 
 use function explode;
-use function implode;
 use function is_string;
 use function preg_replace_callback;
 use function str_contains;
@@ -46,18 +46,21 @@ class RouterMiddleware extends Middleware
                         continue;
                     }
 
-                    $routeArgs ??= $route->getArguments();
                     [$alias, $args] = explode(':', $middleware, 2);
 
-                    $args = preg_replace_callback(
-                        '/{(\d+)}/',
-                        fn(array $matches): string => $routeArgs[$matches[1] - 1] ?? '',
-                        $args
-                    );
+                    $this->queue->add(function(ServerRequest $request, RequestHandler $handler) use ($route, $alias, $args): ClientResponse {
+                        $routeArgs = $route->getArguments();
 
-                    $middleware = implode(':', [$alias, $args]);
+                        $args = preg_replace_callback(
+                            '/{(\d+)}/',
+                            fn(array $matches): string => $routeArgs[$matches[1] - 1] ?? '',
+                            $args
+                        );
+                        $args = explode(',', $args);
 
-                    $this->queue->add($middleware);
+                        return MiddlewareRegistry::use($alias)
+                            ->process($request, $handler, ...$args);
+                    });
                 }
             }, $handler, $handler)();
         }

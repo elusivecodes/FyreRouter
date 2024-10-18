@@ -18,7 +18,7 @@ final class RouterMiddlewareTest extends TestCase
     {
         $ran = false;
 
-        $function = function() use (&$ran) {
+        $function = function() use (&$ran): string {
             $ran = true;
 
             return '';

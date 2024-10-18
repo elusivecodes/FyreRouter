@@ -270,6 +270,16 @@ $destination = function(...$args) {
 };
 ```
 
+You can also use custom [*Entity*](https://github.com/elusivecodes/FyreEntities) types for your arguments, where the entity will be looked up automatically using the path parameter via the [*Model*](https://github.com/elusivecodes/FyreORM#models).
+
+```php
+use App\Entities\Item;
+
+Router::connect('/items/(:num:)', function(Item $item) {
+    return $response;
+});
+```
+
 
 ### Controller Routes
 
@@ -289,6 +299,22 @@ The `$destination` can be expressed in the following formats:
 ```php
 $destination = [MyClass::class]; // defaults to index method
 $destination = [MyClass::class, 'method'];
+```
+
+You can also use custom [*Entity*](https://github.com/elusivecodes/FyreEntities) types for your controller method arguments, where the entity will be looked up automatically using the path parameter via the [*Model*](https://github.com/elusivecodes/FyreORM#models).
+
+```php
+Router::connect('/items/(:num:)', [ItemsController::class, 'view']);
+
+use App\Entities\Item;
+
+class ItemsController
+{
+    public function view(Item $item)
+    {
+        return $response;
+    }
+}
 ```
 
 **Get Action**

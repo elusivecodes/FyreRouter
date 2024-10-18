@@ -7,6 +7,7 @@ use Fyre\Router\Exceptions\RouterException;
 use Fyre\Router\Route;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
+use ReflectionClass;
 
 use function array_shift;
 use function class_exists;
@@ -76,5 +77,21 @@ class ControllerRoute extends Route
         $controller = new $this->controller($request, $response);
 
         return $controller->{$this->action}(...$this->arguments);
+    }
+
+    /**
+     * Get the reflection parameters.
+     *
+     * @return array The reflection parameters.
+     */
+    protected function getParameters(): array
+    {
+        if (!class_exists($this->controller) || !method_exists($this->controller, $this->action)) {
+            return [];
+        }
+
+        return (new ReflectionClass($this->controller))
+            ->getMethod($this->action)
+            ->getParameters();
     }
 }

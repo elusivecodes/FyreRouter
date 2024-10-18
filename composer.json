@@ -20,7 +20,9 @@
         }
     },
     "require": {
+        "fyre/error": "^4.0",
         "fyre/middleware": "^2.0",
+        "fyre/orm": "^8.0",
         "fyre/server": "^3.0",
         "fyre/uri": "^3.0"
     },

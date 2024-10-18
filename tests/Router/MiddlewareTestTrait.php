@@ -136,7 +136,7 @@ trait MiddlewareTestTrait
         $ran = false;
 
         Router::connect('test', HomeController::class, [
-            'middleware' => function(ServerRequest $request, RequestHandler $handler) use (&$ran) {
+            'middleware' => function(ServerRequest $request, RequestHandler $handler) use (&$ran): ClientResponse {
                 $ran = true;
 
                 return $handler->handle($request);
