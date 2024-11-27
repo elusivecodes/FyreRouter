@@ -1,6 +1,6 @@
 # FyreRouter
 
-**FyreRouter** is a free, open-source URL routing library for *PHP*.
+**FyreRouter** is a free, open-source URI routing library for *PHP*.
 
 
 ## Table Of Contents
