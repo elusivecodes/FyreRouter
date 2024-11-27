@@ -12,17 +12,27 @@ trait PlaceholderTestTrait
 {
     public function testPlaceholders(): void
     {
-        Router::get('home/alternate/(:segment)/(:alpha)/(:num)', [HomeController::class, 'altMethod']);
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/home/alternate/test/a/2',
+        $router->get('home/alternate/{a}/{b}/{c}', [HomeController::class, 'altMethod'], [
+            'placeholders' => [
+                'a' => '[^/]+',
+                'b' => '[a-z]+',
+                'c' => '\d+',
+            ],
+        ]);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/home/alternate/test/a/2',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -41,9 +51,9 @@ trait PlaceholderTestTrait
 
         $this->assertSame(
             [
-                'test',
-                'a',
-                '2',
+                'a' => 'test',
+                'b' => 'a',
+                'c' => '2',
             ],
             $route->getArguments()
         );

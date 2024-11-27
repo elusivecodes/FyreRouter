@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Fyre\Config\Config;
+use Fyre\Container\Container;
 use Fyre\Middleware\MiddlewareQueue;
 use Fyre\Middleware\RequestHandler;
 use Fyre\Router\Middleware\RouterMiddleware;
@@ -14,6 +16,10 @@ use Tests\Mock\Controller\HomeController;
 
 final class RouterMiddlewareTest extends TestCase
 {
+    protected Container $container;
+
+    protected Router $router;
+
     public function testProcessClosureRoute(): void
     {
         $ran = false;
@@ -24,18 +30,19 @@ final class RouterMiddlewareTest extends TestCase
             return '';
         };
 
-        Router::connect('test', $function);
+        $this->router->connect('test', $function);
 
         $queue = new MiddlewareQueue([
             RouterMiddleware::class,
         ]);
 
-        $handler = new RequestHandler($queue);
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $handler = $this->container->build(RequestHandler::class, ['queue' => $queue]);
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
@@ -50,18 +57,19 @@ final class RouterMiddlewareTest extends TestCase
 
     public function testProcessControllerRoute(): void
     {
-        Router::connect('test', HomeController::class);
+        $this->router->connect('test', HomeController::class);
 
         $queue = new MiddlewareQueue([
             RouterMiddleware::class,
         ]);
 
-        $handler = new RequestHandler($queue);
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $handler = $this->container->build(RequestHandler::class, ['queue' => $queue]);
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
@@ -74,18 +82,19 @@ final class RouterMiddlewareTest extends TestCase
 
     public function testProcessRedirectRoute(): void
     {
-        Router::redirect('test', 'https://test.com/');
+        $this->router->redirect('test', 'https://test.com/');
 
         $queue = new MiddlewareQueue([
             RouterMiddleware::class,
         ]);
 
-        $handler = new RequestHandler($queue);
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $handler = $this->container->build(RequestHandler::class, ['queue' => $queue]);
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
@@ -110,6 +119,10 @@ final class RouterMiddlewareTest extends TestCase
 
     protected function setUp(): void
     {
-        Router::clear();
+        $this->container = new Container();
+        $this->container->singleton(Config::class);
+        $this->container->singleton(Router::class);
+
+        $this->router = $this->container->use(Router::class);
     }
 }

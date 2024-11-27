@@ -4,24 +4,22 @@ declare(strict_types=1);
 namespace Fyre\Router;
 
 use Closure;
-use Fyre\Entity\Entity;
-use Fyre\Error\Exceptions\NotFoundException;
-use Fyre\ORM\ModelRegistry;
+use Fyre\Container\Container;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
-use Fyre\Utility\Inflector;
-use ReflectionClass;
-use ReflectionNamedType;
 
+use function array_key_exists;
 use function array_keys;
 use function array_map;
-use function array_slice;
-use function array_values;
+use function array_shift;
 use function in_array;
-use function is_subclass_of;
+use function is_string;
 use function preg_match;
+use function preg_match_all;
 use function str_replace;
 use function strtolower;
+
+use const PREG_SET_ORDER;
 
 /**
  * Route
@@ -29,6 +27,10 @@ use function strtolower;
 abstract class Route
 {
     protected array $arguments = [];
+
+    protected array $bindingFields = [];
+
+    protected Container $container;
 
     protected array|Closure|string $destination;
 
@@ -38,16 +40,25 @@ abstract class Route
 
     protected string $path;
 
+    protected array $placeholders = [];
+
     /**
      * New Route constructor.
      *
-     * @param array|Closure|string $destination The route destination.
-     * @param string $path The route path.
+     * @param Container $container The Container.
+     * @param array|Closure|string $destination The destination.
+     * @param string $path The path.
+     * @param array $options The route options.
      */
-    public function __construct(array|Closure|string $destination, string $path = '')
+    public function __construct(Container $container, array|Closure|string $destination, string $path = '', array $options = [])
     {
+        $this->container = $container;
+
         $this->destination = $destination;
         $this->path = $path;
+        $this->methods = $options['methods'] ?? [];
+        $this->middleware = $options['middleware'] ?? [];
+        $this->placeholders = $options['placeholders'] ?? [];
     }
 
     /**
@@ -75,7 +86,33 @@ abstract class Route
      */
     public function checkPath(string $path): bool
     {
-        return (bool) preg_match($this->getPathRegExp(), $path);
+        if (!preg_match($this->getPathRegExp(), $path, $matches)) {
+            return false;
+        }
+
+        array_shift($matches);
+
+        preg_match_all('/\{([^\}]+)\}/', $this->path, $placeholders, PREG_SET_ORDER);
+
+        $this->arguments = [];
+        $this->bindingFields = [];
+
+        foreach ($placeholders as $i => $placeholder) {
+            if (!array_key_exists($i, $matches)) {
+                continue;
+            }
+
+            $name = $placeholder[1];
+
+            if (str_contains($name, ':')) {
+                [$name, $field] = explode(':', $name, 2);
+                $this->bindingFields[$name] = $field;
+            }
+
+            $this->arguments[$name] = $matches[$i];
+        }
+
+        return true;
     }
 
     /**
@@ -86,6 +123,16 @@ abstract class Route
     public function getArguments(): array
     {
         return $this->arguments;
+    }
+
+    /**
+     * Get the route binding fields.
+     *
+     * @return array The route binding fields.
+     */
+    public function getBindingFields(): array
+    {
+        return $this->bindingFields;
     }
 
     /**
@@ -109,6 +156,16 @@ abstract class Route
     }
 
     /**
+     * Get the reflection parameters.
+     *
+     * @return array The reflection parameters.
+     */
+    public function getParameters(): array
+    {
+        return [];
+    }
+
+    /**
      * Get the route path.
      *
      * @return string The route path.
@@ -119,107 +176,71 @@ abstract class Route
     }
 
     /**
-     * Process the route.
+     * Get the route placeholders.
      *
-     * @param ServerRequest $request The ServerRequest.
-     * @param ClientResponse $response The ClientResponse.
-     * @return ClientResponse|string The ClientResponse or string response.
+     * @return array The route placeholders.
      */
-    abstract public function process(ServerRequest $request, ClientResponse $response): ClientResponse|string;
-
-    /**
-     * Set the route arguments from a path.
-     *
-     * @param string $path The path.
-     * @return Route A new Route.
-     */
-    public function setArgumentsFromPath(string $path): static
+    public function getPlaceholders(): array
     {
-        preg_match($this->getPathRegExp(), $path, $match);
-
-        $arguments = array_slice($match, 1);
-
-        $params = $this->getParameters();
-
-        foreach ($params as $param) {
-            $i = $param->getPosition();
-            $value = $arguments[$i] ?? null;
-
-            if ($value === null) {
-                continue;
-            }
-
-            $type = $param->getType();
-
-            if (!($type instanceof ReflectionNamedType)) {
-                continue;
-            }
-
-            $name = $type->getName();
-
-            if (!is_subclass_of($name, Entity::class)) {
-                continue;
-            }
-
-            $reflect = new ReflectionClass($name);
-            $alias = $reflect->getProperty('source')->getDefaultValue() ?? Inflector::pluralize($reflect->getShortName());
-            $entity = ModelRegistry::use($alias)->get($arguments[$i]);
-
-            if (!$entity && !$type->allowsNull()) {
-                throw new NotFoundException();
-            }
-
-            $arguments[$i] = $entity;
-        }
-
-        $temp = clone $this;
-
-        $temp->arguments = $arguments;
-
-        return $temp;
+        return $this->placeholders;
     }
 
     /**
-     * Set the route methods.
+     * Handle the route.
      *
-     * @param array $methods The route methods.
-     * @return Route A new Route.
+     * @param ServerRequest $request The ServerRequest.
+     * @param ClientResponse $response The ClientResponse.
+     * @return ClientResponse The ClientResponse.
      */
-    public function setMethods(array $methods): static
+    public function handle(ServerRequest $request, ClientResponse $response): ClientResponse
     {
-        $temp = clone $this;
+        $result = $this->process($request, $response);
 
-        $temp->methods = array_map(
-            fn(string $method): string => strtolower($method),
-            $methods
-        );
+        if (is_string($result)) {
+            return $response->setBody($result);
+        }
 
-        return $temp;
+        return $result;
+    }
+
+    /**
+     * Set the route arguments.
+     *
+     * @param array $arguments The route arguments.
+     * @return Route The Route.
+     */
+    public function setArguments(array $arguments): static
+    {
+        $this->arguments = $arguments;
+
+        return $this;
     }
 
     /**
      * Set the route middleware.
      *
      * @param array $middleware The route middleware.
-     * @return Route A new Route.
+     * @return Route The Route.
      */
     public function setMiddleware(array $middleware): static
     {
-        $temp = clone $this;
+        $this->middleware = $middleware;
 
-        $temp->middleware = $middleware;
-
-        return $temp;
+        return $this;
     }
 
     /**
-     * Get the reflection parameters.
+     * Set a route placeholder.
      *
-     * @return array The reflection parameters.
+     * @param string $placeholder The route placeholder.
+     * @param string $regex The route placeholder regex.
+     * @return Route The Route.
      */
-    protected function getParameters(): array
+    public function setPlaceholder(string $placeholder, string $regex): static
     {
-        return [];
+        $this->placeholders[$placeholder] = $regex;
+
+        return $this;
     }
 
     /**
@@ -229,16 +250,27 @@ abstract class Route
      */
     protected function getPathRegExp(): string
     {
-        $placeholders = Router::getPlaceholders();
-
         $placeholderKeys = array_map(
-            fn(string $key): string => ':'.$key,
-            array_keys($placeholders)
+            fn(string $key): string => '{'.$key.'}',
+            array_keys($this->placeholders)
         );
-        $placeholderValues = array_values($placeholders);
+        $placeholderValues = array_map(
+            fn(string $value): string => '('.$value.')',
+            $this->placeholders
+        );
 
         $path = str_replace($placeholderKeys, $placeholderValues, $this->path);
+        $path = preg_replace('/\{([^\}]+)\}/', '([^/]+)', $path);
 
         return '`^'.$path.'$`u';
     }
+
+    /**
+     * Process the route.
+     *
+     * @param ServerRequest $request The ServerRequest.
+     * @param ClientResponse $response The ClientResponse.
+     * @return ClientResponse|string The ClientResponse or string response.
+     */
+    abstract protected function process(ServerRequest $request, ClientResponse $response): ClientResponse|string;
 }

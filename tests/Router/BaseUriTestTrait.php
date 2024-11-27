@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
+use Fyre\Config\Config;
 use Fyre\Router\Router;
 use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Server\ServerRequest;
@@ -12,18 +13,22 @@ trait BaseUriTestTrait
 {
     public function testRouteBaseUri(): void
     {
-        Router::setBaseUri('https://test.com/deep/');
-        Router::get('test', TestController::class);
+        $this->container->use(Config::class)->set('App.baseUri', 'https://test.com/deep/');
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/deep/test',
+        $router = $this->container->build(Router::class);
+        $router->get('test', TestController::class);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/deep/test',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,

@@ -3,17 +3,25 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
+use Fyre\Container\Container;
 use Fyre\Router\Route;
 use Fyre\Router\Routes\ClosureRoute;
 use PHPUnit\Framework\TestCase;
 
 final class ClosureRouteTest extends TestCase
 {
+    protected Container $container;
+
     public function testGetDestination(): void
     {
         $function = function() {};
 
-        $route = new ClosureRoute($function);
+        $route = $this->container->build(ClosureRoute::class, ['destination' => $function]);
+
+        $this->assertInstanceOf(
+            Route::class,
+            $route
+        );
 
         $this->assertSame(
             $function,
@@ -21,33 +29,26 @@ final class ClosureRouteTest extends TestCase
         );
     }
 
-    public function testRoute(): void
-    {
-        $function = function() {};
-
-        $this->assertInstanceOf(
-            Route::class,
-            new ClosureRoute($function)
-        );
-    }
-
     public function testSetArgumentsFromPath(): void
     {
-        $function = function() {};
+        $route = $this->container->build(ClosureRoute::class, [
+            'destination' => function(): void {},
+            'path' => 'test/{a}/{b}',
+        ]);
 
-        $route1 = new ClosureRoute($function, 'test/(.*)/(.*)');
-        $route2 = $route1->setArgumentsFromPath('test/a/1');
-
-        $this->assertEmpty(
-            $route1->getArguments()
-        );
+        $route->checkPath('test/a/1');
 
         $this->assertSame(
             [
-                'a',
-                '1',
+                'a' => 'a',
+                'b' => '1',
             ],
-            $route2->getArguments()
+            $route->getArguments()
         );
+    }
+
+    protected function setUp(): void
+    {
+        $this->container = new Container();
     }
 }

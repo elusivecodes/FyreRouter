@@ -3,15 +3,20 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
+use Fyre\Container\Container;
 use Fyre\Router\Route;
 use Fyre\Router\Routes\RedirectRoute;
 use PHPUnit\Framework\TestCase;
 
 final class RedirectRouteTest extends TestCase
 {
+    protected Container $container;
+
     public function testGetDestination(): void
     {
-        $route = new RedirectRoute('https://test.com/');
+        $route = $this->container->build(RedirectRoute::class, [
+            'destination' => 'https://test.com/',
+        ]);
 
         $this->assertSame(
             'https://test.com/',
@@ -21,28 +26,36 @@ final class RedirectRouteTest extends TestCase
 
     public function testRoute(): void
     {
+        $route = $this->container->build(RedirectRoute::class, [
+            'destination' => 'https://test.com/',
+        ]);
+
         $this->assertInstanceOf(
             Route::class,
-            new RedirectRoute('')
+            $route
         );
     }
 
     public function testSetArgumentsFromPath(): void
     {
-        $route1 = new RedirectRoute('https://test.com/$1/$2', 'test/(.*)/(.*)');
-        $route2 = $route1->setArgumentsFromPath('test/a/1');
+        $route = $this->container->build(RedirectRoute::class, [
+            'destination' => 'https://test.com/{a}/{b}',
+            'path' => 'test/{a}/{b}',
+        ]);
 
-        $this->assertSame(
-            [],
-            $route1->getArguments()
-        );
+        $route->checkPath('test/a/1');
 
         $this->assertSame(
             [
-                'a',
-                '1',
+                'a' => 'a',
+                'b' => '1',
             ],
-            $route2->getArguments()
+            $route->getArguments()
         );
+    }
+
+    protected function setUp(): void
+    {
+        $this->container = new Container();
     }
 }

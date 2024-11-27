@@ -4,7 +4,11 @@ declare(strict_types=1);
 namespace Fyre\Router;
 
 use Closure;
+use Fyre\Config\Config;
+use Fyre\Container\Container;
+use Fyre\Entity\Entity;
 use Fyre\Http\Uri;
+use Fyre\ORM\ModelRegistry;
 use Fyre\Router\Exceptions\RouterException;
 use Fyre\Router\Routes\ClosureRoute;
 use Fyre\Router\Routes\ControllerRoute;
@@ -15,59 +19,57 @@ use function array_key_exists;
 use function array_map;
 use function array_merge;
 use function array_pop;
-use function array_shift;
 use function explode;
 use function implode;
+use function is_object;
 use function preg_match;
+use function preg_replace_callback;
 use function rawurldecode;
 use function rawurlencode;
+use function str_contains;
 use function str_starts_with;
 use function strlen;
 use function substr;
-use function substr_replace;
 use function trim;
-
-use const PREG_OFFSET_CAPTURE;
 
 /**
  * Router
  */
-abstract class Router
+class Router
 {
-    protected static Uri|null $baseUri = null;
+    protected Uri|null $baseUri = null;
 
-    protected static array $groups = [];
+    protected Container $container;
 
-    protected static array $placeholders = [
-        'alpha' => '[a-zA-Z]+',
-        'alphanum' => '[a-zA-Z0-9]+',
-        'num' => '\d+',
-        'segment' => '[^/]+',
-    ];
+    protected array $groups = [];
 
-    protected static array $routeAliases = [];
+    protected ModelRegistry $modelRegistry;
 
-    protected static array $routes = [];
+    protected array $routeAliases = [];
+
+    protected array $routes = [];
 
     /**
-     * Add a placeholder.
+     * New Router constructor.
      *
-     * @param string $placeholder The placeholder.
-     * @param string $pattern The placeholder pattern.
+     * @param Container $container The Container.
+     * @param ModelRegistry $modelRegistry The ModelRegistry.
+     * @param Config $config The Config.
      */
-    public static function addPlaceholder(string $placeholder, string $pattern): void
+    public function __construct(Container $container, ModelRegistry $modelRegistry, Config $config)
     {
-        static::$placeholders[$placeholder] = $pattern;
+        $this->container = $container;
+        $this->modelRegistry = $modelRegistry;
+        $this->baseUri = new Uri($config->get('App.baseUri', ''));
     }
 
     /**
      * Clear all routes and aliases.
      */
-    public static function clear(): void
+    public function clear(): void
     {
-        static::$routes = [];
-        static::$routeAliases = [];
-        static::$baseUri = null;
+        $this->routes = [];
+        $this->routeAliases = [];
     }
 
     /**
@@ -76,8 +78,9 @@ abstract class Router
      * @param string $path The route path.
      * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
+     * @return Route The Route.
      */
-    public static function connect(string $path, array|Closure|string $destination, array $options = []): void
+    public function connect(string $path, array|Closure|string $destination, array $options = []): Route
     {
         $options['redirect'] ??= false;
 
@@ -85,12 +88,14 @@ abstract class Router
         $path = static::normalizePath($path);
         $methods = (array) ($options['method'] ?? []);
         $middleware = (array) ($options['middleware'] ?? []);
+        $placeholders = $options['placeholders'] ?? [];
 
         $groupAliases = [];
         $groupPrefixes = [];
         $groupMiddleware = [];
+        $groupPlaceholders = [];
 
-        foreach (static::$groups as $group) {
+        foreach ($this->groups as $group) {
             if ($group['as']) {
                 $groupAliases[] = $group['as'];
             }
@@ -99,9 +104,8 @@ abstract class Router
                 $groupPrefixes[] = static::normalizePath($group['prefix']);
             }
 
-            foreach ((array) $group['middleware'] as $tempMiddleware) {
-                $groupMiddleware[] = $tempMiddleware;
-            }
+            $groupMiddleware = array_merge($groupMiddleware, (array) $group['middleware']);
+            $groupPlaceholders = array_merge($groupPlaceholders, $group['placeholders']);
         }
 
         if ($alias && $groupAliases !== []) {
@@ -114,23 +118,33 @@ abstract class Router
         }
 
         $middleware = array_merge($groupMiddleware, $middleware);
+        $placeholders = array_merge($groupPlaceholders, $placeholders);
 
         if ($destination instanceof Closure) {
-            $route = new ClosureRoute($destination, $path);
+            $className = ClosureRoute::class;
         } else if ($options['redirect']) {
-            $route = new RedirectRoute($destination, $path);
+            $className = RedirectRoute::class;
         } else {
-            $route = new ControllerRoute((array) $destination, $path);
+            $className = ControllerRoute::class;
         }
 
-        $route = $route->setMethods($methods);
-        $route = $route->setMiddleware($middleware);
+        $route = $this->container->build($className, [
+            'destination' => $destination,
+            'path' => $path,
+            'options' => [
+                'methods' => $methods,
+                'middleware' => $middleware,
+                'placeholders' => $placeholders,
+            ],
+        ]);
 
-        static::$routes[] = $route;
+        $this->routes[] = $route;
 
         if ($alias) {
-            static::$routeAliases[$alias] = $route;
+            $this->routeAliases[$alias] = $route;
         }
+
+        return $route;
     }
 
     /**
@@ -139,10 +153,11 @@ abstract class Router
      * @param string $path The route path.
      * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
+     * @return Route The Route.
      */
-    public static function delete(string $path, array|Closure|string $destination, array $options = []): void
+    public function delete(string $path, array|Closure|string $destination, array $options = []): Route
     {
-        static::connect($path, $destination, $options + ['method' => 'delete']);
+        return $this->connect($path, $destination, $options + ['method' => 'delete']);
     }
 
     /**
@@ -151,10 +166,11 @@ abstract class Router
      * @param string $path The route path.
      * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
+     * @return Route The Route.
      */
-    public static function get(string $path, array|Closure|string $destination, array $options = []): void
+    public function get(string $path, array|Closure|string $destination, array $options = []): Route
     {
-        static::connect($path, $destination, $options + ['method' => 'get']);
+        return $this->connect($path, $destination, $options + ['method' => 'get']);
     }
 
     /**
@@ -162,21 +178,11 @@ abstract class Router
      *
      * @return string|null The base uri.
      */
-    public static function getBaseUri(): string|null
+    public function getBaseUri(): string|null
     {
-        return static::$baseUri ?
-            static::$baseUri->getUri() :
+        return $this->baseUri ?
+            $this->baseUri->getUri() :
             null;
-    }
-
-    /**
-     * Get the placeholders.
-     *
-     * @return array The placeholders.
-     */
-    public static function getPlaceholders(): array
-    {
-        return static::$placeholders;
     }
 
     /**
@@ -185,17 +191,18 @@ abstract class Router
      * @param array $options The group options.
      * @param Closure $callback The callback to define routes.
      */
-    public static function group(array $options, Closure $callback): void
+    public function group(array $options, Closure $callback): void
     {
         $options['prefix'] ??= null;
         $options['as'] ??= null;
         $options['middleware'] ??= [];
+        $options['placeholders'] ??= [];
 
-        static::$groups[] = $options;
+        $this->groups[] = $options;
 
-        $callback();
+        $this->container->call($callback, ['router' => $this]);
 
-        array_pop(static::$groups);
+        array_pop($this->groups);
     }
 
     /**
@@ -206,7 +213,7 @@ abstract class Router
      *
      * @throws RouterException if the route was not found.
      */
-    public static function loadRoute(ServerRequest $request): ServerRequest
+    public function loadRoute(ServerRequest $request): ServerRequest
     {
         $path = $request->getUri()->getPath();
         $method = $request->getMethod();
@@ -214,8 +221,8 @@ abstract class Router
         $path = rawurldecode($path);
         $path = static::normalizePath($path);
 
-        if (static::$baseUri) {
-            $basePath = static::$baseUri->getPath();
+        if ($this->baseUri) {
+            $basePath = $this->baseUri->getPath();
 
             $basePath = static::normalizePath($basePath);
 
@@ -225,12 +232,13 @@ abstract class Router
             }
         }
 
-        foreach (static::$routes as $route) {
-            if (!$route->checkMethod($method) || !$route->checkPath($path)) {
+        foreach ($this->routes as $route) {
+            if (
+                !$route->checkMethod($method) ||
+                !$route->checkPath($path)
+            ) {
                 continue;
             }
-
-            $route = $route->setArgumentsFromPath($path);
 
             return $request->setParam('route', $route);
         }
@@ -244,10 +252,11 @@ abstract class Router
      * @param string $path The route path.
      * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
+     * @return Route The Route.
      */
-    public static function patch(string $path, array|Closure|string $destination, array $options = []): void
+    public function patch(string $path, array|Closure|string $destination, array $options = []): Route
     {
-        static::connect($path, $destination, $options + ['method' => 'patch']);
+        return $this->connect($path, $destination, $options + ['method' => 'patch']);
     }
 
     /**
@@ -256,10 +265,11 @@ abstract class Router
      * @param string $path The route path.
      * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
+     * @return Route The Route.
      */
-    public static function post(string $path, array|Closure|string $destination, array $options = []): void
+    public function post(string $path, array|Closure|string $destination, array $options = []): Route
     {
-        static::connect($path, $destination, $options + ['method' => 'post']);
+        return $this->connect($path, $destination, $options + ['method' => 'post']);
     }
 
     /**
@@ -268,10 +278,11 @@ abstract class Router
      * @param string $path The route path.
      * @param array|Closure|string $destination The route destination.
      * @param array $options Options for configuring the route.
+     * @return Route The Route.
      */
-    public static function put(string $path, array|Closure|string $destination, array $options = []): void
+    public function put(string $path, array|Closure|string $destination, array $options = []): Route
     {
-        static::connect($path, $destination, $options + ['method' => 'put']);
+        return $this->connect($path, $destination, $options + ['method' => 'put']);
     }
 
     /**
@@ -280,20 +291,11 @@ abstract class Router
      * @param string $path The route path.
      * @param string $destination The route destination.
      * @param array $options Options for configuring the route.
+     * @return Route The Route.
      */
-    public static function redirect(string $path, string $destination, array $options = []): void
+    public function redirect(string $path, string $destination, array $options = []): Route
     {
-        static::connect($path, $destination, $options + ['redirect' => true]);
-    }
-
-    /**
-     * Set the base uri.
-     *
-     * @param string $baseUri The uri.
-     */
-    public static function setBaseUri(string $baseUri): void
-    {
-        static::$baseUri = Uri::fromString($baseUri);
+        return $this->connect($path, $destination, $options + ['redirect' => true]);
     }
 
     /**
@@ -306,11 +308,11 @@ abstract class Router
      *
      * @throws RouterException for invalid alias, or invalid arguments.
      */
-    public static function url(string $name, array $arguments = [], array $options = []): string
+    public function url(string $name, array $arguments = [], array $options = []): string
     {
         $options['fullBase'] ??= false;
 
-        if (!array_key_exists($name, static::$routeAliases)) {
+        if (!array_key_exists($name, $this->routeAliases)) {
             throw RouterException::forInvalidRouteAlias($name);
         }
 
@@ -320,29 +322,44 @@ abstract class Router
         unset($arguments['?']);
         unset($arguments['#']);
 
-        $route = static::$routeAliases[$name];
+        $route = $this->routeAliases[$name];
 
         $destination = $route->getPath();
+        $placeholders = $route->getPlaceholders();
 
-        $offset = 0;
-        while (preg_match('/\(([^)]+)\)/', $destination, $matches, PREG_OFFSET_CAPTURE, $offset)) {
-            if ($arguments === []) {
-                throw RouterException::forMissingRouteParameter();
+        $destination = preg_replace_callback('/\{([^\}]+)\}/', function(array $match) use ($arguments, $placeholders): string {
+            $name = $match[1];
+
+            if (str_contains($name, ':')) {
+                [$name, $field] = explode(':', $name, 2);
+            } else {
+                $field = null;
             }
 
-            $match = $matches[0];
-            $placeholder = $match[0];
-            $placeholderKey = substr($placeholder, 2, -1);
-            $pattern = static::$placeholders[$placeholderKey] ?? $placeholder;
-            $value = (string) array_shift($arguments);
+            if (!array_key_exists($name, $arguments)) {
+                throw RouterException::forMissingRouteParameter($name);
+            }
+
+            $value = $arguments[$name];
+
+            if (is_object($value) && $value instanceof Entity) {
+                $alias = $value->getSource();
+                $Model = $this->modelRegistry->use($alias);
+                $field ??= $Model->getRouteKey();
+
+                $value = $value->get($field);
+            }
+
+            $value = (string) $value;
+
+            $pattern = $placeholders[$name] ?? '([^/]+)';
 
             if (!preg_match('`^'.$pattern.'$`u', $value)) {
-                throw RouterException::forInvalidRouteParameter();
+                throw RouterException::forInvalidRouteParameter($name);
             }
 
-            $destination = substr_replace($destination, $value, (int) $match[1], strlen($placeholder));
-            $offset = $match[1] + strlen($value);
-        }
+            return $value;
+        }, $destination);
 
         $segments = explode('/', $destination);
         $segments = array_map(
@@ -351,8 +368,8 @@ abstract class Router
         );
         $destination = implode('/', $segments);
 
-        if ($options['fullBase'] && static::$baseUri) {
-            $uri = static::$baseUri->resolveRelativeUri($destination);
+        if ($options['fullBase'] && $this->baseUri) {
+            $uri = $this->baseUri->resolveRelativeUri($destination);
         } else {
             $uri = Uri::fromString($destination);
         }
@@ -374,7 +391,7 @@ abstract class Router
      * @param string $path The path.
      * @return string The normalized path.
      */
-    protected static function normalizePath(string $path): string
+    protected function normalizePath(string $path): string
     {
         return '/'.trim($path, '/');
     }

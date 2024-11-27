@@ -3,15 +3,23 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
+use Fyre\Container\Container;
 use Fyre\Router\Routes\ControllerRoute;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Controller\TestController;
 
 final class RouteTest extends TestCase
 {
+    protected Container $container;
+
     public function testCheckMethod(): void
     {
-        $route = (new ControllerRoute([TestController::class]))->setMethods(['get']);
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+            'options' => [
+                'methods' => ['get'],
+            ],
+        ]);
 
         $this->assertTrue(
             $route->checkMethod('get')
@@ -20,7 +28,12 @@ final class RouteTest extends TestCase
 
     public function testCheckMethodInvalid(): void
     {
-        $route = (new ControllerRoute([TestController::class]))->setMethods(['get']);
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+            'options' => [
+                'methods' => ['get'],
+            ],
+        ]);
 
         $this->assertFalse(
             $route->checkMethod('post')
@@ -29,7 +42,9 @@ final class RouteTest extends TestCase
 
     public function testCheckMethodNoMethods(): void
     {
-        $route = new ControllerRoute([TestController::class]);
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+        ]);
 
         $this->assertTrue(
             $route->checkMethod('get')
@@ -38,7 +53,10 @@ final class RouteTest extends TestCase
 
     public function testCheckPath(): void
     {
-        $route = new ControllerRoute([TestController::class], 'test/(.*)');
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+            'path' => 'test/{a}',
+        ]);
 
         $this->assertTrue(
             $route->checkPath('test/a')
@@ -47,7 +65,10 @@ final class RouteTest extends TestCase
 
     public function testCheckPathInvalid(): void
     {
-        $route = new ControllerRoute([TestController::class], 'test/(.*)');
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+            'path' => 'test/{a}',
+        ]);
 
         $this->assertFalse(
             $route->checkPath('invalid')
@@ -56,11 +77,19 @@ final class RouteTest extends TestCase
 
     public function testGetPath(): void
     {
-        $route = new ControllerRoute([TestController::class], 'test/(.*)');
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+            'path' => 'test/{a}',
+        ]);
 
         $this->assertSame(
-            'test/(.*)',
+            'test/{a}',
             $route->getPath()
         );
+    }
+
+    protected function setUp(): void
+    {
+        $this->container = new Container();
     }
 }

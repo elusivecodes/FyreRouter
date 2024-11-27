@@ -16,49 +16,61 @@ trait FindRouteTestTrait
     {
         $this->expectException(RouterException::class);
 
-        Router::get('test', TestController::class);
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'method' => 'post',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $router->get('test', TestController::class);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'method' => 'post',
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
 
-        Router::loadRoute($request);
+        $router->loadRoute($request);
     }
 
     public function testInvalidRoute(): void
     {
         $this->expectException(RouterException::class);
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $router = $this->container->use(Router::class);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
 
-        Router::loadRoute($request);
+        $router->loadRoute($request);
     }
 
     public function testRouteOrder(): void
     {
-        Router::get('(.*)', HomeController::class);
-        Router::get('test', TestController::class);
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $router->get('{a}', HomeController::class);
+        $router->get('test', TestController::class);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,

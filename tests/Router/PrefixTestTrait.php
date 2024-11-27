@@ -12,19 +12,23 @@ trait PrefixTestTrait
 {
     public function testPrefix(): void
     {
-        Router::group(['prefix' => 'prefix'], function() {
-            Router::get('home', HomeController::class);
+        $router = $this->container->use(Router::class);
+
+        $router->group(['prefix' => 'prefix'], function(Router $router): void {
+            $router->get('home', HomeController::class);
         });
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/prefix/home',
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/prefix/home',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -39,21 +43,25 @@ trait PrefixTestTrait
 
     public function testPrefixDeep(): void
     {
-        Router::group(['prefix' => 'prefix'], function() {
-            Router::group(['prefix' => 'deep'], function() {
-                Router::get('home', HomeController::class);
+        $router = $this->container->use(Router::class);
+
+        $router->group(['prefix' => 'prefix'], function(Router $router): void {
+            $router->group(['prefix' => 'deep'], function(Router $router): void {
+                $router->get('home', HomeController::class);
             });
         });
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/prefix/deep/home',
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/prefix/deep/home',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -68,19 +76,23 @@ trait PrefixTestTrait
 
     public function testPrefixEmptyRoute(): void
     {
-        Router::group(['prefix' => 'prefix'], function() {
-            Router::get('', HomeController::class);
+        $router = $this->container->use(Router::class);
+
+        $router->group(['prefix' => 'prefix'], function(Router $router): void {
+            $router->get('', HomeController::class);
         });
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/prefix',
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/prefix',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -95,19 +107,23 @@ trait PrefixTestTrait
 
     public function testPrefixLeadingSlash(): void
     {
-        Router::group(['prefix' => '/prefix'], function() {
-            Router::get('home', HomeController::class);
+        $router = $this->container->use(Router::class);
+
+        $router->group(['prefix' => '/prefix'], function(Router $router): void {
+            $router->get('home', HomeController::class);
         });
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/prefix/home',
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/prefix/home',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -122,19 +138,23 @@ trait PrefixTestTrait
 
     public function testPrefixTrailingSlash(): void
     {
-        Router::group(['prefix' => 'prefix/'], function() {
-            Router::get('home', HomeController::class);
+        $router = $this->container->use(Router::class);
+
+        $router->group(['prefix' => 'prefix/'], function(Router $router): void {
+            $router->get('home', HomeController::class);
         });
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/prefix/home',
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/prefix/home',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,

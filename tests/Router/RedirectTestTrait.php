@@ -12,17 +12,21 @@ trait RedirectTestTrait
 {
     public function testRedirect(): void
     {
-        Router::redirect('test', 'https://test.com/');
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $router->redirect('test', 'https://test.com/');
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             RedirectRoute::class,
@@ -37,22 +41,28 @@ trait RedirectTestTrait
 
     public function testRedirectArguments(): void
     {
-        Router::redirect('test/(.*)/(.*)', 'https://test.com/$1/$2');
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test/a/2',
+        $router->redirect('test/{a}/{b}', 'https://test.com/{a}/{b}');
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test/a/2',
+                    ],
                 ],
             ],
         ]);
-        $route = Router::loadRoute($request)->getParam('route');
+
+        $route = $router->loadRoute($request)->getParam('route');
+
         $this->assertInstanceOf(
             RedirectRoute::class,
             $route
         );
 
-        $response = $route->process($request, new ClientResponse());
+        $response = $route->handle($request, new ClientResponse());
 
         $this->assertInstanceOf(
             ClientResponse::class,

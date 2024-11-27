@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Routes;
 
+use Fyre\Container\Container;
 use Fyre\Router\Route;
 use Fyre\Router\Routes\ControllerRoute;
 use PHPUnit\Framework\TestCase;
@@ -10,9 +11,13 @@ use Tests\Mock\Controller\TestController;
 
 final class ControllerRouteTest extends TestCase
 {
+    protected Container $container;
+
     public function testGetAction(): void
     {
-        $route = new ControllerRoute([TestController::class, 'test']);
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+        ]);
 
         $this->assertSame(
             'test',
@@ -22,7 +27,9 @@ final class ControllerRouteTest extends TestCase
 
     public function testGetController(): void
     {
-        $route = new ControllerRoute([TestController::class, 'test']);
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+        ]);
 
         $this->assertSame(
             TestController::class,
@@ -32,7 +39,9 @@ final class ControllerRouteTest extends TestCase
 
     public function testGetDestination(): void
     {
-        $route = new ControllerRoute([TestController::class, 'test']);
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+        ]);
 
         $this->assertSame(
             [TestController::class, 'test'],
@@ -42,28 +51,36 @@ final class ControllerRouteTest extends TestCase
 
     public function testRoute(): void
     {
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+        ]);
+
         $this->assertInstanceOf(
             Route::class,
-            new ControllerRoute([TestController::class])
+            $route
         );
     }
 
     public function testSetArgumentsFromPath(): void
     {
-        $route1 = new ControllerRoute([TestController::class, 'test'], 'test/(.*)/(.*)');
-        $route2 = $route1->setArgumentsFromPath('test/a/1');
+        $route = $this->container->build(ControllerRoute::class, [
+            'destination' => [TestController::class, 'test'],
+            'path' => 'test/{a}/{b}',
+        ]);
 
-        $this->assertSame(
-            [],
-            $route1->getArguments()
-        );
+        $route->checkPath('test/a/1');
 
         $this->assertSame(
             [
-                'a',
-                '1',
+                'a' => 'a',
+                'b' => '1',
             ],
-            $route2->getArguments()
+            $route->getArguments()
         );
+    }
+
+    protected function setUp(): void
+    {
+        $this->container = new Container();
     }
 }

@@ -30,13 +30,13 @@ class RouterException extends RuntimeException
         return new static('Route alias not found: '.$alias, 404);
     }
 
-    public static function forInvalidRouteParameter(): static
+    public static function forInvalidRouteParameter(string $name): static
     {
-        return new static('Invalid route parameter');
+        return new static('Invalid route parameter: '.$name);
     }
 
-    public static function forMissingRouteParameter(): static
+    public static function forMissingRouteParameter(string $name): static
     {
-        return new static('Missing route parameter');
+        return new static('Missing route parameter: '.$name);
     }
 }

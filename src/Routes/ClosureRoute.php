@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Fyre\Router\Routes;
 
 use Closure;
+use Fyre\Container\Container;
 use Fyre\Router\Route;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
@@ -17,12 +18,24 @@ class ClosureRoute extends Route
     /**
      * New ClosureRoute constructor.
      *
-     * @param Closure $destination The route destination.
-     * @param string $path The route path.
+     * @param Container $container The Container.
+     * @param Closure $destination The destination.
+     * @param string $path The path.
+     * @param array $options The route options.
      */
-    public function __construct(Closure $destination, string $path = '')
+    public function __construct(Container $container, Closure $destination, string $path = '', array $options = [])
     {
-        parent::__construct($destination, $path);
+        parent::__construct($container, $destination, $path, $options);
+    }
+
+    /**
+     * Get the reflection parameters.
+     *
+     * @return array The reflection parameters.
+     */
+    public function getParameters(): array
+    {
+        return (new ReflectionFunction($this->destination))->getParameters();
     }
 
     /**
@@ -32,18 +45,10 @@ class ClosureRoute extends Route
      * @param ClientResponse $response The ClientResponse.
      * @return ClientResponse|string The ClientResponse or string response.
      */
-    public function process(ServerRequest $request, ClientResponse $response): ClientResponse|string
+    protected function process(ServerRequest $request, ClientResponse $response): ClientResponse|string
     {
-        return ($this->destination)(...$this->arguments);
-    }
+        $arguments = ['request' => $request, 'response' => $response, ...$this->arguments];
 
-    /**
-     * Get the reflection parameters.
-     *
-     * @return array The reflection parameters.
-     */
-    protected function getParameters(): array
-    {
-        return (new ReflectionFunction($this->destination))->getParameters();
+        return $this->container->call($this->destination, $arguments);
     }
 }

@@ -12,17 +12,21 @@ trait ConnectTestTrait
 {
     public function testConnectLeadingSlash(): void
     {
-        Router::connect('/home', HomeController::class);
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/home',
+        $router->connect('/home', HomeController::class);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/home',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -37,17 +41,21 @@ trait ConnectTestTrait
 
     public function testConnectTrailingSlash(): void
     {
-        Router::connect('home/', HomeController::class);
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/home',
+        $router->connect('home/', HomeController::class);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/home',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,

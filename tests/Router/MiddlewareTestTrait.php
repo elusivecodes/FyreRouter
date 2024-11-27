@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
-use Fyre\Middleware\ClosureMiddleware;
-use Fyre\Middleware\Middleware;
+use Closure;
 use Fyre\Middleware\MiddlewareQueue;
 use Fyre\Middleware\MiddlewareRegistry;
 use Fyre\Middleware\RequestHandler;
@@ -13,6 +12,7 @@ use Fyre\Router\Router;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
 use Tests\Mock\Controller\HomeController;
+use Tests\Mock\Middleware\ArgsMiddleware;
 
 trait MiddlewareTestTrait
 {
@@ -20,21 +20,23 @@ trait MiddlewareTestTrait
     {
         $results = [];
 
-        Router::group([
+        $router = $this->container->use(Router::class);
+
+        $router->group([
             'middleware' => [
-                function(ServerRequest $request, RequestHandler $handler) use (&$results): ClientResponse {
+                function(ServerRequest $request, Closure $next) use (&$results): ClientResponse {
                     $results[] = 'test1';
 
-                    return $handler->handle($request);
+                    return $next($request);
                 },
             ],
-        ], function() use (&$results): void {
-            Router::connect('test', HomeController::class, [
+        ], function(Router $router) use (&$results): void {
+            $router->connect('test', HomeController::class, [
                 'middleware' => [
-                    function(ServerRequest $request, RequestHandler $handler) use (&$results): ClientResponse {
+                    function(ServerRequest $request, Closure $next) use (&$results): ClientResponse {
                         $results[] = 'test2';
 
-                        return $handler->handle($request);
+                        return $next($request);
                     },
                 ],
             ]);
@@ -44,12 +46,13 @@ trait MiddlewareTestTrait
             RouterMiddleware::class,
         ]);
 
-        $handler = new RequestHandler($queue);
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $handler = $this->container->build(RequestHandler::class, ['queue' => $queue]);
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
@@ -72,30 +75,32 @@ trait MiddlewareTestTrait
     {
         $results = [];
 
-        Router::group([
+        $router = $this->container->use(Router::class);
+
+        $router->group([
             'middleware' => [
-                function(ServerRequest $request, RequestHandler $handler) use (&$results): ClientResponse {
+                function(ServerRequest $request, Closure $next) use (&$results): ClientResponse {
                     $results[] = 'test1';
 
-                    return $handler->handle($request);
+                    return $next($request);
                 },
             ],
-        ], function() use (&$results): void {
-            Router::group([
+        ], function(Router $router) use (&$results): void {
+            $router->group([
                 'middleware' => [
-                    function(ServerRequest $request, RequestHandler $handler) use (&$results): ClientResponse {
+                    function(ServerRequest $request, Closure $next) use (&$results): ClientResponse {
                         $results[] = 'test2';
 
-                        return $handler->handle($request);
+                        return $next($request);
                     },
                 ],
-            ], function() use (&$results): void {
-                Router::connect('test', HomeController::class, [
+            ], function(Router $router) use (&$results): void {
+                $router->connect('test', HomeController::class, [
                     'middleware' => [
-                        function(ServerRequest $request, RequestHandler $handler) use (&$results): ClientResponse {
+                        function(ServerRequest $request, Closure $next) use (&$results): ClientResponse {
                             $results[] = 'test3';
 
-                            return $handler->handle($request);
+                            return $next($request);
                         },
                     ],
                 ]);
@@ -106,12 +111,13 @@ trait MiddlewareTestTrait
             RouterMiddleware::class,
         ]);
 
-        $handler = new RequestHandler($queue);
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $handler = $this->container->build(RequestHandler::class, ['queue' => $queue]);
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
@@ -135,11 +141,13 @@ trait MiddlewareTestTrait
     {
         $ran = false;
 
-        Router::connect('test', HomeController::class, [
-            'middleware' => function(ServerRequest $request, RequestHandler $handler) use (&$ran): ClientResponse {
+        $router = $this->container->use(Router::class);
+
+        $router->connect('test', HomeController::class, [
+            'middleware' => function(ServerRequest $request, Closure $next) use (&$ran): ClientResponse {
                 $ran = true;
 
-                return $handler->handle($request);
+                return $next($request);
             },
         ]);
 
@@ -147,12 +155,13 @@ trait MiddlewareTestTrait
             RouterMiddleware::class,
         ]);
 
-        $handler = new RequestHandler($queue);
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $handler = $this->container->build(RequestHandler::class, ['queue' => $queue]);
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
@@ -167,19 +176,15 @@ trait MiddlewareTestTrait
 
     public function testMiddlewareArgs(): void
     {
-        $results = null;
+        $middlewareRegistry = $this->container->use(MiddlewareRegistry::class);
 
-        MiddlewareRegistry::map('test', function() use (&$results): Middleware {
-            return new ClosureMiddleware(function(ServerRequest $request, RequestHandler $handler, string ...$args) use (&$results) {
-                $results = $args;
+        $middlewareRegistry->map('test', ArgsMiddleware::class);
 
-                return $handler->handle($request);
-            });
-        });
+        $router = $this->container->use(Router::class);
 
-        Router::connect('test/(:segment)', HomeController::class, [
+        $router->connect('test/{a}', HomeController::class, [
             'middleware' => [
-                'test:{1},1',
+                'test:{a},1',
             ],
         ]);
 
@@ -187,24 +192,30 @@ trait MiddlewareTestTrait
             RouterMiddleware::class,
         ]);
 
-        $handler = new RequestHandler($queue);
-
-        $request = new ServerRequest([
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test/2',
+        $handler = $this->container->build(RequestHandler::class, ['queue' => $queue]);
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test/2',
+                    ],
                 ],
             ],
         ]);
 
+        $response = $handler->handle($request);
+
         $this->assertInstanceOf(
             ClientResponse::class,
-            $handler->handle($request)
+            $response
         );
 
         $this->assertSame(
-            ['2', '1'],
-            $results
+            '[
+    "2",
+    "1"
+]',
+            $response->getBody()
         );
     }
 }

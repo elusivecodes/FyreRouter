@@ -5,10 +5,10 @@ namespace Tests\Mock\Model;
 
 use Fyre\ORM\Model;
 
-class ItemsModel extends Model
+class ContainsModel extends Model
 {
     public function initialize(): void
     {
-        $this->hasMany('Contains');
+        $this->belongsTo('Items');
     }
 }

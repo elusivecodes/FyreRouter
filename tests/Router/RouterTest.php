@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Tests\Router;
 
+use Fyre\Config\Config;
+use Fyre\Container\Container;
+use Fyre\Middleware\MiddlewareRegistry;
 use Fyre\Router\Router;
 use PHPUnit\Framework\TestCase;
 
@@ -22,8 +25,13 @@ final class RouterTest extends TestCase
     use RedirectTestTrait;
     use UrlTestTrait;
 
+    protected Container $container;
+
     protected function setUp(): void
     {
-        Router::clear();
+        $this->container = new Container();
+        $this->container->singleton(Config::class);
+        $this->container->singleton(Router::class);
+        $this->container->singleton(MiddlewareRegistry::class);
     }
 }

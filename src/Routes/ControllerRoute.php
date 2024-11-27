@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Fyre\Router\Routes;
 
+use Fyre\Container\Container;
 use Fyre\Router\Exceptions\RouterException;
 use Fyre\Router\Route;
 use Fyre\Server\ClientResponse;
@@ -25,12 +26,16 @@ class ControllerRoute extends Route
     /**
      * New ControllerRoute constructor.
      *
-     * @param array $destination The route destination.
-     * @param string $path The route path.
+     * @param Container $container The Container.
+     * @param array|string $destination The destination.
+     * @param string $path The path.
+     * @param array $options The route options.
      */
-    public function __construct(array $destination, string $path = '')
+    public function __construct(Container $container, array|string $destination, string $path = '', array $options = [])
     {
-        parent::__construct($destination, $path);
+        parent::__construct($container, $destination, $path, $options);
+
+        $destination = (array) $this->destination;
 
         $this->controller = array_shift($destination);
         $this->action = array_shift($destination) ?? 'index';
@@ -57,6 +62,22 @@ class ControllerRoute extends Route
     }
 
     /**
+     * Get the reflection parameters.
+     *
+     * @return array The reflection parameters.
+     */
+    public function getParameters(): array
+    {
+        if (!class_exists($this->controller) || !method_exists($this->controller, $this->action)) {
+            return [];
+        }
+
+        return (new ReflectionClass($this->controller))
+            ->getMethod($this->action)
+            ->getParameters();
+    }
+
+    /**
      * Process the route.
      *
      * @param ServerRequest $request The ServerRequest.
@@ -64,7 +85,7 @@ class ControllerRoute extends Route
      *
      * @throws RouterException if the controller class or method is not valid.
      */
-    public function process(ServerRequest $request, ClientResponse $response): ClientResponse|string
+    protected function process(ServerRequest $request, ClientResponse $response): ClientResponse|string
     {
         if (!class_exists($this->controller)) {
             throw RouterException::forInvalidController($this->controller);
@@ -74,24 +95,8 @@ class ControllerRoute extends Route
             throw RouterException::forInvalidMethod($this->controller, $this->action);
         }
 
-        $controller = new $this->controller($request, $response);
+        $controller = $this->container->build($this->controller, ['request' => $request, 'response' => $response]);
 
-        return $controller->{$this->action}(...$this->arguments);
-    }
-
-    /**
-     * Get the reflection parameters.
-     *
-     * @return array The reflection parameters.
-     */
-    protected function getParameters(): array
-    {
-        if (!class_exists($this->controller) || !method_exists($this->controller, $this->action)) {
-            return [];
-        }
-
-        return (new ReflectionClass($this->controller))
-            ->getMethod($this->action)
-            ->getParameters();
+        return $this->container->call([$controller, $this->action], $this->arguments);
     }
 }

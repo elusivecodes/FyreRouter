@@ -7,23 +7,28 @@ use Fyre\Router\Router;
 use Fyre\Router\Routes\ClosureRoute;
 use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Server\ServerRequest;
+use Tests\Mock\Controller\HomeController;
 
 trait PatchTestTrait
 {
     public function testPatch(): void
     {
-        Router::patch('home', HomeController::class);
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'method' => 'patch',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/home',
+        $router->patch('home', HomeController::class);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'method' => 'patch',
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/home',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -43,18 +48,22 @@ trait PatchTestTrait
 
     public function testPatchAction(): void
     {
-        Router::patch('home/alternate', [HomeController::class, 'altMethod']);
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'method' => 'patch',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/home/alternate',
+        $router->patch('home/alternate', [HomeController::class, 'altMethod']);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'method' => 'patch',
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/home/alternate',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -74,18 +83,22 @@ trait PatchTestTrait
 
     public function testPatchArguments(): void
     {
-        Router::patch('home/alternate/(.*)/(.*)/(.*)', [HomeController::class, 'altMethod']);
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'method' => 'patch',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/home/alternate/test/a/2',
+        $router->patch('home/alternate/{a}/{b}/{c}', [HomeController::class, 'altMethod']);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'method' => 'patch',
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/home/alternate/test/a/2',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ControllerRoute::class,
@@ -104,9 +117,9 @@ trait PatchTestTrait
 
         $this->assertSame(
             [
-                'test',
-                'a',
-                '2',
+                'a' => 'test',
+                'b' => 'a',
+                'c' => '2',
             ],
             $route->getArguments()
         );
@@ -116,18 +129,22 @@ trait PatchTestTrait
     {
         $callback = function() {};
 
-        Router::patch('test', $callback);
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'method' => 'patch',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test',
+        $router->patch('test', $callback);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'method' => 'patch',
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ClosureRoute::class,
@@ -144,18 +161,22 @@ trait PatchTestTrait
     {
         $callback = function() {};
 
-        Router::patch('test/(.*)/(.*)', $callback);
+        $router = $this->container->use(Router::class);
 
-        $request = new ServerRequest([
-            'method' => 'patch',
-            'globals' => [
-                'server' => [
-                    'REQUEST_URI' => '/test/a/2',
+        $router->patch('test/{a}/{b}', $callback);
+
+        $request = $this->container->build(ServerRequest::class, [
+            'options' => [
+                'method' => 'patch',
+                'globals' => [
+                    'server' => [
+                        'REQUEST_URI' => '/test/a/2',
+                    ],
                 ],
             ],
         ]);
 
-        $route = Router::loadRoute($request)->getParam('route');
+        $route = $router->loadRoute($request)->getParam('route');
 
         $this->assertInstanceOf(
             ClosureRoute::class,
@@ -169,8 +190,8 @@ trait PatchTestTrait
 
         $this->assertSame(
             [
-                'a',
-                '2',
+                'a' => 'a',
+                'b' => '2',
             ],
             $route->getArguments()
         );
