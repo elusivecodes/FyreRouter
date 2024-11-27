@@ -235,7 +235,7 @@ Handle the route.
 - `$response` is a [*ClientResponse*](https://github.com/elusivecodes/FyreServer#client-responses).
 
 ```php
-$response = $route->process($request, $response);
+$response = $route->handle($request, $response);
 ```
 
 This method will return a [*ClientResponse*](https://github.com/elusivecodes/FyreServer#client-responses).
