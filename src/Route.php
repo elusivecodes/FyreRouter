@@ -9,14 +9,12 @@ use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
 
 use function array_key_exists;
-use function array_keys;
-use function array_map;
 use function array_shift;
 use function in_array;
 use function is_string;
 use function preg_match;
 use function preg_match_all;
-use function str_replace;
+use function preg_replace_callback;
 use function strtolower;
 
 use const PREG_SET_ORDER;
@@ -250,17 +248,13 @@ abstract class Route
      */
     protected function getPathRegExp(): string
     {
-        $placeholderKeys = array_map(
-            fn(string $key): string => '{'.$key.'}',
-            array_keys($this->placeholders)
-        );
-        $placeholderValues = array_map(
-            fn(string $value): string => '('.$value.')',
-            $this->placeholders
-        );
+        $path = preg_replace_callback('/\{([^\}]+)\}/', function(array $match): string {
+            $placeholder = $match[1];
 
-        $path = str_replace($placeholderKeys, $placeholderValues, $this->path);
-        $path = preg_replace('/\{([^\}]+)\}/', '([^/]+)', $path);
+            return array_key_exists($placeholder, $this->placeholders) ?
+                '('.$this->placeholders[$placeholder].')' :
+                '([^/]+)';
+        }, $this->path);
 
         return '`^'.$path.'$`u';
     }
