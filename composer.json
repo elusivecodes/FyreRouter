@@ -23,7 +23,7 @@
         "fyre/container": "^1.0",
         "fyre/error": "^6.0",
         "fyre/middleware": "^6.0",
-        "fyre/orm": "^10.0",
+        "fyre/orm": "^11.0",
         "fyre/server": "^4.0",
         "fyre/uri": "^3.0"
     },
