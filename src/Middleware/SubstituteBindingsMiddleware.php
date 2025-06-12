@@ -21,23 +21,16 @@ use function is_subclass_of;
  */
 class SubstituteBindingsMiddleware extends Middleware
 {
-    protected Container $container;
-
-    protected EntityLocator $entityLocator;
-
-    protected ModelRegistry $modelRegistry;
-
     /**
      * New SubstituteBindingsMiddleware constructor.
      *
      * @param Container $container The Container.
      */
-    public function __construct(Container $container, ModelRegistry $modelRegistry, EntityLocator $entityLocator)
-    {
-        $this->container = $container;
-        $this->modelRegistry = $modelRegistry;
-        $this->entityLocator = $entityLocator;
-    }
+    public function __construct(
+        protected Container $container,
+        protected ModelRegistry $modelRegistry,
+        protected EntityLocator $entityLocator
+    ) {}
 
     /**
      * Handle a ServerRequest.

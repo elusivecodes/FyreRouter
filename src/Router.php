@@ -39,11 +39,7 @@ class Router
 {
     protected Uri|null $baseUri = null;
 
-    protected Container $container;
-
     protected array $groups = [];
-
-    protected ModelRegistry $modelRegistry;
 
     protected array $routeAliases = [];
 
@@ -56,10 +52,11 @@ class Router
      * @param ModelRegistry $modelRegistry The ModelRegistry.
      * @param Config $config The Config.
      */
-    public function __construct(Container $container, ModelRegistry $modelRegistry, Config $config)
-    {
-        $this->container = $container;
-        $this->modelRegistry = $modelRegistry;
+    public function __construct(
+        protected Container $container,
+        protected ModelRegistry $modelRegistry,
+        Config $config
+    ) {
         $this->baseUri = new Uri($config->get('App.baseUri', ''));
     }
 

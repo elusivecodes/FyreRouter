@@ -27,12 +27,6 @@ use function substr;
  */
 class RouterMiddleware extends Middleware
 {
-    protected Container $container;
-
-    protected MiddlewareRegistry $middlewareRegistry;
-
-    protected Router $router;
-
     /**
      * New RouterMiddleware constructor.
      *
@@ -40,12 +34,11 @@ class RouterMiddleware extends Middleware
      * @param MiddlewareRegistry $middlewareRegistry The MiddlewareRegistry.
      * @param Router $router The Router.
      */
-    public function __construct(Container $container, MiddlewareRegistry $middlewareRegistry, Router $router)
-    {
-        $this->container = $container;
-        $this->middlewareRegistry = $middlewareRegistry;
-        $this->router = $router;
-    }
+    public function __construct(
+        protected Container $container,
+        protected MiddlewareRegistry $middlewareRegistry,
+        protected Router $router
+    ) {}
 
     /**
      * Handle a ServerRequest.

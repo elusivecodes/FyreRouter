@@ -28,15 +28,9 @@ abstract class Route
 
     protected array $bindingFields = [];
 
-    protected Container $container;
-
-    protected array|Closure|string $destination;
-
     protected array $methods = [];
 
     protected array $middleware = [];
-
-    protected string $path;
 
     protected array $placeholders = [];
 
@@ -48,12 +42,12 @@ abstract class Route
      * @param string $path The path.
      * @param array $options The route options.
      */
-    public function __construct(Container $container, array|Closure|string $destination, string $path = '', array $options = [])
-    {
-        $this->container = $container;
-
-        $this->destination = $destination;
-        $this->path = $path;
+    public function __construct(
+        protected Container $container,
+        protected array|Closure|string $destination,
+        protected string $path = '',
+        array $options = []
+    ) {
         $this->methods = $options['methods'] ?? [];
         $this->middleware = $options['middleware'] ?? [];
         $this->placeholders = $options['placeholders'] ?? [];
