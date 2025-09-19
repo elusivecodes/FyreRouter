@@ -14,6 +14,7 @@ use Fyre\Router\Routes\ClosureRoute;
 use Fyre\Router\Routes\ControllerRoute;
 use Fyre\Router\Routes\RedirectRoute;
 use Fyre\Server\ServerRequest;
+use Fyre\Utility\Traits\MacroTrait;
 
 use function array_key_exists;
 use function array_map;
@@ -37,6 +38,8 @@ use function trim;
  */
 class Router
 {
+    use MacroTrait;
+
     protected Uri|null $baseUri = null;
 
     protected array $groups = [];
@@ -230,10 +233,7 @@ class Router
         }
 
         foreach ($this->routes as $route) {
-            if (
-                !$route->checkMethod($method) ||
-                !$route->checkPath($path)
-            ) {
+            if (!$route->checkRoute($method, $path)) {
                 continue;
             }
 

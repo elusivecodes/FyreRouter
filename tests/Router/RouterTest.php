@@ -7,7 +7,13 @@ use Fyre\Config\Config;
 use Fyre\Container\Container;
 use Fyre\Middleware\MiddlewareRegistry;
 use Fyre\Router\Router;
+use Fyre\Router\Routes\ClosureRoute;
+use Fyre\Router\Routes\ControllerRoute;
+use Fyre\Router\Routes\RedirectRoute;
+use Fyre\Utility\Traits\MacroTrait;
 use PHPUnit\Framework\TestCase;
+
+use function class_uses;
 
 final class RouterTest extends TestCase
 {
@@ -26,6 +32,29 @@ final class RouterTest extends TestCase
     use UrlTestTrait;
 
     protected Container $container;
+
+    public function testMacroable(): void
+    {
+        $this->assertContains(
+            MacroTrait::class,
+            class_uses(Router::class)
+        );
+
+        $this->assertContains(
+            MacroTrait::class,
+            class_uses(ClosureRoute::class)
+        );
+
+        $this->assertContains(
+            MacroTrait::class,
+            class_uses(ControllerRoute::class)
+        );
+
+        $this->assertContains(
+            MacroTrait::class,
+            class_uses(RedirectRoute::class)
+        );
+    }
 
     protected function setUp(): void
     {

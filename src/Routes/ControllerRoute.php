@@ -8,6 +8,7 @@ use Fyre\Router\Exceptions\RouterException;
 use Fyre\Router\Route;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
+use Fyre\Utility\Traits\MacroTrait;
 use ReflectionClass;
 
 use function array_shift;
@@ -19,6 +20,8 @@ use function method_exists;
  */
 class ControllerRoute extends Route
 {
+    use MacroTrait;
+
     protected string $action;
 
     protected string $controller;

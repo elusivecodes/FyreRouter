@@ -68,7 +68,7 @@ final class ControllerRouteTest extends TestCase
             'path' => 'test/{a}/{b}',
         ]);
 
-        $route->checkPath('test/a/1');
+        $route->checkRoute(path: 'test/a/1');
 
         $this->assertSame(
             [

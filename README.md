@@ -159,24 +159,15 @@ $url = $router->url($name, $arguments, $options)
 
 All routes extend the `Fyre\Router\Route` class, and include the following methods.
 
-**Check Method**
+**Check Route**
 
-Check if the route matches a test method.
+Check if the route matches a test method and path.
 
 - `$method` is a string representing the method to test.
-
-```php
-$checkMethod = $route->checkMethod($method);
-```
-
-**Check Path**
-
-Check if the route matches a test path.
-
 - `$path` is a string representing the path to test.
 
 ```php
-$checkPath = $route->checkPath($path);
+$checkRoute = $route->checkRoute($method, $pth);
 ```
 
 **Get Arguments**

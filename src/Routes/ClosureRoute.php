@@ -8,6 +8,7 @@ use Fyre\Container\Container;
 use Fyre\Router\Route;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\ServerRequest;
+use Fyre\Utility\Traits\MacroTrait;
 use ReflectionFunction;
 
 /**
@@ -15,6 +16,8 @@ use ReflectionFunction;
  */
 class ClosureRoute extends Route
 {
+    use MacroTrait;
+
     /**
      * New ClosureRoute constructor.
      *

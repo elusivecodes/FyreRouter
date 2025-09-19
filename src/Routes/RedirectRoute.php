@@ -9,6 +9,7 @@ use Fyre\Router\Route;
 use Fyre\Server\ClientResponse;
 use Fyre\Server\RedirectResponse;
 use Fyre\Server\ServerRequest;
+use Fyre\Utility\Traits\MacroTrait;
 
 use function array_key_exists;
 use function explode;
@@ -20,6 +21,8 @@ use function str_contains;
  */
 class RedirectRoute extends Route
 {
+    use MacroTrait;
+
     /**
      * New RedirectRoute constructor.
      *

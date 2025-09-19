@@ -54,57 +54,15 @@ abstract class Route
     }
 
     /**
-     * Check if the route matches a test method.
+     * Check if the route matches a test method and path.
      *
      * @param string $method The test method.
-     * @return bool TRUE if the method matches, otherwise FALSE.
-     */
-    public function checkMethod(string $method): bool
-    {
-        if ($this->methods === []) {
-            return true;
-        }
-
-        $method = strtolower($method);
-
-        return in_array($method, $this->methods);
-    }
-
-    /**
-     * Check if the route matches a test path.
-     *
      * @param string $path The test path.
-     * @return bool TRUE if the path matches, otherwise FALSE.
+     * @return bool TRUE if the method and path match, otherwise FALSE.
      */
-    public function checkPath(string $path): bool
+    public function checkRoute(string $method = 'get', string $path = ''): bool
     {
-        if (!preg_match($this->getPathRegExp(), $path, $matches)) {
-            return false;
-        }
-
-        array_shift($matches);
-
-        preg_match_all('/\{([^\}]+)\}/', $this->path, $placeholders, PREG_SET_ORDER);
-
-        $this->arguments = [];
-        $this->bindingFields = [];
-
-        foreach ($placeholders as $i => $placeholder) {
-            if (!array_key_exists($i, $matches)) {
-                continue;
-            }
-
-            $name = $placeholder[1];
-
-            if (str_contains($name, ':')) {
-                [$name, $field] = explode(':', $name, 2);
-                $this->bindingFields[$name] = $field;
-            }
-
-            $this->arguments[$name] = $matches[$i];
-        }
-
-        return true;
+        return $this->checkMethod($method) && $this->checkPath($path);
     }
 
     /**
@@ -233,6 +191,60 @@ abstract class Route
         $this->placeholders[$placeholder] = $regex;
 
         return $this;
+    }
+
+    /**
+     * Check if the route matches a test method.
+     *
+     * @param string $method The test method.
+     * @return bool TRUE if the method matches, otherwise FALSE.
+     */
+    protected function checkMethod(string $method): bool
+    {
+        if ($this->methods === []) {
+            return true;
+        }
+
+        $method = strtolower($method);
+
+        return in_array($method, $this->methods);
+    }
+
+    /**
+     * Check if the route matches a test path.
+     *
+     * @param string $path The test path.
+     * @return bool TRUE if the path matches, otherwise FALSE.
+     */
+    protected function checkPath(string $path): bool
+    {
+        if (!preg_match($this->getPathRegExp(), $path, $matches)) {
+            return false;
+        }
+
+        array_shift($matches);
+
+        preg_match_all('/\{([^\}]+)\}/', $this->path, $placeholders, PREG_SET_ORDER);
+
+        $this->arguments = [];
+        $this->bindingFields = [];
+
+        foreach ($placeholders as $i => $placeholder) {
+            if (!array_key_exists($i, $matches)) {
+                continue;
+            }
+
+            $name = $placeholder[1];
+
+            if (str_contains($name, ':')) {
+                [$name, $field] = explode(':', $name, 2);
+                $this->bindingFields[$name] = $field;
+            }
+
+            $this->arguments[$name] = $matches[$i];
+        }
+
+        return true;
     }
 
     /**

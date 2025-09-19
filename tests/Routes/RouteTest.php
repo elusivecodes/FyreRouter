@@ -22,7 +22,7 @@ final class RouteTest extends TestCase
         ]);
 
         $this->assertTrue(
-            $route->checkMethod('get')
+            $route->checkRoute('get')
         );
     }
 
@@ -36,7 +36,7 @@ final class RouteTest extends TestCase
         ]);
 
         $this->assertFalse(
-            $route->checkMethod('post')
+            $route->checkRoute('post')
         );
     }
 
@@ -47,7 +47,7 @@ final class RouteTest extends TestCase
         ]);
 
         $this->assertTrue(
-            $route->checkMethod('get')
+            $route->checkRoute('get')
         );
     }
 
@@ -59,7 +59,7 @@ final class RouteTest extends TestCase
         ]);
 
         $this->assertTrue(
-            $route->checkPath('test/a')
+            $route->checkRoute(path: 'test/a')
         );
     }
 
@@ -71,7 +71,7 @@ final class RouteTest extends TestCase
         ]);
 
         $this->assertFalse(
-            $route->checkPath('invalid')
+            $route->checkRoute(path: 'invalid')
         );
     }
 
